@@ -131,7 +131,8 @@ function renameFunction()
 # Add a prefix for each line.
 #
 # $1    string  prefix
-function prepareOutput {
+function prepareOutput()
+{
     IFS_BAK=$IFS;
     IFS="
 ";
@@ -147,7 +148,8 @@ function prepareOutput {
 # ) 2>&1 >&3 | handleError;
 #
 # -     string  error stream
-function handleError {
+function handleError()
+{
     loadFunctions "format";
     loadFunctions "log";
     local pre='ERROR: ';
