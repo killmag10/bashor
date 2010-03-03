@@ -24,6 +24,8 @@ export BASHOR_DIR;
 export BASHOR_DIR_FUNCTIONS="${BASHOR_DIR}/functions";
 export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
 
+export BASHOR_FILE_LOG="error.log";
+
 # Load general functions
 . "${BASHOR_DIR_INCLUDES}/functions.sh";
 

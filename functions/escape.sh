@@ -21,7 +21,7 @@
 # $1    string  To escape
 # $2    string  Expression limiter
 # $?    0:OK    1:ERROR
-function escapeRegEx ()
+function escape_RegEx ()
 {
     if [ -n "$2" ]; then
         replacement=`echo "$2" | sed 's#/#\\/#g'`;
@@ -43,7 +43,7 @@ function escapeRegEx ()
 # $1    string  To escape
 # $2    string  Expression limiter
 # $?    0:OK    1:ERROR
-function escapeRegExReplacement ()
+function escape_RegExReplacement ()
 {
     if [ -n "$2" ]; then
         replacement=`echo "$2" | sed 's#/#\\/#g'`;

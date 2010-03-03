@@ -8,24 +8,21 @@
 # http://www.gnu.de/documents/lgpl.de.html
 #
 # @package      Bashor
+# @subpackage   Functions
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
 # @version      $Id$
 ################################################################################
 
-BASE_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
-if [[ ! "$BASE_DIR" =~ ^/ ]]; then
-    BASE_DIR=`echo "$PWD/$BASE_DIR" | sed 's#/\.\?$##'`;
-fi
 
-. "$BASE_DIR/loader.sh"
-
-loadFunctions 'log';
-
-OPTS=':ab:c'
-ARGS="$*"
-
-log_Error "bla";
-
-optList
+##
+# Get the md5 hash
+#
+# $1    string  Text
+# $?    0:OK    1:ERROR
+function hash_Md5()
+{
+    echo "$1" | md5sum | sed 's/^\(\S\+\).*/\1/';
+    return $?
+}

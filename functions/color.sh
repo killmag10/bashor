@@ -15,35 +15,40 @@
 # @version      $Id$
 ################################################################################
 
-function colorFG {
-    color=`getFGColorByName "$2" "$3"`
+function color_FG ()
+{
+    color=`color_getFGColorByName "$2" "$3"`
     echo -en "\033$color";
     echo -n "$1";
     echo -en "\033[0m"
 }
 
-function colorBG {
-    color=`getBGColorByName "$2"`
+function color_BG ()
+{
+    color=`color_getBGColorByName "$2"`
     echo -en "\033$color";
     echo -n "$1";
     echo -en "\033[0m"
 }
 
-function colorFGStream {
+function color_FGStream ()
+{
     local IFS_BAK=$IFS;
     local IFS=`echo -e "\n\r"`;
-    while read msg; do colorFG "$msg" "$1" "$2"; echo ''; done
+    while read msg; do color_FG "$msg" "$1" "$2"; echo ''; done
     local IFS=$IFS_BAK;
 }
 
-function colorBGStream {
+function color_BGStream ()
+{
     local IFS_BAK=$IFS;
     local IFS=`echo -e "\n\r"`;
-    while read msg; do colorBG "$msg" "$1"; echo ''; done
+    while read msg; do color_BG "$msg" "$1"; echo ''; done
     local IFS=$IFS_BAK;
 } 
 
-function getFGColorByName {
+function color_getFGColorByName ()
+{
     if [ -n "$2" ]; then
         local style=`getStyleByName "$2"`;
     fi
@@ -75,7 +80,8 @@ function getFGColorByName {
     done
 }
 
-function getBGColorByName {
+function color_getBGColorByName ()
+{
     local BG_NAME[1]='black'
     local BG_NAME[2]='red'
     local BG_NAME[3]='green'
@@ -103,7 +109,8 @@ function getBGColorByName {
     done
 }
 
-function getStyleByName {
+function color_getStyleByName ()
+{
     local IFS_BAK=$IFS;
     local IFS=" ";
     for word in $1; do
