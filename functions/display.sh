@@ -22,7 +22,7 @@
 # $1?   string bar
 # $2?   string pre
 # $3?   string post
-function display_SimpleRotateBar()
+function display_simpleRotateBar()
 {
     local pbar='#         ';
     if [ -n "$1" ]; then

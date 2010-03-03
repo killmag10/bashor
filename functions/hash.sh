@@ -21,7 +21,7 @@
 #
 # $1    string  Text
 # $?    0:OK    1:ERROR
-function hash_Md5()
+function hash_md5()
 {
     echo "$1" | md5sum | sed 's/^\(\S\+\).*/\1/';
     return $?
