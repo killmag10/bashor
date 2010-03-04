@@ -8,27 +8,14 @@
 # http://www.gnu.de/documents/lgpl.de.html
 #
 # @package      Bashor
+# @subpackage   Tests
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
 # @version      $Id$
 ################################################################################
 
-BASHOR_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
-if [[ ! "$BASHOR_DIR" =~ ^/ ]]; then
-    BASHOR_DIR=`echo "$PWD/$BASHOR_DIR" | sed 's#/\.\?$##'`;
-fi
+loadFunctions 'hash';
 
-# Set paths
-export BASHOR_DIR;
-export BASHOR_DIR_FUNCTIONS="${BASHOR_DIR}/functions";
-export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
-
-# Defaults
-export BASHOR_FILE_LOG="./error.log";
-
-# Load general functions
-. "${BASHOR_DIR_INCLUDES}/functions.sh";
-
-# Load Object Support
-#. "${BASHOR_DIR_INCLUDES}/object.sh"
+res=`hash_md5 'abc123'`;
+checkSimple "md5" "$res" "2c6c8ab6ba8b9c98a1939450eb4089ed";

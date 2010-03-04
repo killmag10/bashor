@@ -15,6 +15,10 @@
 # @version      $Id$
 ################################################################################
 
+export BASHOR_FUNCTION_CACHE_DIR="./cache";
+if [ -n "$1" ]; then
+    export BASHOR_FUNCTION_CACHE_DIR="$1";
+fi
 
 ##
 # Generate the cache filename.
@@ -24,12 +28,11 @@
 # &1    string filename 
 function cache_filename()
 {
-    loadFunction 'hash';
-    mkdir -p "$BASHOR_DIR_CACHE/";
+    loadFunctions 'hash';
     
-    local hashMd5=`hashMd5 "$1"`;
+    local hashMd5=`hash_md5 "$1"`;
     local hashCrc32=`echo "$1" | cksum | tr ' ' '_'`;
-    echo "$BASHOR_DIR_CACHE/CACHE_${md5}_${cksum}";
+    echo "$BASHOR_FUNCTION_CACHE_DIR/CACHE_${hashMd5}_${hashCrc32}";
     return 0;
 }
 
@@ -42,9 +45,9 @@ function cache_filename()
 # $?    0:OK    1:ERROR
 function cache_set()
 {
-    local filename=`cacheFilename "$1"`;
+    local filename=`cache_filename "$1"`;
     local time=`date +%s`;
-    ((endTime= "$time" + "$3"))
+    ((time="$time"+"$3"));
     {
         echo "$time";
         echo -n "$2";
@@ -61,7 +64,7 @@ function cache_set()
 # &1    string Data 
 function cache_get()
 {
-    local filename=`cacheFilename "$1"`;
+    local filename=`cache_filename "$1"`;
     local curTime=`date +%s`;
     if [ -f "$filename" ]; then
         local time=`cat "$filename" | head -n 1`;
@@ -81,7 +84,7 @@ function cache_get()
 # $?    0:CACHED    1:NOT CACHED
 function cache_check()
 {
-    local filename=`cacheFilename "$1"`;
+    local filename=`cache_filename "$1"`;
     cacheCheckByFilename "$filename";	
     return "$?";
 }
@@ -114,9 +117,9 @@ function cache_removeOld()
 {
     local files=`ls -1 "$BASHOR_DIR_CACHE/file/"`;
     for file in $files; do
-        cacheCheckByFilename "$BASHOR_DIR_CACHE/$file";
+        cacheCheckByFilename "$BASHOR_FUNCTION_CACHE_DIR/$file";
         if [ "$?" != 0 ]; then
-            rm "$BASHOR_DIR_CACHE/$file";
+            rm "$BASHOR_FUNCTION_CACHE_DIR/$file";
         fi
     done;
     return 0;

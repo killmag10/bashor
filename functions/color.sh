@@ -50,7 +50,7 @@ function color_bgStream()
 function color_getFGColorByName()
 {
     if [ -n "$2" ]; then
-        local style=`getStyleByName "$2"`;
+        local style=`color_getStyleByName "$2"`;
     fi
    
     local FG_NAME[1]='black'
@@ -80,7 +80,7 @@ function color_getFGColorByName()
     done
 }
 
-function color_getBGColorByName ()
+function color_getBGColorByName()
 {
     local BG_NAME[1]='black'
     local BG_NAME[2]='red'
@@ -109,7 +109,7 @@ function color_getBGColorByName ()
     done
 }
 
-function color_getStyleByName ()
+function color_getStyleByName()
 {
     local IFS_BAK=$IFS;
     local IFS=" ";

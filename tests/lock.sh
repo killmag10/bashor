@@ -8,27 +8,32 @@
 # http://www.gnu.de/documents/lgpl.de.html
 #
 # @package      Bashor
+# @subpackage   Tests
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
 # @version      $Id$
 ################################################################################
 
-BASHOR_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
-if [[ ! "$BASHOR_DIR" =~ ^/ ]]; then
-    BASHOR_DIR=`echo "$PWD/$BASHOR_DIR" | sed 's#/\.\?$##'`;
-fi
+loadFunctions 'lock';
 
-# Set paths
-export BASHOR_DIR;
-export BASHOR_DIR_FUNCTIONS="${BASHOR_DIR}/functions";
-export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
+res=`lock_filename 'abc'`;
+checkSimple "filename" "$res" "abc.lock";
 
-# Defaults
-export BASHOR_FILE_LOG="./error.log";
+lockfile="$TEST_TEMP_DIR/$res";
+{
+    flock 200;
+    
+    lock_checkRead "$lockfile";
+    checkSimple "checkRead locked" "$?" "1";
+    
+    lock_checkWrite "$lockfile";
+    checkSimple "checkWrite locked" "$?" "1";
+    
+} 200>"$lockfile";
 
-# Load general functions
-. "${BASHOR_DIR_INCLUDES}/functions.sh";
+lock_checkRead "$lockfile";
+checkSimple "checkRead unlocked" "$?" "0";
 
-# Load Object Support
-#. "${BASHOR_DIR_INCLUDES}/object.sh"
+lock_checkWrite "$lockfile";
+checkSimple "checkWrite unlocked" "$?" "0";

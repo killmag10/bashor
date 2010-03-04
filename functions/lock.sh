@@ -46,7 +46,7 @@ function lock_delete {
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
 function lock_checkRead {
     if [ -f "$1" ]; then
-        flock -s --nonblock "$1" "";
+        flock -s --nonblock "$1" "true";
         return "$?";
     fi
     
@@ -60,7 +60,7 @@ function lock_checkRead {
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
 function lock_checkWrite {
     if [ -f "$1" ]; then
-        flock --nonblock "$1" "";
+        flock --nonblock "$1" "true";
         return "$?";
     fi
     

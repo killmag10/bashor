@@ -25,7 +25,8 @@ function loadFunctions()
     if [ -n "$1" ]; then
         local filename="$BASHOR_DIR_FUNCTIONS/""$1"'.sh';
         if [ -f "$filename" ]; then
-            . "$filename";
+            shift;
+            . "$filename" $*;
             return 0;
         fi
     fi
