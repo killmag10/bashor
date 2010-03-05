@@ -47,3 +47,4 @@ doTest 'cache';
 doTest 'color';
 doTest 'lock';
 doTest 'hash';
+doTest 'registry';

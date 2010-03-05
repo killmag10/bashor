@@ -16,18 +16,25 @@
 ################################################################################
 
 loadFunctions 'cache' "$TEST_TEMP_DIR";
+nl=`echo -e '\n\r'`;
 
 res=`cache_filename 'test'`;
 checkSimple "filename" "$res" "$TEST_TEMP_DIR/CACHE_d8e8fca2dc0f896fd7cb4cb0031ba249_935282863_5";
 
-cache_set 'test' '1234567890' '2';
-checkSimple "set" "$?" "0";
+cache_set 'test' '2' "12345${nl}67890";
+checkSimple "set var" "$?" "0";
 
 res=`cache_get 'test'`;
 checkSimple "get cached" "$?" "0";
-checkSimple "get cached data" "$res" "1234567890";
+checkSimple "get cached data" "$res" "12345${nl}67890";
 sleep 2;
 res=`cache_get 'test'`;
 checkSimple "get no cached" "$?" "1";
 checkSimple "get no cached data" "$res" "";
 
+echo "12345${nl}678${nl}90" | cache_set 'test' '3';
+checkSimple "set stream" "$?" "0";
+
+res=`cache_get 'test'`;
+checkSimple "get cached" "$?" "0";
+checkSimple "get cached data" "$res" "12345${nl}678${nl}90";

@@ -159,6 +159,6 @@ function handleError()
     fi
     while read msg; do
         echo "$msg" | sed "s/^/$pre/g" | color_FGText 'red';
-        echo "$msg" | log_ErrorStream;
+        echo "$msg" | log_error;
     done
 }

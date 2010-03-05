@@ -15,49 +15,52 @@
 # @version      $Id$
 ################################################################################
 
+export BASHOR_FUNCTION_LOG_FILE="$BASHOR_LOG_FILE";
+if [ -n "$1" ]; then
+    export BASHOR_FUNCTION_LOG_FILE="$1";
+fi
+
 ##
 # Write a message to log
 #
-# -     string  Text
-function log_Stream()
+# $1    string  Text
+# &0    string  Text
+function log()
 {
-	cat - >> "$BASHOR_FILE_LOG";
-}
-
-##
-# Log a error message
-#
-# -     string  Text
-function log_ErrorStream()
-{
-	datestring=`date +'%Y-%m-%d %H:%M:%S'`;
-	nl | sed "s#^#$datestring ERROR: #" | log_Stream;
-}
-
-##
-# Log a debug message
-#
-# -     string  Text
-function log_DebugStream()
-{
-	datestring=`date +'%Y-%m-%d %H:%M:%S'`;
-	nl | sed "s#^#$datestring DEBUG: #" | log_Stream;
+    if [ -p "/dev/stdin" ]; then
+        cat - >> "$BASHOR_FUNCTION_LOG_FILE";
+    else
+        echo "$1" >> "$BASHOR_FUNCTION_LOG_FILE";
+    fi
 }
 
 ##
 # Log a error message
 #
 # $1    string  Text
-function log_Error()
+# &0    string  Text
+function log_error()
 {
-	echo "$1" | log_ErrorStream;
+    datestring=`date +'%Y-%m-%d %H:%M:%S'`;
+    if [ -p "/dev/stdin" ]; then
+        nl | sed "s#^#$datestring ERROR: #" | log;
+    else
+        echo "$datestring ERROR: $1" | log;
+    fi
 }
 
 ##
 # Log a debug message
 #
 # $1    string  Text
-function log_Debug()
+# &0    string  Text
+function log_debug()
 {
-	echo "$1" | log_DebugStream;
+    datestring=`date +'%Y-%m-%d %H:%M:%S'`;
+    if [ -p "/dev/stdin" ]; then
+        nl | sed "s#^#$datestring DEBUG: #" | log;
+    else
+        echo "$datestring DEBUG: $1" | log;
+    fi
+
 }

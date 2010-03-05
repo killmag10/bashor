@@ -15,7 +15,7 @@
 # @version      $Id$
 ################################################################################
 
-export BASHOR_FUNCTION_CACHE_DIR="./cache";
+export BASHOR_FUNCTION_CACHE_DIR="$BASHOR_CACHE_DIR";
 if [ -n "$1" ]; then
     export BASHOR_FUNCTION_CACHE_DIR="$1";
 fi
@@ -40,17 +40,25 @@ function cache_filename()
 # Save in cache.
 #
 # $1    string  Id
-# $2    string  Data
-# $3    string  Cachetime in seconds.
+# $2    string  Cachetime in seconds.
+# $3    string  Data
 # $?    0:OK    1:ERROR
+# &0    string  Data
 function cache_set()
 {
     local filename=`cache_filename "$1"`;
     local time=`date +%s`;
-    ((time="$time"+"$3"));
+    ((time="$time"+"$2"));
     {
         echo "$time";
-        echo -n "$2";
+        echo "`echo '$1' | tr '\n\r' ' '`";
+        if [ -p /dev/stdin ]; then
+            while read value; do
+                echo "$value";
+            done < /dev/stdin;
+        else
+            echo -n "$3";
+        fi
     } > "$filename";
     
     return "$?"
@@ -69,7 +77,7 @@ function cache_get()
     if [ -f "$filename" ]; then
         local time=`cat "$filename" | head -n 1`;
         if [ -n "$time" ] && [ "$time" -gt "$curTime" ]; then
-            cat "$filename" | tail -n +2;
+            cat "$filename" | tail -n +3;
             return 0;
         fi
     fi
