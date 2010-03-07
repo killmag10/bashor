@@ -15,26 +15,19 @@
 # @version      $Id$
 ################################################################################
 
-loadFunctions 'registry' "$TEST_TEMP_DIR/registry";
+loadFunctions 'escape';
 nl=`echo -e '\n\r'`;
 
-registry_set "test" "blub 123blub";
-checkSimple "set 1" "$?" "0";
+testString=`cat "$TEST_RESOURCE_DIR/escape.raw.dat"`
 
-registry_set "bli" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
-checkSimple "set 2" "$?" "0";
+#escape_regEx "$testString" > "$TEST_RESOURCE_DIR/escape.esc.dat";
 
-res=`registry_get "test"`;
-checkSimple "get 1" "$res" "blub 123blub";
+res=`escape_regEx "$testString"`;
+checkSimple "regEx" "$?" "0";
+checkSimple "regEx data" "$res" "`cat \"$TEST_RESOURCE_DIR/escape.esc.dat\"`";
 
-res=`registry_get "bli"`;
-checkSimple "get 2" "$res" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
+#escape_regExReplacement "$testString" > "$TEST_RESOURCE_DIR/escape.rpl.dat";
 
-registry_isset "test";
-checkSimple "isset isset 1" "$?" "0";
-
-registry_remove "test";
-checkSimple "remove 1" "$?" "0";
-
-registry_isset "test";
-checkSimple "isset notset 1" "$?" "1";
+res=`escape_regExReplacement "$testString"`;
+checkSimple "regExReplacement" "$?" "0";
+checkSimple "regExReplacement data" "$res" "`cat \"$TEST_RESOURCE_DIR/escape.rpl.dat\"`";

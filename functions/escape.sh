@@ -30,11 +30,11 @@ function escape_regEx ()
     fi
 
     echo "$1" \
-        | sed 's#\([.^$]\)#\\\1#g' \
+        | sed 's#\([.^$\\]\)#\\\1#g' \
         | sed 's#\([]]\|[[]\)#[\1]#g' \
         | sed 's/'"$replacement"'/\\'"$replacement"'/g';
         
-    return 0;
+    return "$?";
 }
 
 ##
@@ -51,5 +51,9 @@ function escape_regExReplacement ()
         replacement='\/';
     fi
 
-    echo "$1" | sed 's/'"$replacement"'/\\'"$replacement"'/g';
+    echo "$1" \
+        | sed 's#\([\\]\)#\\\1#g' \
+        | sed 's/'"$replacement"'/\\'"$replacement"'/g';
+    
+    return "$?";
 }

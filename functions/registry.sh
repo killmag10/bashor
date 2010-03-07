@@ -34,15 +34,23 @@ function registry_set()
     else
         local value="$2";
     fi
-       
-    local key=`echo "$1" | base64 -w 0`;
-    local value=`echo "$value" | base64 -w 0`;
     
-    touch "$BASHOR_FUNCTION_REGISTRY_FILE";     
-    local data=`cat "$BASHOR_FUNCTION_REGISTRY_FILE"`;
-    local data=`echo "$data" | sed "s#^${key}\s\+.*##"`;
-    local data=`echo "$key $value"; echo -n "$data";`;
-    echo "$data" | sort -u > "$BASHOR_FUNCTION_REGISTRY_FILE";
+    loadFunctions 'lock';
+    local lockFile=`lock_filename '$BASHOR_FUNCTION_REGISTRY_FILE'`;
+    
+    {
+        flock 200;
+        
+        local key=`echo "$1" | base64 -w 0`;
+        local value=`echo "$value" | base64 -w 0`;
+        
+        touch "$BASHOR_FUNCTION_REGISTRY_FILE";     
+        local data=`cat "$BASHOR_FUNCTION_REGISTRY_FILE"`;
+        local data=`echo "$data" | sed "s#^${key}\s\+.*##"`;
+        local data=`echo "$key $value"; echo -n "$data";`;
+        echo "$data" | sort -u > "$BASHOR_FUNCTION_REGISTRY_FILE";
+    } 200>"$lockFile";
+    lock_delete "$lockFile";
     
     return "$?"
 }
@@ -54,12 +62,20 @@ function registry_set()
 # $?    0:OK    1:ERROR
 function registry_remove()
 {       
+    loadFunctions 'lock';
+    local lockFile=`lock_filename '$BASHOR_FUNCTION_REGISTRY_FILE'`;
     local key=`echo "$1" | base64 -w 0`;
     
     if [ -f "$BASHOR_FUNCTION_REGISTRY_FILE" ]; then
-        cat "$BASHOR_FUNCTION_REGISTRY_FILE" \
-            | sed "s#^${key}\s\+.*##" \
-            | sort -u > "$BASHOR_FUNCTION_REGISTRY_FILE";
+        {
+            flock 200;
+            
+            cat "$BASHOR_FUNCTION_REGISTRY_FILE" \
+                | sed "s#^${key}\s\+.*##" \
+                | sort -u > "$BASHOR_FUNCTION_REGISTRY_FILE";
+        } 200>"$lockFile";
+        lock_delete "$lockFile";
+        
         return "$?"
     fi
 }

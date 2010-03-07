@@ -35,6 +35,36 @@ function log()
 }
 
 ##
+# Get the log content.
+#
+# $1    string  Text
+# &0    string  Text
+function log_get()
+{
+    if [ -f "$BASHOR_FUNCTION_LOG_FILE" ]; then
+        cat "$BASHOR_FUNCTION_LOG_FILE";
+        return "$?";
+    fi
+    
+    return 1;
+}
+
+##
+# Remove the log.
+#
+# $1    string  Text
+# &0    string  Text
+function log_remove()
+{
+    if [ -f "$BASHOR_FUNCTION_LOG_FILE" ]; then
+        rm "$BASHOR_FUNCTION_LOG_FILE";
+        return "$?";
+    fi
+    
+    return 1;
+}
+
+##
 # Log a error message
 #
 # $1    string  Text
@@ -45,7 +75,7 @@ function log_error()
     if [ -p "/dev/stdin" ]; then
         nl | sed "s#^#$datestring ERROR: #" | log;
     else
-        echo "$datestring ERROR: $1" | log;
+        echo "$1" | nl | sed "s#^#$datestring ERROR: #" | log;
     fi
 }
 
@@ -60,7 +90,7 @@ function log_debug()
     if [ -p "/dev/stdin" ]; then
         nl | sed "s#^#$datestring DEBUG: #" | log;
     else
-        echo "$datestring DEBUG: $1" | log;
+        echo "$1" | nl | sed "s#^#$datestring DEBUG: #" | log;
     fi
 
 }

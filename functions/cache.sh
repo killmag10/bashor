@@ -53,9 +53,7 @@ function cache_set()
         echo "$time";
         echo "`echo '$1' | tr '\n\r' ' '`";
         if [ -p /dev/stdin ]; then
-            while read value; do
-                echo "$value";
-            done < /dev/stdin;
+            cat /dev/stdin;
         else
             echo -n "$3";
         fi
