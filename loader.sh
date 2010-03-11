@@ -28,6 +28,7 @@ export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
 export BASHOR_CACHE_DIR="./cache";
 export BASHOR_LOG_FILE="./error.log";
 export BASHOR_REGISTRY_FILE="./registry";
+export BASHOR_TEMP_DIR="./temp";
 
 # Load general functions
 . "${BASHOR_DIR_INCLUDES}/functions.sh";

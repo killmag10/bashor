@@ -48,7 +48,11 @@ function printFinalResult()
 
 function printResult()
 {
-    if [ 0 == "$2" ]; then
+    local res="$2";
+    if [ -n "$3" ]; then
+        local res=`echo "$res" | tr '01' '10'`;
+    fi
+    if [ 0 == "$res" ]; then
         local res=`echo -en '\033[1;32mOK   \033[0m'`
     else
         local res=`echo -en '\033[1;31mERROR\033[0m'`;
@@ -60,13 +64,13 @@ function printResult()
 function checkSimple()
 {
     [ "$2" == "$3" ];
-    printResult "$1" "$?";
+    printResult "$1" "$?" "$4";
 }
 
 function checkRegex()
 {
     local res=`echo "$2" | grep "$3"`;
-    printResult "$1" "$?";
+    printResult "$1" "$?" "$4";
 }
 
 function checkRegexLines()
@@ -85,6 +89,7 @@ doTest 'hash';
 doTest 'registry';
 doTest 'log';
 doTest 'escape';
+doTest 'temp';
 
 
 printFinalResult;
