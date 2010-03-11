@@ -140,19 +140,43 @@ function optKeys()
 ##
 # Get argument keys and valus seperate by :
 #
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
 # $?    0:OK    1:ERROR
 function optList()
 {
-    local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPT_OPTS" key $pArgs
-    do
-        echo "$key=$OPTARG";
+    local key="$1";
+    local pos=0;
+    local return=1;
+    eval set -- "$OPT_ARGS";    
+
+    local first=0;
+    while shift "$first"; do
+        local first=1;
+        ((pos++));        
+        if [ "$1" == "--" ]; then
+            break;
+        fi        
+        echo "$1" | grep -q '^-';
+        if [ "$?" != "0" ]; then
+            continue;
+        fi
+        
+        local res=`echo "$1" | sed 's#^-##'`;
+        echo "$res" | grep -q '^-';
+        if [ "$?" == 0 ]; then
+            local opt=`echo "$OPT_OPTS_LONG" | cut -f "$pos" -d "," | rev | cut -b -1`;
+        else
+            local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
+        fi
+        echo -n "$res=";
+        local return=0;
+        if [ ":" == "$opt" ]; then
+            echo -n "$2";
+            shift;
+        fi
+        echo "";  
     done
-    
-    return 0;
+        
+    return "$return";
 }
 
 ##
