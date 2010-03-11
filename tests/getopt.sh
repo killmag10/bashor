@@ -21,8 +21,11 @@ nl=`echo -e '\n\r'`;
 
 function test_getopts()
 {   
-    OPTS="abc:df:";
-    ARGS="$*";
+    optSetOpts "abc:df:";
+    optSetArgs "$@";
+    res=`optGetArgs`;
+    echo "$res";
+    checkSimple "optGetArgs" "$res" " -d -c '123' -f '456 789' -b -- 'aaa bbb' 'ccc'";
 
     optIsset "b";    
     checkSimple "optIsset is set" "$?" "0";
@@ -31,18 +34,20 @@ function test_getopts()
     checkSimple "optIsset not set" "$?" "1";
     
     res=`optValue "c"`;
-    echo "$res"; 
+    echo "$res";
     checkSimple "optValue 1" "$?" "0";
     checkSimple "optValue data 1" "$res" "123";
     
-    res=`optValue "f"`;    
-    echo "$res"; 
+    res=`optValue "f"`;
+    echo "$res";
     checkSimple "optValue 2" "$?" "0";
     checkSimple "optValue data 2" "$res" "456 789";
     
     res=`optKeys`;
+    echo "$res";
     checkSimple "optKeys" "$res" "d
 c
+f
 b";
 
     res=`optList`;

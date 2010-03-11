@@ -80,7 +80,7 @@ function checkRegexLines()
     printResult "$1" "$?";
 }
 
-#doTest 'getopt';
+doTest 'getopt';
 doTest 'getopts';
 doTest 'cache';
 doTest 'color';
@@ -90,6 +90,5 @@ doTest 'registry';
 doTest 'log';
 doTest 'escape';
 doTest 'temp';
-
 
 printFinalResult;

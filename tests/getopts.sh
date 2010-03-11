@@ -21,8 +21,8 @@ nl=`echo -e '\n\r'`;
 
 function test_getopts()
 {   
-    OPTS="abc:d";
-    ARGS="$@";
+    optSetOpts "abc:d";
+    optSetArgs "$@";
 
     optIsset "b";    
     checkSimple "optIsset is set" "$?" "0";

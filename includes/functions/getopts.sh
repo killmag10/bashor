@@ -25,8 +25,8 @@
 function optIsset()
 {    
     local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
+    local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
+    while getopts "$OPT_OPTS" key $pArgs
     do
         if [ "$key" == "$1" ]; then
             return 0;
@@ -46,8 +46,8 @@ function optIsset()
 function optValue()
 {    
     local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
+    local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
+    while getopts "$OPT_OPTS" key $pArgs
     do
         if [ "$key" == "$1" ]; then
             echo "$OPTARG";
@@ -67,8 +67,8 @@ function optValue()
 function optKeys()
 {
     local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
+    local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
+    while getopts "$OPT_OPTS" key $pArgs
     do
         echo "$key";
     done
@@ -85,11 +85,35 @@ function optKeys()
 function optList()
 {
     local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
+    local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
+    while getopts "$OPT_OPTS" key $pArgs
     do
         echo "$key=$OPTARG";
     done
     
     return 0;
+}
+
+##
+# Set expressions (long not supported)
+#
+# $1    string  getopts expression
+# $2    string  long getopts expression
+# $?    0:FOUND 1:NOT FOUND
+function optSetOpts()
+{    
+    OPT_OPTS="$1";
+    OPT_OPTS_LONG="$2";
+    return 0;
+}
+
+##
+# Set arguments
+#
+# $@    arguments
+# $?    0:FOUND 1:NOT FOUND
+function optSetArgs()
+{    
+    OPT_ARGS="$@";
+    return "$?";
 }

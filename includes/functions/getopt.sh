@@ -18,61 +18,76 @@
 ##
 # Check if argument exists
 #
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
 function optIsset()
 {    
-    local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
-    do
-        if [ "$key" == "$1" ]; then
+    local key="$1";
+    local pos=0;
+    eval set -- "$OPT_ARGS";    
+
+    local first=0;
+    while shift "$first"; do
+        local first=1;
+        ((pos++));
+        if [ "$1" == "--" ]; then
+            break;
+        fi 
+        echo "$1" | grep -q '^-';
+        if [ "$?" != "0" ]; then
+            continue;
+        fi
+        
+        local res=`echo "$1" | sed 's#^-##'`;
+        echo "$res" | grep -q '^-';
+        if [ "$?" == 0 ]; then
+            local opt=`echo "$OPT_OPTS_LONG" | cut -f "$pos" -d "," | rev | cut -b -1`;
+        else
+            local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
+        fi
+        if [ "$res" == "$key" ]; then
             return 0;
         fi
+        if [ ":" == "$opt" ]; then
+            shift;
+        fi    
     done
-    
+        
     return 1;
 }
 
 ##
 # Get argument value
 #
-# $OPTS string  getopts expression
-# $OPTS_LONG string  getopts expression
-# $ARGS string  getopts expression
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
 function optValue()
-{    
-    local OPTIND='1'; 
+{     
     local key="$1";
     local pos=0;
-    local args=`echo "$ARGS" | sed 's#"#\\\\\\"#'`;
-    local res=`getopt -o "$OPTS" --long "$OPTS_LONG" -- $args`
-    eval set -- "$res";    
+    eval set -- "$OPT_ARGS";    
 
-    while shift; do
+    local first=0;
+    while shift "$first"; do
+        local first=1;
         ((pos++));
+        if [ "$1" == "--" ]; then
+            break;
+        fi 
         echo "$1" | grep -q '^-';
         if [ "$?" != "0" ]; then
-            echo "$1: continue"
-            shift;
             continue;
         fi
-        echo "$1"
         local res=`echo "$1" | sed 's#^-##'`;
-        echo "$res"
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-            local opt=`echo "$OPTS_LONG" | cut -f "$pos" -d "," | rev | cut -b -1`;
+            local opt=`echo "$OPT_OPTS_LONG" | cut -f "$pos" -d "," | rev | cut -b -1`;
         else
-            local opt=`echo "$OPTS" | cut -f 2 -d "$key" | cut -b 1`;
+            local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
         fi
         if [ ":" == "$opt" ]; then
             if [ "$res" == "$key" ]; then
-                echo "FOUND $1: $2"
+                echo "$2"
                 return 0;
             fi
             shift;
@@ -85,19 +100,41 @@ function optValue()
 ##
 # Get argument keys
 #
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
 # $?    0:OK    1:ERROR
 function optKeys()
 {
-    local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
-    do
-        echo "$key";
+    local key="$1";
+    local pos=0;
+    local return=1;
+    eval set -- "$OPT_ARGS";    
+
+    local first=0;
+    while shift "$first"; do
+        local first=1;
+        ((pos++));        
+        if [ "$1" == "--" ]; then
+            break;
+        fi        
+        echo "$1" | grep -q '^-';
+        if [ "$?" != "0" ]; then
+            continue;
+        fi
+        
+        local res=`echo "$1" | sed 's#^-##'`;
+        echo "$res" | grep -q '^-';
+        if [ "$?" == 0 ]; then
+            local opt=`echo "$OPT_OPTS_LONG" | cut -f "$pos" -d "," | rev | cut -b -1`;
+        else
+            local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
+        fi
+        echo "$res";
+        local return=0;
+        if [ ":" == "$opt" ]; then
+            shift;
+        fi    
     done
-    
-    return 0;
+        
+    return "$return";
 }
 
 ##
@@ -110,10 +147,44 @@ function optList()
 {
     local OPTIND='1';    
     local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
+    while getopts "$OPT_OPTS" key $pArgs
     do
         echo "$key=$OPTARG";
     done
     
+    return 0;
+}
+
+##
+# Set expressions
+#
+# $1    string  getopts expression
+# $2    string  long getopts expression
+# $?    0:FOUND 1:NOT FOUND
+function optSetOpts()
+{    
+    OPT_OPTS="$1";
+    OPT_OPTS_LONG="$2";
+    return 0;
+}
+
+##
+# Set arguments
+#
+# $@    arguments
+# $?    0:FOUND 1:NOT FOUND
+function optSetArgs()
+{    
+    OPT_ARGS=`getopt -o "$OPT_OPTS" --long "$OPT_OPTS_LONG" -- "$@"`
+    return "$?";
+}
+
+##
+# Get arguments
+#
+# $?    0:OK 1:ERROR
+function optGetArgs()
+{    
+    echo "$OPT_ARGS";
     return 0;
 }
