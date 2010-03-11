@@ -26,92 +26,12 @@ function loadFunctions()
         local filename="$BASHOR_DIR_FUNCTIONS/""$1"'.sh';
         if [ -f "$filename" ]; then
             shift;
-            . "$filename" $*;
+            . "$filename" "$@";
             return 0;
         fi
     fi
     
     return 1;
-}
-
-##
-# Check if argument exists
-#
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
-# $1    string  key
-# $?    0:FOUND 1:NOT FOUND
-function optIsset()
-{    
-    local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
-    do
-        if [ "$key" == "$1" ]; then
-            echo "";
-            #return 0;
-        fi
-    done
-    
-    return 1;
-}
-
-##
-# Get argument value
-#
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
-# $1    string  key
-# $?    0:FOUND 1:NOT FOUND
-function optValue()
-{    
-    local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
-    do
-        if [ "$key" == "$1" ]; then
-            echo "$OPTARG";
-            return 0;
-        fi
-    done
-    
-    return 1;
-}
-
-##
-# Get argument keys
-#
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
-# $?    0:OK    1:ERROR
-function optKeys()
-{
-    local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
-    do
-        echo "$key";
-    done
-    
-    return 0;
-}
-
-##
-# Get argument keys and valus seperate by :
-#
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
-# $?    0:OK    1:ERROR
-function optList()
-{
-    local OPTIND='1';    
-    local pArgs=`echo $ARGS | sed 's#^[^-]*##'`;
-    while getopts "$OPTS" key $pArgs
-    do
-        echo "$key:$OPTARG";
-    done
-    
-    return 0;
 }
 
 ##
@@ -162,3 +82,5 @@ function handleError()
         echo "$msg" | log_error;
     done
 }
+
+. "$BASHOR_DIR_INCLUDES/functions/getopts.sh";

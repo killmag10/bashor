@@ -76,6 +76,8 @@ function checkRegexLines()
     printResult "$1" "$?";
 }
 
+#doTest 'getopt';
+doTest 'getopts';
 doTest 'cache';
 doTest 'color';
 doTest 'lock';
