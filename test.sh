@@ -26,6 +26,10 @@ TESTS_FAIL='0';
 
 . "$BASE_DIR/loader.sh"
 
+exec 3>&1; (
+    loadFunctions ''
+) 2>&1 >&3 | handleError;
+
 function doTest()
 {
     echo "##### Test: $1 #####";

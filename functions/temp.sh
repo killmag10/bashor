@@ -26,7 +26,10 @@ fi
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  path
-function temp_dir {
+function temp_dir()
+{
+    : ${1:?};
+    
     mkdir -p "$BASHOR_FUNCTION_TEMP_DIR/";
     echo -n "$BASHOR_FUNCTION_TEMP_DIR/"`temp_generateFilename "$1"`;
     return "$?";
@@ -38,7 +41,10 @@ function temp_dir {
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  path
-function temp_file {
+function temp_file()
+{
+    : ${1:?};
+
     echo "`temp_dir \"$1\"`"'.tmp';
     return "$?";
 }
@@ -49,7 +55,10 @@ function temp_file {
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  name
-function temp_generateFilename {
+function temp_generateFilename()
+{
+    : ${1?};
+
     echo 'temp_'`date +'%Y%m%dT%H%M%S'`"_""$$""_""$1""_""$RANDOM";
     return 0;
 }
@@ -57,7 +66,6 @@ function temp_generateFilename {
 ##
 # Clear the temp dir.
 #
-# $1    string  Id
 # $?    0:OK    1:ERROR
 function temp_clear {
     if [ -n "$BASHOR_FUNCTION_TEMP_DIR" ] && [ -d "$BASHOR_FUNCTION_TEMP_DIR" ]; then

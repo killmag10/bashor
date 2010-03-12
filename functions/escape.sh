@@ -19,14 +19,20 @@
 # escape string for regex
 #
 # $1    string  To escape
-# $2    string  Expression limiter
+# -d    string  Expression limiter
 # $?    0:OK    1:ERROR
 function escape_regEx ()
 {
-    if [ -n "$2" ]; then
-        replacement=`echo "$2" | sed 's#/#\\/#g'`;
+    : ${1?};
+    
+    optSetOpts 'd:';
+    optSetArgs "$@";
+    
+    if optIsset 'd'; then
+        local replacement=`optValue 'd'`;
+        local replacement=`echo "$replacement" | sed 's#/#\\/#g'`;
     else
-        replacement='\/';
+        local replacement='\/';
     fi
 
     echo "$1" \
@@ -41,14 +47,20 @@ function escape_regEx ()
 # escape string for regex replacement
 #
 # $1    string  To escape
-# $2    string  Expression limiter
+# -d    string  Expression limiter
 # $?    0:OK    1:ERROR
 function escape_regExReplacement ()
 {
-    if [ -n "$2" ]; then
-        replacement=`echo "$2" | sed 's#/#\\/#g'`;
+    : ${1?};
+    
+    optSetOpts 'd:';
+    optSetArgs "$@";
+    
+    if optIsset 'd'; then
+        local replacement=`optValue 'd'`;
+        local replacement=`echo "$replacement" | sed 's#/#\\/#g'`;
     else
-        replacement='\/';
+        local replacement='\/';
     fi
 
     echo "$1" \

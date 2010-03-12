@@ -29,6 +29,8 @@ fi
 # &0    string  Data
 function registry_set()
 {
+    : ${1:?};
+    
     if [ -p /dev/stdin ]; then
         local value=`cat -`;
     else
@@ -61,7 +63,9 @@ function registry_set()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 function registry_remove()
-{       
+{
+    : ${1:?};
+    
     loadFunctions 'lock';
     local lockFile=`lock_filename '$BASHOR_FUNCTION_REGISTRY_FILE'`;
     local key=`echo "$1" | base64 -w 0`;
@@ -88,6 +92,8 @@ function registry_remove()
 # &1    string Data 
 function registry_get()
 {
+    : ${1:?};
+    
     if [ -f "$BASHOR_FUNCTION_REGISTRY_FILE" ]; then
         local key=`echo "$1" | base64`;
         local res=`grep "^$key " "$BASHOR_FUNCTION_REGISTRY_FILE"`;
@@ -110,6 +116,8 @@ function registry_get()
 # &1    string Data 
 function registry_isset()
 {
+    : ${1:?};
+    
     if [ -f "$BASHOR_FUNCTION_REGISTRY_FILE" ]; then
         local key=`echo "$1" | base64`;
         local res=`grep "^$key " "$BASHOR_FUNCTION_REGISTRY_FILE"`

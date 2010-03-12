@@ -20,7 +20,10 @@
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function lock_filename {
+function lock_filename()
+{
+    : ${1:?};
+    
     echo "$1"".lock";
     return 0
 }
@@ -30,7 +33,10 @@ function lock_filename {
 #
 # $1    string  file
 # $?    0:OK    1:LOCKED    2:ERROR
-function lock_delete {
+function lock_delete()
+{
+    : ${1:?};
+    
     if [ -f "$1" ]; then
         flock --nonblock "$1" rm "$1";
         return "$?";
@@ -44,7 +50,10 @@ function lock_delete {
 #
 # $1    string  file
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
-function lock_checkRead {
+function lock_checkRead()
+{
+    : ${1:?};
+    
     if [ -f "$1" ]; then
         flock -s --nonblock "$1" "true";
         return "$?";
@@ -58,7 +67,10 @@ function lock_checkRead {
 #
 # $1    string  file
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
-function lock_checkWrite {
+function lock_checkWrite
+{
+    : ${1:?};
+    
     if [ -f "$1" ]; then
         flock --nonblock "$1" "true";
         return "$?";

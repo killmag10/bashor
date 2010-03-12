@@ -21,7 +21,9 @@
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
 function optIsset()
-{    
+{
+    : ${1:?};
+    
     local key="$1";
     local pos=0;
     eval set -- "$OPT_ARGS";    
@@ -63,7 +65,9 @@ function optIsset()
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
 function optValue()
-{     
+{
+    : ${1:?};
+        
     local key="$1";
     local pos=0;
     eval set -- "$OPT_ARGS";    
@@ -190,7 +194,9 @@ function optList()
 # $2    string  long getopts expression
 # $?    0:FOUND 1:NOT FOUND
 function optSetOpts()
-{    
+{
+    : ${1:?};
+    
     OPT_OPTS="$1";
     OPT_OPTS_LONG="$2";
     return 0;
@@ -202,7 +208,9 @@ function optSetOpts()
 # $@    arguments
 # $?    0:FOUND 1:NOT FOUND
 function optSetArgs()
-{    
+{
+    : ${@:?};
+    
     OPT_ARGS=`getopt -o "$OPT_OPTS" --long "$OPT_OPTS_LONG" -- "$@"`
     return "$?";
 }
@@ -212,7 +220,7 @@ function optSetArgs()
 #
 # $?    0:OK 1:ERROR
 function optGetArgs()
-{    
+{
     echo "$OPT_ARGS";
     return 0;
 }

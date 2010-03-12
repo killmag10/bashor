@@ -26,8 +26,16 @@ res=`escape_regEx "$testString"`;
 checkSimple "regEx" "$?" "0";
 checkSimple "regEx data" "$res" "`cat \"$TEST_RESOURCE_DIR/escape.esc.dat\"`";
 
+res=`escape_regEx "123#/#/#456" -d '#'`;
+checkSimple "regEx -d" "$?" "0";
+checkSimple "regEx data -d" "$res" '123\#/\#/\#456';
+
 #escape_regExReplacement "$testString" > "$TEST_RESOURCE_DIR/escape.rpl.dat";
 
 res=`escape_regExReplacement "$testString"`;
 checkSimple "regExReplacement" "$?" "0";
 checkSimple "regExReplacement data" "$res" "`cat \"$TEST_RESOURCE_DIR/escape.rpl.dat\"`";
+
+res=`escape_regExReplacement "123#/#/#456" -d '#'`;
+checkSimple "regExReplacement -d" "$?" "0";
+checkSimple "regExReplacement -d data" "$res" '123\#/\#/\#456';

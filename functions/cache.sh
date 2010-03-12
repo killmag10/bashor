@@ -28,6 +28,8 @@ fi
 # &1    string filename 
 function cache_filename()
 {
+    : ${1?};
+    
     loadFunctions 'hash';
     
     local hashMd5=`hash_md5 "$1"`;
@@ -46,6 +48,9 @@ function cache_filename()
 # &0    string  Data
 function cache_set()
 {
+    : ${1:?};
+    : ${2:?};
+    
     local filename=`cache_filename "$1"`;
     local time=`date +%s`;
     ((time="$time"+"$2"));
@@ -70,6 +75,8 @@ function cache_set()
 # &1    string Data 
 function cache_get()
 {
+    : ${1:?};
+    
     local filename=`cache_filename "$1"`;
     local curTime=`date +%s`;
     if [ -f "$filename" ]; then
@@ -90,6 +97,8 @@ function cache_get()
 # $?    0:CACHED    1:NOT CACHED
 function cache_check()
 {
+    : ${1:?};
+    
     local filename=`cache_filename "$1"`;
     cacheCheckByFilename "$filename";	
     return "$?";
@@ -102,6 +111,8 @@ function cache_check()
 # $?    0:CACHED    1:NOT CACHED
 function cache_checkByFilename()
 {
+    : ${1?};
+    
     local filename="$1";
     local curTime=`date +%s`;
     if [ -f "$filename" ]; then
@@ -117,8 +128,7 @@ function cache_checkByFilename()
 ##
 # Remove old cache files.
 #
-# $1    string  filename
-# $?    0:CACHED    1:NOT CACHED
+# $?    0:OK    1:ERROR
 function cache_removeOld()
 {
     local files=`ls -1 "$BASHOR_DIR_CACHE/file/"`;

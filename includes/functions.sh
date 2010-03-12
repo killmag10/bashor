@@ -18,10 +18,12 @@
 ##
 # Load function files.
 #
-# $1    string  filename
+# $1    string  namespace
 # $?    0:OK    1:ERROR
 function loadFunctions()
 {
+    : ${1:?};
+    
     if [ -n "$1" ]; then
         local filename="$BASHOR_DIR_FUNCTIONS/""$1"'.sh';
         if [ -f "$filename" ]; then
@@ -42,6 +44,9 @@ function loadFunctions()
 # $?    0:OK    1:ERROR
 function renameFunction()
 {
+    : ${1:?};
+    : ${2:?};
+    
     local tmp=`echo "function $2"; declare -f "$1" | tail -n +2;`;
     eval "$tmp";
     unset "$1";
@@ -54,11 +59,12 @@ function renameFunction()
 # $1    string  prefix
 function prepareOutput()
 {
-    IFS_BAK=$IFS;
-    IFS="
-";
+    : ${1:?};
+    
+    local IFS_BAK=$IFS;
+    local IFS=`echo -e "\n\r"`;
     while read msg; do echo "$1$msg"; done
-    IFS="$IFS_BAK";
+    local IFS="$IFS_BAK";
 }
 
 ##
@@ -70,15 +76,15 @@ function prepareOutput()
 #
 # -     string  error stream
 function handleError()
-{
-    loadFunctions "format";
+{    
+    loadFunctions "color";
     loadFunctions "log";
     local pre='ERROR: ';
     if [ -n "$1" ]; then
         local pre="$1";
     fi
     while read msg; do
-        echo "$msg" | sed "s/^/$pre/g" | color_FGText 'red';
+        echo "$msg" | sed "s/^/$pre/g" | color_fg '' 'red' 'bold';
         echo "$msg" | log_error;
     done
 }

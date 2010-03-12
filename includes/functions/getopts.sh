@@ -18,12 +18,12 @@
 ##
 # Check if argument exists
 #
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
 function optIsset()
-{    
+{
+    : ${1:?};
+    
     local OPTIND='1';    
     local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
@@ -39,12 +39,12 @@ function optIsset()
 ##
 # Get argument value
 #
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
 function optValue()
-{    
+{ 
+    : ${1:?};
+       
     local OPTIND='1';    
     local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
@@ -61,8 +61,6 @@ function optValue()
 ##
 # Get argument keys
 #
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
 # $?    0:OK    1:ERROR
 function optKeys()
 {
@@ -79,8 +77,6 @@ function optKeys()
 ##
 # Get argument keys and valus seperate by :
 #
-# $OPTS string  getopts expression
-# $ARGS string  getopts expression
 # $?    0:OK    1:ERROR
 function optList()
 {
@@ -101,7 +97,9 @@ function optList()
 # $2    string  long getopts expression
 # $?    0:FOUND 1:NOT FOUND
 function optSetOpts()
-{    
+{
+    : ${1:?};
+    
     OPT_OPTS="$1";
     OPT_OPTS_LONG="$2";
     return 0;
@@ -113,7 +111,9 @@ function optSetOpts()
 # $@    arguments
 # $?    0:FOUND 1:NOT FOUND
 function optSetArgs()
-{    
+{ 
+    : ${@:?};
+       
     OPT_ARGS="$@";
     return "$?";
 }

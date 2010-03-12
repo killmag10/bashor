@@ -23,6 +23,8 @@
 # $?    0:OK    1:ERROR
 function hash_md5()
 {
+    : ${1?};
+    
     echo "$1" | md5sum | sed 's/^\(\S\+\).*/\1/';
     return $?
 }

@@ -24,6 +24,8 @@
 # $3?   string post
 function display_simpleRotateBar()
 {
+    : ${1:?};
+    
     local pbar='#         ';
     if [ -n "$1" ]; then
         local bar="$1";

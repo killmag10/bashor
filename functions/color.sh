@@ -15,40 +15,71 @@
 # @version      $Id$
 ################################################################################
 
+##
+# Print text with forderground color.
+#
+# $1    string Text
+# $2    string Color
+# $3?   string Style
+# $?    0:OK    1:ERROR
+# &1    string Text
 function color_fg()
 {
-    color=`color_getFGColorByName "$2" "$3"`
+    : ${1?};
+    : ${2:?};
+        
+    if [ -p /dev/stdin ] && [ -z "$1" ] ; then
+        local IFS_BAK=$IFS;
+        local IFS=`echo -e "\n\r"`;
+        while read msg; do color_fg "$msg" "$2" "$3"; echo ''; done
+        local IFS=$IFS_BAK;
+        return 0;
+    fi
+    
+    local color=`color_getFGColorByName "$2" "$3"`
     echo -en "\033$color";
     echo -n "$1";
     echo -en "\033[0m"
+    return 0;
 }
 
+##
+# Print text with background color.
+#
+# $1    string Text
+# $2    string Color
+# $?    0:OK    1:ERROR
+# &1    string Text
 function color_bg()
 {
-    color=`color_getBGColorByName "$2"`
+    : ${1?};
+    : ${2:?};
+    
+    if [ -p /dev/stdin ]; then
+        local IFS_BAK=$IFS;
+        local IFS=`echo -e "\n\r"`;
+        while read msg; do color_bg "$msg" "$1"; echo ''; done
+        local IFS=$IFS_BAK;
+        return 0;
+    fi
+    
+    local color=`color_getBGColorByName "$2"`
     echo -en "\033$color";
     echo -n "$1";
     echo -en "\033[0m"
+    return 0;
 }
 
-function color_fgStream()
-{
-    local IFS_BAK=$IFS;
-    local IFS=`echo -e "\n\r"`;
-    while read msg; do color_fg "$msg" "$1" "$2"; echo ''; done
-    local IFS=$IFS_BAK;
-}
-
-function color_bgStream()
-{
-    local IFS_BAK=$IFS;
-    local IFS=`echo -e "\n\r"`;
-    while read msg; do color_bg "$msg" "$1"; echo ''; done
-    local IFS=$IFS_BAK;
-} 
-
+##
+# Get binary forderground color.
+#
+# $1    string Color
+# $?    0:OK    1:ERROR
+# &1    string binary color
 function color_getFGColorByName()
 {
+    : ${1:?};
+
     if [ -n "$2" ]; then
         local style=`color_getStyleByName "$2"`;
     fi
@@ -80,8 +111,16 @@ function color_getFGColorByName()
     done
 }
 
+##
+# Get binary background color.
+#
+# $1    string Color
+# $?    0:OK    1:ERROR
+# &1    string binary color
 function color_getBGColorByName()
 {
+    : ${1:?};
+    
     local BG_NAME[1]='black'
     local BG_NAME[2]='red'
     local BG_NAME[3]='green'
@@ -109,8 +148,16 @@ function color_getBGColorByName()
     done
 }
 
+##
+# Get binary style color.
+#
+# $1    string Style
+# $?    0:OK    1:ERROR
+# &1    string binary color
 function color_getStyleByName()
 {
+    : ${1:?};
+    
     local IFS_BAK=$IFS;
     local IFS=" ";
     for word in $1; do
