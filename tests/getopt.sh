@@ -21,12 +21,12 @@ nl=`echo -e '\n\r'`;
 
 function test_getopts()
 {   
-    optSetOpts "abc:df:";
+    optSetOpts "abc:df:" "eins:,zwei:,drei";
     optSetArgs "$@";
     res=`optGetArgs`;
-    checkSimple "optGetArgs" "$res" " -d -c '123' -f '456 789' -b -- 'aaa bbb' 'ccc'";
+    checkSimple "optGetArgs" "$res" " -d -c '123' --zwei 'test' -f '456 789' -b -- 'aaa bbb' 'ccc'";
 
-    optIsset "b";    
+    optIsset "b";
     checkSimple "optIsset is set" "$?" "0";
     
     optIsset "a";    
@@ -40,17 +40,23 @@ function test_getopts()
     checkSimple "optValue 2" "$?" "0";
     checkSimple "optValue data 2" "$res" "456 789";
     
+	res=`optValue "zwei"`;
+    checkSimple "optValue long" "$?" "0";
+    checkSimple "optValue data long" "$res" "test";
+    
     res=`optKeys`;
     checkSimple "optKeys" "$res" "d
 c
+zwei
 f
 b";
 
     res=`optList`;
     checkSimple "optList" "$res" "d=
 c=123
+zwei=test
 f=456 789
 b=";
 }
 
-test_getopts "aaa bbb" "ccc" -d -c "123" -f "456 789" -b
+test_getopts "aaa bbb" "ccc" -d -c "123" --zwei test -f "456 789" -b

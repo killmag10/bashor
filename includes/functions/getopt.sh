@@ -41,7 +41,8 @@ function optIsset()
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-            local opt=`echo "$OPT_OPTS_LONG" | cut -f "$pos" -d "," | rev | cut -b -1`;
+			local res=`echo "$res" | sed 's#^-##'`;
+            local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
         fi
@@ -81,7 +82,8 @@ function optValue()
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-            local opt=`echo "$OPT_OPTS_LONG" | cut -f "$pos" -d "," | rev | cut -b -1`;
+			local res=`echo "$res" | sed 's#^-##'`;
+            local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
         fi
@@ -123,7 +125,8 @@ function optKeys()
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-            local opt=`echo "$OPT_OPTS_LONG" | cut -f "$pos" -d "," | rev | cut -b -1`;
+			local res=`echo "$res" | sed 's#^-##'`;
+            local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
         fi
@@ -163,7 +166,8 @@ function optList()
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-            local opt=`echo "$OPT_OPTS_LONG" | cut -f "$pos" -d "," | rev | cut -b -1`;
+			local res=`echo "$res" | sed 's#^-##'`;
+            local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
         fi
@@ -211,4 +215,24 @@ function optGetArgs()
 {    
     echo "$OPT_ARGS";
     return 0;
+}
+
+##
+# Get long expression Extension
+#
+# $1    string  long getopts expression value
+# $?    0:FOUND 1:NOT FOUND
+function optGetOptLongExtension()
+{    
+    local IFS_BAK="IFS";
+    local IFS=",";
+    for value in $OPT_OPTS_LONG; do
+		local key=`echo "$value" | sed 's#:##g'`;
+		if [ "$key" == "$1" ]; then
+			echo "$value" | sed 's#[^:]##g';
+			return 0;
+		fi
+    done;
+    local IFS="$IFS_BAK";
+    return 1;
 }
