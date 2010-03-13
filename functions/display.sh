@@ -26,20 +26,9 @@ function display_simpleRotateBar()
 {
     : ${1:?};
     
-    local pbar='#         ';
-    if [ -n "$1" ]; then
-        local bar="$1";
-    fi
-    
-    local pbar_pre='[';
-    if [ -n "$2" ]; then
-        local barPre="$2";
-    fi
-    
-    local pbar_post=']';
-    if [ -n "$3" ]; then
-        local barPost="$3";
-    fi
+    local bar="${1:-'#         '}";
+    local pbar_pre="${2:-'['}";
+    local pbar_post="${3:-']'}";
     
     local barLength=`echo -n "$pbar" | wc -m`;
     echo "$barPre""$bar""$barPost";

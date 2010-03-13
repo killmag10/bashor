@@ -132,6 +132,7 @@ function cache_checkByFilename()
 function cache_removeOld()
 {
     local files=`ls -1 "$BASHOR_DIR_CACHE/file/"`;
+    local IFS=`echo -e "\n\r"`;
     for file in $files; do
         cacheCheckByFilename "$BASHOR_FUNCTION_CACHE_DIR/$file";
         if [ "$?" != 0 ]; then

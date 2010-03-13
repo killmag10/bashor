@@ -29,10 +29,8 @@ function color_fg()
     : ${2:?};
         
     if [ -p /dev/stdin ] && [ -z "$1" ] ; then
-        local IFS_BAK=$IFS;
         local IFS=`echo -e "\n\r"`;
         while read msg; do color_fg "$msg" "$2" "$3"; echo ''; done
-        local IFS=$IFS_BAK;
         return 0;
     fi
     
@@ -56,10 +54,8 @@ function color_bg()
     : ${2:?};
     
     if [ -p /dev/stdin ]; then
-        local IFS_BAK=$IFS;
         local IFS=`echo -e "\n\r"`;
         while read msg; do color_bg "$msg" "$1"; echo ''; done
-        local IFS=$IFS_BAK;
         return 0;
     fi
     
