@@ -28,7 +28,7 @@ function color_fg()
     : ${1?};
     : ${2:?};
         
-    if [ -p /dev/stdin ] && [ -z "$1" ] ; then
+    if [ -p /dev/stdin ] && [ -z "$1" ]; then
         local IFS=`echo -e "\n\r"`;
         while read msg; do color_fg "$msg" "$2" "$3"; echo ''; done
         return 0;
@@ -49,13 +49,13 @@ function color_fg()
 # $?    0:OK    1:ERROR
 # &1    string Text
 function color_bg()
-{
+{    
     : ${1?};
     : ${2:?};
     
-    if [ -p /dev/stdin ]; then
+    if [ -p /dev/stdin ] && [ -z "$1" ]; then
         local IFS=`echo -e "\n\r"`;
-        while read msg; do color_bg "$msg" "$1"; echo ''; done
+        while read msg; do color_bg "$msg" "$2"; echo ''; done
         return 0;
     fi
     

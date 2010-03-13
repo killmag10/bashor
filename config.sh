@@ -22,3 +22,21 @@ export BASHOR_TEMP_DIR="./temp";
 
 # Compatibility
 export BASHOR_USE_GETOPT="1"; # 0|1
+
+# Options
+export BASHOR_ERROR_LOG="0";
+export BASHOR_ERROR_OUTPUT="1";
+export BASHOR_ERROR_BACKTRACE="1";
+export BASHOR_WARNING_LOG="0";
+export BASHOR_WARNING_OUTPUT="1";
+export BASHOR_WARNING_BACKTRACE="1";
+export BASHOR_DEBUG_LOG="0";
+export BASHOR_DEBUG_OUTPUT="1";
+export BASHOR_DEBUG_BACKTRACE="0"
+
+# Bash options
+set -B # enable brace expansion;
+set +a # disable allexport
+set +b # disable notify;
+set +e # disable errexit;
+set -i # enable interactive;

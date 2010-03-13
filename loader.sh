@@ -19,6 +19,8 @@ if [[ ! "$BASHOR_DIR" =~ ^/ ]]; then
     BASHOR_DIR=`echo "$PWD/$BASHOR_DIR" | sed 's#/\.\?$##'`;
 fi
 
+export nl=`echo -e '\n\r'`;
+
 # Set paths
 export BASHOR_DIR;
 export BASHOR_DIR_FUNCTIONS="${BASHOR_DIR}/functions";

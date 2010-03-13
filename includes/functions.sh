@@ -83,25 +83,126 @@ function prepareOutput()
 }
 
 ##
-# Add a prefix for each line.
+# Get the backtrace.
+#
+function getBacktrace()
+{    
+    local res=1;
+    local pos=0;
+    while caller "$pos"; do        
+        ((pos++));
+        local res=0;
+    done
+    return "$res";
+}
+
+##
+# Handle Errors
 #
 # exec 3>&1; (
 #       COMANDS
 # ) 2>&1 >&3 | handleError;
 #
-# -     string  error stream
+# &0    string  error stream
 function handleError()
 {    
-    loadFunctions "color";
-    loadFunctions "log";
+    [ $BASHOR_ERROR_OUTPUT == 1 ] && loadFunctions "color";
+    [ $BASHOR_ERROR_LOG == 1 ] && loadFunctions "log";
     local pre='ERROR: ';
-    if [ -n "$1" ]; then
-        local pre="$1";
-    fi
-    while read msg; do
-        echo "$msg" | sed "s/^/$pre/g" | color_fg '' 'red' 'bold';
-        echo "$msg" | log_error;
+    while read msg; do 
+        [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+            && local trace=`getBacktrace | tail -n +2  | sed 's#^#    #'`;
+        if [ $BASHOR_ERROR_OUTPUT == 1 ]; then
+            msgOut=`echo "$msg" | sed "s/^/$pre/g"`;
+            [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+                && local msgOut="$msgOut""$nl""$trace";
+            echo "$msgOut" | color_fg '' 'red' 'bold';
+        fi
+        if [ $BASHOR_ERROR_LOG == 1 ]; then
+            msgLog="$msg";
+            [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+                && local msgLog="$msgOut""$nl""$trace";
+            echo "$msgLog" | log_error;
+        fi
     done
+}
+
+##
+# error message
+#
+# $1    message
+function error()
+{
+    local pre='ERROR: ';
+    local msg="$1";
+    [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+        && local trace=`getBacktrace | tail -n +2  | sed 's#^#    #'`;
+    if [ $BASHOR_ERROR_OUTPUT == 1 ]; then
+        loadFunctions "color";
+        msgOut=`echo "$msg" | sed "s/^/$pre/g"`;
+        [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+            && local msgOut="$msgOut""$nl""$trace";
+        echo "$msgOut" | color_fg '' 'red' 'bold';
+    fi
+    if [ $BASHOR_ERROR_LOG == 1 ]; then
+        loadFunctions "log";
+        msgLog="$msg";
+        [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+            && local msgLog="$msgOut""$nl""$trace";
+        echo "$msgLog" | log_error;
+    fi
+}
+
+##
+# warning message
+#
+# $1    message
+function warning()
+{
+    local pre='WARNING: ';
+    local msg="$1";
+    [ $BASHOR_WARNING_BACKTRACE == 1 ] \
+        && local trace=`getBacktrace | tail -n +2  | sed 's#^#    #'`;
+    if [ $BASHOR_WARNING_OUTPUT == 1 ]; then
+        loadFunctions "color";
+        msgOut=`echo "$msg" | sed "s/^/$pre/g"`;
+        [ $BASHOR_WARNING_BACKTRACE == 1 ] \
+            && local msgOut="$msgOut""$nl""$trace";
+        echo "$msgOut" | color_fg '' 'yellow' 'bold';
+    fi
+    if [ $BASHOR_WARNING_LOG == 1 ]; then
+        loadFunctions "log";
+        msgLog="$msg";
+        [ $BASHOR_WARNING_BACKTRACE == 1 ] \
+            && local msgLog="$msgOut""$nl""$trace";
+        echo "$msgLog" | log_error;
+    fi
+}
+
+##
+# debug message
+#
+# $1    message
+function debug()
+{
+    local pre='DEBUG: ';
+    local msg="$1";
+    [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
+        && local trace=`getBacktrace | tail -n +2  | sed 's#^#    #'`;
+    if [ $BASHOR_DEBUG_OUTPUT == 1 ]; then
+        loadFunctions "color";
+        msgOut=`echo "$msg" | sed "s/^/$pre/g"`;
+        [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
+            && local msgOut="$msgOut""$nl""$trace";
+        echo "$msgOut" | color_fg '' 'white' 'bold';
+    fi
+    if [ $BASHOR_DEBUG_LOG == 1 ]; then
+        loadFunctions "log";
+        msgLog="$msg";
+        [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
+            && local msgLog="$msgOut""$nl""$trace";
+        echo "$msgLog" | log_error;
+    fi
 }
 
 # load opt function
