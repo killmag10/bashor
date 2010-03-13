@@ -32,7 +32,7 @@ export BASHOR_WARNING_OUTPUT="1";
 export BASHOR_WARNING_BACKTRACE="1";
 export BASHOR_DEBUG_LOG="0";
 export BASHOR_DEBUG_OUTPUT="1";
-export BASHOR_DEBUG_BACKTRACE="0"
+export BASHOR_DEBUG_BACKTRACE="1";
 
 # Bash options
 set -B # enable brace expansion;
@@ -40,3 +40,4 @@ set +a # disable allexport
 set +b # disable notify;
 set +e # disable errexit;
 set -i # enable interactive;
+set +p # disable privileged (suid);
