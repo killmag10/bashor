@@ -25,25 +25,18 @@ function optIsset()
     : ${1:?};
     
     local key="$1";
-    local pos=0;
     eval set -- "$OPT_ARGS";    
 
     local first=0;
     while shift "$first"; do
         local first=1;
-        ((pos++));
-        if [ "$1" == "--" ]; then
-            break;
-        fi 
-        echo "$1" | grep -q '^-';
-        if [ "$?" != "0" ]; then
-            continue;
-        fi
+        [ "$1" == "--" ] && break;
+        echo "$1" | grep -q '^-' || continue;
         
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-			local res=`echo "$res" | sed 's#^-##'`;
+            local res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
@@ -69,24 +62,18 @@ function optValue()
     : ${1:?};
         
     local key="$1";
-    local pos=0;
     eval set -- "$OPT_ARGS";    
 
     local first=0;
     while shift "$first"; do
         local first=1;
-        ((pos++));
-        if [ "$1" == "--" ]; then
-            break;
-        fi 
-        echo "$1" | grep -q '^-';
-        if [ "$?" != "0" ]; then
-            continue;
-        fi
+        [ "$1" == "--" ] && break;
+        echo "$1" | grep -q '^-' || continue;
+        
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-			local res=`echo "$res" | sed 's#^-##'`;
+            local res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
@@ -110,26 +97,19 @@ function optValue()
 function optKeys()
 {
     local key="$1";
-    local pos=0;
     local return=1;
     eval set -- "$OPT_ARGS";    
 
     local first=0;
     while shift "$first"; do
         local first=1;
-        ((pos++));        
-        if [ "$1" == "--" ]; then
-            break;
-        fi        
-        echo "$1" | grep -q '^-';
-        if [ "$?" != "0" ]; then
-            continue;
-        fi
+        [ "$1" == "--" ] && break;
+        echo "$1" | grep -q '^-' || continue;
         
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-			local res=`echo "$res" | sed 's#^-##'`;
+                local res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
@@ -151,26 +131,19 @@ function optKeys()
 function optList()
 {
     local key="$1";
-    local pos=0;
     local return=1;
     eval set -- "$OPT_ARGS";    
 
     local first=0;
     while shift "$first"; do
         local first=1;
-        ((pos++));        
-        if [ "$1" == "--" ]; then
-            break;
-        fi        
-        echo "$1" | grep -q '^-';
-        if [ "$?" != "0" ]; then
-            continue;
-        fi
+        [ "$1" == "--" ] && break;
+        echo "$1" | grep -q '^-' || continue;
         
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-			local res=`echo "$res" | sed 's#^-##'`;
+            local res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
@@ -211,8 +184,21 @@ function optSetArgs()
 {
     : ${@:?};
     
-    OPT_ARGS=`getopt -o "$OPT_OPTS" --long "$OPT_OPTS_LONG" -- "$@"`
+    OPT_ARGS=`getopt -o "$OPT_OPTS" --long "$OPT_OPTS_LONG" -- "$@"`;
     return "$?";
+}
+
+##
+# Set expressions (long not supported)
+#
+# 1:Short 2:Long
+#
+# $?    0:OK 1:ERROR
+function optGetOpts()
+{    
+    echo "$OPT_OPTS";
+    echo "$OPT_OPTS_LONG";
+    return 0;
 }
 
 ##
@@ -220,9 +206,9 @@ function optSetArgs()
 #
 # $?    0:OK 1:ERROR
 function optGetArgs()
-{
+{        
     echo "$OPT_ARGS";
-    return 0;
+    return "0";
 }
 
 ##
@@ -231,16 +217,14 @@ function optGetArgs()
 # $1    string  long getopts expression value
 # $?    0:FOUND 1:NOT FOUND
 function optGetOptLongExtension()
-{    
-    local IFS_BAK="IFS";
+{
     local IFS=",";
     for value in $OPT_OPTS_LONG; do
-		local key=`echo "$value" | sed 's#:##g'`;
-		if [ "$key" == "$1" ]; then
-			echo "$value" | sed 's#[^:]##g';
-			return 0;
-		fi
+        local key=`echo "$value" | sed 's#:##g'`;
+        if [ "$key" == "$1" ]; then
+            echo "$value" | sed 's#[^:]##g';
+            return 0;
+        fi
     done;
-    local IFS="$IFS_BAK";
     return 1;
 }

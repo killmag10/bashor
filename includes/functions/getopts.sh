@@ -28,9 +28,7 @@ function optIsset()
     local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
     do
-        if [ "$key" == "$1" ]; then
-            return 0;
-        fi
+        [ "$key" == "$1" ] && return 0;
     done
     
     return 1;
@@ -95,7 +93,7 @@ function optList()
 #
 # $1    string  getopts expression
 # $2    string  long getopts expression
-# $?    0:FOUND 1:NOT FOUND
+# $?    0:OK 1:ERROR
 function optSetOpts()
 {
     : ${1:?};
@@ -109,11 +107,34 @@ function optSetOpts()
 # Set arguments
 #
 # $@    arguments
-# $?    0:FOUND 1:NOT FOUND
+# $?    0:OK 1:ERROR
 function optSetArgs()
 { 
     : ${@:?};
        
     OPT_ARGS="$@";
     return "$?";
+}
+
+##
+# Set expressions (long not supported)
+#
+# 1:Short 2:Long
+#
+# $?    0:OK 1:ERROR
+function optGetOpts()
+{    
+    echo "$OPT_OPTS";
+    echo "$OPT_OPTS_LONG";
+    return 0;
+}
+
+##
+# Get arguments
+#
+# $?    0:OK 1:ERROR
+function optGetArgs()
+{        
+    echo "$OPT_ARGS";
+    return "0";
 }

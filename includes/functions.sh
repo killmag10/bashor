@@ -37,6 +37,22 @@ function loadFunctions()
 }
 
 ##
+# Copy a function
+#
+# $1    string  current function name
+# $2    string  new function name
+# $?    0:OK    1:ERROR
+function copyFunction()
+{
+    : ${1:?};
+    : ${2:?};
+    
+    local tmp=`echo "function $2"; declare -f "$1" | tail -n +2;`;
+    eval "$tmp";
+    return 0;
+}
+
+##
 # Rename a function
 #
 # $1    string  current function name
@@ -47,8 +63,7 @@ function renameFunction()
     : ${1:?};
     : ${2:?};
     
-    local tmp=`echo "function $2"; declare -f "$1" | tail -n +2;`;
-    eval "$tmp";
+    copyFunction "$1" "$2";
     unset "$1";
     return 0;
 }
@@ -89,4 +104,9 @@ function handleError()
     done
 }
 
-. "$BASHOR_DIR_INCLUDES/functions/getopts.sh";
+# load opt function
+if [ "$BASHOR_USE_GETOPT" == 1 ]; then
+    . "$BASHOR_DIR_INCLUDES/functions/getopt.sh";
+else
+    . "$BASHOR_DIR_INCLUDES/functions/getopts.sh";
+fi

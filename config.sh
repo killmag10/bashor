@@ -11,29 +11,14 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id$
+# @version      $Id: loader.sh 11 2010-03-11 21:41:42Z lars $
 ################################################################################
 
-BASHOR_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
-if [[ ! "$BASHOR_DIR" =~ ^/ ]]; then
-    BASHOR_DIR=`echo "$PWD/$BASHOR_DIR" | sed 's#/\.\?$##'`;
-fi
-
-# Set paths
-export BASHOR_DIR;
-export BASHOR_DIR_FUNCTIONS="${BASHOR_DIR}/functions";
-export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
-
-# Defaults
+# Directorys
 export BASHOR_CACHE_DIR="./cache";
 export BASHOR_LOG_FILE="./error.log";
 export BASHOR_REGISTRY_FILE="./registry";
 export BASHOR_TEMP_DIR="./temp";
 
-. "${BASHOR_DIR}/config.sh";
-
-# Load general functions
-. "${BASHOR_DIR_INCLUDES}/functions.sh";
-
-# Load Object Support
-#. "${BASHOR_DIR_INCLUDES}/object.sh"
+# Compatibility
+export BASHOR_USE_GETOPT="1"; # 0|1
