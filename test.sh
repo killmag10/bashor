@@ -91,5 +91,6 @@ doTest 'session';
 doTest 'log';
 doTest 'escape';
 doTest 'temp';
+doTest 'terminal';
 
 printFinalResult;
