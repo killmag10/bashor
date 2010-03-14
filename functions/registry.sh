@@ -45,12 +45,13 @@ function registry_set()
         
         local key=`echo "$1" | base64 -w 0`;
         local value=`echo "$value" | base64 -w 0`;
-        
-        touch "$BASHOR_FUNCTION_REGISTRY_FILE";     
-        local data=`cat "$BASHOR_FUNCTION_REGISTRY_FILE"`;
+        [ ! -f "$BASHOR_FUNCTION_REGISTRY_FILE" ] \
+            && echo " " | _registry_compress 'c' > "$BASHOR_FUNCTION_REGISTRY_FILE";   
+        local data=`cat "$BASHOR_FUNCTION_REGISTRY_FILE" | _registry_compress 'd'`;
         local data=`echo "$data" | sed "s#^${key}\s\+.*##"`;
         local data=`echo "$key $value"; echo -n "$data";`;
-        echo "$data" | sort -u > "$BASHOR_FUNCTION_REGISTRY_FILE";
+        echo "$data" | sort -u | _registry_compress 'c' \
+            > "$BASHOR_FUNCTION_REGISTRY_FILE";
     } 200>"$lockFile";
     lock_delete "$lockFile";
     
@@ -75,8 +76,10 @@ function registry_remove()
             flock 200;
             
             cat "$BASHOR_FUNCTION_REGISTRY_FILE" \
+                | _registry_compress 'd' \
                 | sed "s#^${key}\s\+.*##" \
-                | sort -u > "$BASHOR_FUNCTION_REGISTRY_FILE";
+                | sort -u \
+                | _registry_compress 'c' > "$BASHOR_FUNCTION_REGISTRY_FILE";
         } 200>"$lockFile";
         lock_delete "$lockFile";
         
@@ -96,12 +99,11 @@ function registry_get()
     
     if [ -f "$BASHOR_FUNCTION_REGISTRY_FILE" ]; then
         local key=`echo "$1" | base64`;
-        local res=`grep "^$key " "$BASHOR_FUNCTION_REGISTRY_FILE"`;
+        local res=`cat "$BASHOR_FUNCTION_REGISTRY_FILE" \
+            | _registry_compress 'd' | grep "^$key "`;
         if [ -n "$res" ]; then
             echo "$res" | sed 's#\S\+\s\+##' | base64 -d;
             return 0;
-        else
-            return 1;
         fi
     fi
     
@@ -120,13 +122,31 @@ function registry_isset()
     
     if [ -f "$BASHOR_FUNCTION_REGISTRY_FILE" ]; then
         local key=`echo "$1" | base64`;
-        local res=`grep "^$key " "$BASHOR_FUNCTION_REGISTRY_FILE"`
+        local res=`cat "$BASHOR_FUNCTION_REGISTRY_FILE" \
+            | _registry_compress 'd' | grep "^$key "`;
         if [ -n "$res" ]; then
             return 0;
-        else
-            return 1;
         fi
     fi
     
     return 1;
+}
+
+##
+# Isset in registry.
+#
+# $1    mode c:compress d:decompress
+# &0    string Data
+# $?    0:EXISTS    1:NOT FOUND
+# &1    string Data 
+function _registry_compress()
+{
+    : ${1:?};
+    
+    if [ "$BASHOR_REGISTRY_COMPRESS" == 1 ]; then
+        [ "$1" == 'c' ] && gzip;
+        [ "$1" == 'd' ] && gzip -d;
+    else
+        cat -;
+    fi
 }

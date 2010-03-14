@@ -145,7 +145,7 @@ function error()
         msgOut=`echo "$msg" | sed "s/^/$pre/g"`;
         [ $BASHOR_ERROR_BACKTRACE == 1 ] \
             && local msgOut="$msgOut""$nl""$trace";
-        echo "$msgOut" | color_fg '' 'red' 'bold';
+        echo "$msgOut" | color_fg '' 'red' 'bold' 1>&3;
     fi
     if [ $BASHOR_ERROR_LOG == 1 ]; then
         loadFunctions "log";
@@ -174,7 +174,7 @@ function warning()
         msgOut=`echo "$msg" | sed "s/^/$pre/g"`;
         [ $BASHOR_WARNING_BACKTRACE == 1 ] \
             && local msgOut="$msgOut""$nl""$trace";
-        echo "$msgOut" | color_fg '' 'yellow' 'bold';
+        echo "$msgOut" | color_fg '' 'yellow' 'bold' 1>&3;
     fi
     if [ $BASHOR_WARNING_LOG == 1 ]; then
         loadFunctions "log";
@@ -202,7 +202,7 @@ function debug()
         msgOut=`echo "$msg" | sed "s/^/$pre/g"`;
         [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
             && local msgOut="$msgOut""$nl""$trace";
-        echo "$msgOut" | color_fg '' 'white' 'bold';
+        echo "$msgOut" | color_fg '' 'white' 'bold' 1>&3;
     fi
     if [ $BASHOR_DEBUG_LOG == 1 ]; then
         loadFunctions "log";

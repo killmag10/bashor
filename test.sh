@@ -87,6 +87,7 @@ doTest 'color';
 doTest 'lock';
 doTest 'hash';
 doTest 'registry';
+doTest 'session';
 doTest 'log';
 doTest 'escape';
 doTest 'temp';

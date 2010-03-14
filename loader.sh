@@ -30,9 +30,15 @@ export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
 export BASHOR_CACHE_DIR="./cache";
 export BASHOR_LOG_FILE="./error.log";
 export BASHOR_REGISTRY_FILE="./registry";
+export BASHOR_REGISTRY_COMPRESS="0"
 export BASHOR_TEMP_DIR="./temp";
+export BASHOR_SESSION_SIZE="65536" # 64K
+export BASHOR_SESSION_COMPRESS="1"
 
 . "${BASHOR_DIR}/config.sh";
+
+# Add debuging channel
+exec 3>&1;
 
 # Load general functions
 . "${BASHOR_DIR_INCLUDES}/functions.sh";
