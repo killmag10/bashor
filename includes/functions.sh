@@ -131,8 +131,11 @@ function handleError()
 # error message
 #
 # $1    message
+# $2?   status
 function error()
 {
+    : ${1:?};
+    
     local pre='ERROR: ';
     local msg="$1";
     [ $BASHOR_ERROR_BACKTRACE == 1 ] \
@@ -151,6 +154,7 @@ function error()
             && local msgLog="$msgOut""$nl""$trace";
         echo "$msgLog" | log_error;
     fi
+    exit ${var:-1};
 }
 
 ##
@@ -159,6 +163,8 @@ function error()
 # $1    message
 function warning()
 {
+    : ${1:?};
+    
     local pre='WARNING: ';
     local msg="$1";
     [ $BASHOR_WARNING_BACKTRACE == 1 ] \
@@ -185,6 +191,8 @@ function warning()
 # $1    message
 function debug()
 {
+    : ${1:?};
+    
     local pre='DEBUG: ';
     local msg="$1";
     [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
