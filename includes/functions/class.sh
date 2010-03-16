@@ -30,7 +30,7 @@ function loadClass()
         if [ -f "$filename" ]; then
             shift;
             . "$filename" "$@";
-            createClassAliases "$filename" "$ns";
+            createClassAliases "$ns";
             return 0;
         fi
     fi
@@ -39,27 +39,48 @@ function loadClass()
 }
 
 ##
-# Get functions of a file.
+# Create aliases for class functions.
 #
-# $1    string  file
-# $2?    string  namespace
+# $1    string  namespace
 # $?    0:OK    1:ERROR
 function createClassAliases()
 {
     : ${1:?};
-    : ${2:?};
     
-    local ns='';
-    [ -n "$2" ] && local ns="$2"'_';
+    local ns="$1";
     
-    local fList=`cat "$1" | \
-        sed -n 's#^\s*function\s\+\('"$ns"'[^(){} ]\+\)\(()\)\?.*$#\1#p'`;
+    local fList=`declare -F \
+        | sed -n 's#^declare -f CLASS_'"$ns"'_\(.*\)$#\1#p'`;
     local IFS=`echo -e "\n\r"`;
     for f in $fList; do
-        fAlias=`echo "$f" | sed 's#_#::#'`;
-        eval "alias class_""$f"'='"'_classCall \"$2\" \"$f\"'";
+        local fName='CLASS_'"$ns"'_'"$f";
+        eval 'alias '"$fName"'='"'_classCall \"$ns\" \"$f\"'";
         [ 0 == "$BASHOR_MODE_COMPATIBLE" ] \
-            && eval "alias $fAlias"'='"'_classCall \"$2\" \"$f\"'";
+            && eval "alias $ns"'::'"$f"'='"'_classCall \"$ns\" \"$f\"'";
+    done;
+}
+
+##
+# Create aliases for object functions.
+#
+# $1    string  namespace class
+# $2    string  namespace object
+# $?    0:OK    1:ERROR
+function createObjectAliases()
+{
+    : ${1:?};
+    : ${2:?};
+    
+    local ns="$1";
+    local nsObj="$2";
+    
+    local fList=`declare -F \
+        | sed -n 's#^declare -f CLASS_'"$ns"'_\(.*\)$#\1#p'`;
+    local IFS=`echo -e "\n\r"`;
+    for f in $fList; do
+        eval 'alias OBJECT_'"$nsObj"'_'"$f"'='"'_objectCall \"$ns\" \"$nsObj\" \"$f\"'";
+        [ 0 == "$BASHOR_MODE_COMPATIBLE" ] \
+            && eval "alias $nsObj"'.'"$f"'='"'_objectCall \"$ns\" \"$nsObj\" \"$f\"'";
     done;
 }
 
@@ -78,9 +99,14 @@ function _classCall()
     CLASS_NAME="$1";
     OBJECT_NAME="";
     FUNCTION_NAME="$2";
+    local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
     shift 2;
-    "$FUNCTION_NAME" "$@";
-    return "$?";
+    "$fName" "$@";    
+    local res="$?"
+    unset -v 'CLASS_NAME';
+    unset -v 'OBJECT_NAME';
+    unset -v 'FUNCTION_NAME';    
+    return "$res";
 }
 
 ##
@@ -100,15 +126,37 @@ function _objectCall()
     CLASS_NAME="$1";
     OBJECT_NAME="$2";
     FUNCTION_NAME="$3"
+    local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
     shift 3;
-    "$FUNCTION_NAME" "$@";
-    return "$?";
+    "$fName" "$@";
+    local res="$?"
+    unset -v 'CLASS_NAME';
+    unset -v 'OBJECT_NAME';
+    unset -v 'FUNCTION_NAME';    
+    return "$res";
+}
+
+function new()
+{
+    : ${1:?};
+    : ${2:?};
+    
+    local ns="$1";
+    local nsObj="$2";
+    
+    shift 2;
+    
+    createObjectAliases "$ns" "$nsObj";
+
+    declare -F | grep -q '^declare -f CLASS_'"$ns"'__construct$';
+    [ "$?" == 0 ] && _objectCall "$ns" "$nsObj" '_construct' "$@";
 }
 
 function this()
 {
     : ${1:?};
     : ${2:?};
+    : ${CLASS_NAME:?};
     
     local dataVarName='_CLASS_DATA_'"$CLASS_NAME";    
     [ -n "$OBJECT_NAME" ] && local dataVarName='_OBJECT_DATA_'"$OBJECT_NAME";
@@ -214,9 +262,10 @@ function _object_get()
 function _object_isset()
 {
     : ${1:?};
+    : ${2:?};
     
     eval 'local data="$'"$1"'";'
-    local key=`echo "$1" | base64`;
+    local key=`echo "$2" | base64`;
     local res=`echo "$data" | grep "^$key "`
     if [ -n "$res" ]; then
         return 0;
