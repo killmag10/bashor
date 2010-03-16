@@ -213,6 +213,8 @@ function debug()
     fi
 }
 
+. "$BASHOR_DIR_INCLUDES/functions/class.sh";
+
 # load opt function
 if [ "$BASHOR_USE_GETOPT" == 1 ]; then
     . "$BASHOR_DIR_INCLUDES/functions/getopt.sh";

@@ -21,6 +21,7 @@ export BASHOR_TEMP_DIR="./temp";
 
 # Compatibility
 export BASHOR_USE_GETOPT="1"; # 0|1
+export BASHOR_MODE_COMPATIBLE="0";
 
 # Options
 export BASHOR_ERROR_LOG="0";
