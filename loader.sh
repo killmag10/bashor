@@ -19,6 +19,7 @@ if [[ ! "$BASHOR_DIR" =~ ^/ ]]; then
     BASHOR_DIR=`echo "$PWD/$BASHOR_DIR" | sed 's#/\.\?$##'`;
 fi
 
+shopt -s expand_aliases;
 export nl=`echo -e '\n\r'`;
 
 # Set paths
