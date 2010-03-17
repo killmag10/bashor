@@ -31,6 +31,10 @@ function loadClass()
             shift;
             . "$filename" "$@";
             createClassAliases "$ns";
+            
+            declare -F | grep -q '^declare -f CLASS_'"$ns"'__load$';
+            [ "$?" == 0 ] && _staticCall "$ns" '_load' "$@";
+            
             return 0;
         fi
     fi
@@ -54,9 +58,9 @@ function createClassAliases()
     local IFS=`echo -e "\n\r"`;
     for f in $fList; do
         local fName='CLASS_'"$ns"'_'"$f";
-        eval 'alias '"$fName"'='"'_classCall \"$ns\" \"$f\"'";
+        eval 'alias '"$fName"'='"'_staticCall \"$ns\" \"$f\"'";
         [ 0 == "$BASHOR_MODE_COMPATIBLE" ] \
-            && eval "alias $ns"'::'"$f"'='"'_classCall \"$ns\" \"$f\"'";
+            && eval "alias $ns"'::'"$f"'='"'_staticCall \"$ns\" \"$f\"'";
     done;
 }
 
@@ -91,21 +95,21 @@ function createObjectAliases()
 # $2    string  function name
 # $@    params
 # $?    0:OK    1:ERROR
-function _classCall()
+function _staticCall()
 {
     : ${1:?};
     : ${2:?};
     
+    local OLD_CLASS_NAME="$CLASS_NAME";
+    local OLD_OBJECT_NAME="$OBJECT_NAME";
+    local OLD_FUNCTION_NAME="$FUNCTION_NAME"
     CLASS_NAME="$1";
     OBJECT_NAME="";
-    FUNCTION_NAME="$2";
+    FUNCTION_NAME="$2"
     local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
     shift 2;
     "$fName" "$@";    
-    local res="$?"
-    unset -v 'CLASS_NAME';
-    unset -v 'OBJECT_NAME';
-    unset -v 'FUNCTION_NAME';    
+    local res="$?";   
     return "$res";
 }
 
@@ -123,6 +127,9 @@ function _objectCall()
     : ${2:?};
     : ${3:?};
     
+    local OLD_CLASS_NAME="$CLASS_NAME";
+    local OLD_OBJECT_NAME="$OBJECT_NAME";
+    local OLD_FUNCTION_NAME="$FUNCTION_NAME"
     CLASS_NAME="$1";
     OBJECT_NAME="$2";
     FUNCTION_NAME="$3"
@@ -130,9 +137,9 @@ function _objectCall()
     shift 3;
     "$fName" "$@";
     local res="$?"
-    unset -v 'CLASS_NAME';
-    unset -v 'OBJECT_NAME';
-    unset -v 'FUNCTION_NAME';    
+    CLASS_NAME="$OLD_CLASS_NAME";
+    OBJECT_NAME="$OLD_OBJECT_NAME";
+    FUNCTION_NAME="$OLD_FUNCTION_NAME"
     return "$res";
 }
 
@@ -163,23 +170,37 @@ function this()
     
     case "$1" in
         set)
-            : ${3:?};
-            _object_set "$dataVarName" "$2" "$3";
+            : ${3?};
+            _objectSet "$dataVarName" "$2" "$3";
             return "$?";
             ;;
         get)
-            _object_get "$dataVarName" "$2";
+            _objectGet "$dataVarName" "$2";
             return "$?";
             ;;
         unset)
-            _object_unset "$dataVarName" "$2";
+            _objectUnset "$dataVarName" "$2";
             return "$?";
             ;;
         isset)
-            _object_isset "$dataVarName" "$2";
+            _objectIsset "$dataVarName" "$2";
+            return "$?";
+            ;;
+        call)
+            local fName="$2"
+            shift 2;
+            [ -z "$OBJECT_NAME" ] && _staticCall "$CLASS_NAME" "$fName" "$@";
+            [ -n "$OBJECT_NAME" ] && _objectCall "$CLASS_NAME" "$OBJECT_NAME" "$fName" "$@";
             return "$?";
             ;;
     esac
+}
+
+function isStatic()
+{
+    : ${CLASS_NAME:?};   
+    [ -z "$OBJECT_NAME" ];
+    return "$?";
 }
 
 ##
@@ -190,11 +211,11 @@ function this()
 # $3    string  data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function _object_set()
+function _objectSet()
 {
     : ${1:?};
     : ${2:?};
-    : ${3:?};
+    : ${3?};
     
     local value="$3";            
     local key=`echo "$2" | base64 -w 0`;
@@ -215,7 +236,7 @@ function _object_set()
 # $1    string  var name
 # $2    string  key
 # $?    0:OK    1:ERROR
-function _object_unset()
+function _objectUnset()
 {
     : ${1:?};
     : ${2:?};
@@ -237,7 +258,7 @@ function _object_unset()
 # $2    string  key
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function _object_get()
+function _objectGet()
 {
     : ${1:?};
     : ${2:?};
@@ -259,7 +280,7 @@ function _object_get()
 # $1    string  var name
 # $2    string  key
 # $?    0:OK    1:ERROR
-function _object_isset()
+function _objectIsset()
 {
     : ${1:?};
     : ${2:?};

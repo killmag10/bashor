@@ -24,7 +24,7 @@ export nl=`echo -e '\n\r'`;
 
 # Set paths
 export BASHOR_DIR;
-export BASHOR_DIR_CLASS="${BASHOR_DIR}/functions";
+export BASHOR_DIR_CLASS="${BASHOR_DIR}/classes";
 export BASHOR_DIR_FUNCTIONS="${BASHOR_DIR}/functions";
 export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
 
