@@ -211,11 +211,11 @@ function clone()
 function remove()
 {
     : ${1:?};
-    
+
     local nsObj="$1";
     local nsObjVarOld='_OBJECT_DATA_'"$1";
     local ns=`alias \
-        | sed -n 's#^alias OBJECT_'"$nsObjOld"'_[^=]\+='\''_objectCall "\([^"]\+\).*#\1#p' \
+        | sed -n 's#^alias OBJECT_'"$nsObj"'_[^=]\+='\''_objectCall "\([^"]\+\).*#\1#p' \
         | head -n 1`;
     
     shift 1;
