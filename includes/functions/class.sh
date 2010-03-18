@@ -30,9 +30,9 @@ function loadClass()
         if [ -f "$filename" ]; then
             shift;
             . "$filename" "$@";
-            createClassAliases "$ns";
+            _createClassAliases "$ns";
             
-            declare -F | grep -q '^declare -f CLASS_'"$ns"'__load$';
+            declare -F | grep '^declare -f CLASS_'"$ns"'__load$' > /dev/null;
             [ "$?" == 0 ] && _staticCall "$ns" '_load' "$@";
             
             return 0;
@@ -47,7 +47,7 @@ function loadClass()
 #
 # $1    string  namespace
 # $?    0:OK    1:ERROR
-function createClassAliases()
+function _createClassAliases()
 {
     : ${1:?};
     
@@ -70,7 +70,7 @@ function createClassAliases()
 # $1    string  namespace class
 # $2    string  namespace object
 # $?    0:OK    1:ERROR
-function createObjectAliases()
+function _createObjectAliases()
 {
     : ${1:?};
     : ${2:?};
@@ -89,6 +89,30 @@ function createObjectAliases()
 }
 
 ##
+# Remove aliases for object functions.
+#
+# $1    string  namespace class
+# $2    string  namespace object
+# $?    0:OK    1:ERROR
+function _removeObjectAliases()
+{
+    : ${1:?};
+    : ${2:?};
+    
+    local ns="$1";
+    local nsObj="$2";
+    
+    local fList=`declare -F \
+        | sed -n 's#^declare -f CLASS_'"$ns"'_\(.*\)$#\1#p'`;
+    local IFS=`echo -e "\n\r"`;
+    for f in $fList; do
+        eval 'unalias OBJECT_'"$nsObj"'_'"$f";
+        [ 0 == "$BASHOR_MODE_COMPATIBLE" ] \
+            && eval "unalias $nsObj"'.'"$f";
+    done;
+}
+
+##
 # Call a class function
 #
 # $1    string  class name
@@ -103,13 +127,16 @@ function _staticCall()
     local OLD_CLASS_NAME="$CLASS_NAME";
     local OLD_OBJECT_NAME="$OBJECT_NAME";
     local OLD_FUNCTION_NAME="$FUNCTION_NAME"
-    CLASS_NAME="$1";
-    OBJECT_NAME="";
-    FUNCTION_NAME="$2"
+    export CLASS_NAME="$1";
+    export OBJECT_NAME="";
+    export FUNCTION_NAME="$2"
     local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
     shift 2;
     "$fName" "$@";    
-    local res="$?";   
+    local res="$?";
+    export CLASS_NAME="$OLD_CLASS_NAME";
+    export OBJECT_NAME="$OLD_OBJECT_NAME";
+    export FUNCTION_NAME="$OLD_FUNCTION_NAME"
     return "$res";
 }
 
@@ -130,16 +157,16 @@ function _objectCall()
     local OLD_CLASS_NAME="$CLASS_NAME";
     local OLD_OBJECT_NAME="$OBJECT_NAME";
     local OLD_FUNCTION_NAME="$FUNCTION_NAME"
-    CLASS_NAME="$1";
-    OBJECT_NAME="$2";
-    FUNCTION_NAME="$3"
+    export CLASS_NAME="$1";
+    export OBJECT_NAME="$2";
+    export FUNCTION_NAME="$3"
     local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
     shift 3;
     "$fName" "$@";
     local res="$?"
-    CLASS_NAME="$OLD_CLASS_NAME";
-    OBJECT_NAME="$OLD_OBJECT_NAME";
-    FUNCTION_NAME="$OLD_FUNCTION_NAME"
+    export CLASS_NAME="$OLD_CLASS_NAME";
+    export OBJECT_NAME="$OLD_OBJECT_NAME";
+    export FUNCTION_NAME="$OLD_FUNCTION_NAME"
     return "$res";
 }
 
@@ -149,14 +176,67 @@ function new()
     : ${2:?};
     
     local ns="$1";
-    local nsObj="$2";
+    local nsObj="$2";    
+    local dataVarName=`_objectVarName`;
     
     shift 2;
     
-    createObjectAliases "$ns" "$nsObj";
+    _createObjectAliases "$ns" "$nsObj";
 
-    declare -F | grep -q '^declare -f CLASS_'"$ns"'__construct$';
+    eval 'export '"$dataVarName"'="";';
+
+    declare -F | grep '^declare -f CLASS_'"$ns"'__construct$' > /dev/null;
     [ "$?" == 0 ] && _objectCall "$ns" "$nsObj" '_construct' "$@";
+}
+
+function clone()
+{
+    : ${1:?};
+    : ${2:?};
+    
+    local nsObjOld="$1";
+    local nsObjNew="$2";
+    local nsObjVarOld='_OBJECT_DATA_'"$1";
+    local nsObjVarNew='_OBJECT_DATA_'"$2";
+    
+    local ns=`alias \
+        | sed -n 's#^alias OBJECT_'"$nsObjOld"'_[^=]\+='\''_objectCall "\([^"]\+\).*#\1#p' \
+        | head -n 1`;
+    
+    shift 2;
+    
+    new "$ns" "$nsObjNew" "$@";
+    eval 'export '"$nsObjVarNew"'="$'"$nsObjVarOld"'";';
+    
+}
+
+function remove()
+{
+    : ${1:?};
+    
+    local nsObj="$1";
+    local nsObjVarOld='_OBJECT_DATA_'"$1";
+    local ns=`alias \
+        | sed -n 's#^alias OBJECT_'"$nsObjOld"'_[^=]\+='\''_objectCall "\([^"]\+\).*#\1#p' \
+        | head -n 1`;
+    
+    shift 1;
+        
+    declare -F | grep '^declare -f CLASS_'"$ns"'__destruct$' > /dev/null;
+    [ "$?" == 0 ] && _objectCall "$ns" "$nsObj" '_destruct' "$@";
+    
+    _removeObjectAliases "$ns" "$nsObj";
+    eval 'unset -v '"$nsObjVarOld"; 
+}
+
+function _objectVarName()
+{
+    : ${CLASS_NAME:?};
+    
+    local dataVarName='_CLASS_DATA_'"$CLASS_NAME";    
+    [ -n "$OBJECT_NAME" ] && local dataVarName='_OBJECT_DATA_'"$OBJECT_NAME";
+    echo "$dataVarName";
+    return 0;
 }
 
 function this()
@@ -165,8 +245,7 @@ function this()
     : ${2:?};
     : ${CLASS_NAME:?};
     
-    local dataVarName='_CLASS_DATA_'"$CLASS_NAME";    
-    [ -n "$OBJECT_NAME" ] && local dataVarName='_OBJECT_DATA_'"$OBJECT_NAME";
+    local dataVarName=`_objectVarName`;
     
     case "$1" in
         set)

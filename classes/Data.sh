@@ -53,7 +53,7 @@ function CLASS_Data_set()
     local data=`echo "$data" | sed "s#^${key}\s\+.*##"`;
     local data=`echo "$key $value"; echo -n "$data";`;
     local data=`echo "$data" | sort -u;`;
-    this set "$data";
+    this set data "$data";
 
     return "$?"
 }
@@ -72,7 +72,7 @@ function CLASS_Data_remove()
     local data=`echo "$data" \
         | sed "s#^${key}\s\+.*##" \
         | sort -u`;
-    this set "$data";
+    this set data "$data";
     
     return "$?"
 }
@@ -91,11 +91,7 @@ function CLASS_Data_get()
     local data=`this get data`;
     local res=`echo "$data" | grep "^$key "`;
     if [ -n "$res" ]; then
-        if [ "$BASHOR_SESSION_COMPRESS" == 1 ]; then
-            echo "$res" | sed 's#\S\+\s\+##' | base64 -d | gzip -d;
-        else
-            echo "$res" | sed 's#\S\+\s\+##' | base64 -d;
-        fi
+        echo "$res" | sed 's#\S\+\s\+##' | base64 -d;
         return 0;
     fi
     
@@ -114,7 +110,7 @@ function CLASS_Data_isset()
     
     local key=`echo "$1" | base64`;
     local data=`this get data`;
-    local res=`echo "$data" | grep "^$key "`
+    local res=`echo "$data" | grep "^$key "`;
     if [ -n "$res" ]; then
         return 0;
     fi
