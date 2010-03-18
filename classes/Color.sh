@@ -53,8 +53,6 @@ function CLASS_Color_bg()
     : ${1?};
     : ${2:?};
     
-    echo "BG: $1 : $2";
-    
     if [ -p /dev/stdin ] && [ -z "$1" ]; then
         local IFS=`echo -e "\n\r"`;
         while read msg; do this call bg "$msg" "$2"; echo ''; done
