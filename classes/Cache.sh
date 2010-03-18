@@ -58,7 +58,7 @@ function CLASS_Cache_set()
     : ${1:?};
     : ${2:?};
     
-    local filename=`cache_filename "$1"`;
+    local filename=`this call cache_filename "$1"`;
     local time=`date +%s`;
     ((time="$time"+"$2"));
     {
@@ -84,7 +84,7 @@ function CLASS_Cache_get()
 {
     : ${1:?};
     
-    local filename=`cache_filename "$1"`;
+    local filename=`this call cache_filename "$1"`;
     local curTime=`date +%s`;
     if [ -f "$filename" ]; then
         local time=`cat "$filename" | head -n 1`;
@@ -106,7 +106,7 @@ function CLASS_Cache_check()
 {
     : ${1:?};
     
-    local filename=`cache_filename "$1"`;
+    local filename=`this call cache_filename "$1"`;
     cacheCheckByFilename "$filename";	
     return "$?";
 }
