@@ -176,14 +176,12 @@ function new()
     : ${2:?};
     
     local ns="$1";
-    local nsObj="$2";    
-    local dataVarName=`_objectVarName`;
+    local nsObj="$2";
     
-    shift 2;
-    
+    shift 2;    
     _createObjectAliases "$ns" "$nsObj";
-
-    eval 'export '"$dataVarName"'="";';
+	
+    eval 'export _OBJECT_DATA_'"$nsObj"'="";';
 
     declare -F | grep '^declare -f CLASS_'"$ns"'__construct$' > /dev/null;
     [ "$?" == 0 ] && _objectCall "$ns" "$nsObj" '_construct' "$@";
