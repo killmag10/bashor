@@ -15,9 +15,9 @@
 # @version      $Id$
 ################################################################################
 
-loadFunctions 'terminal';
+loadClass 'Terminal';
 
-res=`terminal_getColumns`;
+res=`class Terminal getColumns`;
 checkRegex "getColumns" "$res" '[1-9][0-9]*';
-res=`terminal_getRows`;
+res=`class Terminal getRows`;
 checkRegex "getRows" "$res" '[1-9][0-9]*';

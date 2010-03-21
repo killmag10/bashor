@@ -15,38 +15,38 @@
 # @version      $Id$
 ################################################################################
 
-loadFunctions 'log' "$TEST_TEMP_DIR/log.log";
+loadClass 'Log' "$TEST_TEMP_DIR/log.log";
 nl=`echo -e '\n\r'`;
 
-log_remove;
-log_remove;
+class Log remove;
+class Log remove;
 checkSimple "remove false" "$?" "1";
 
-log "zeile1";
+class Log log "zeile1";
 checkSimple "log string" "$?" "0";
-echo "zeile2" | log;
+echo "zeile2" | class Log log;
 checkSimple "log stream" "$?" "0";
 
 testString="zeile1
 zeile2";
-res=`log_get`;
+res=`class Log get`;
 checkSimple "get" "$?" "0";
-checkSimple "get data" "`log_get`" "$testString";
+checkSimple "get data" "`class Log get`" "$testString";
 
-log_remove;
+class Log remove;
 checkSimple "remove true" "$?" "0";
 
-log_error "blab";
+class Log error "blab";
 checkSimple "error string" "$?" "0";
-echo "blub" | log_error;
+echo "blub" | class Log error;
 checkSimple "error stream" "$?" "0";
 
 checkRegexLines "error data" "`cat \"$TEST_TEMP_DIR/log.log\"`" \
     "[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\} ERROR:      1	bl.b" "2";
 
-log_debug "blab";
+class Log debug "blab";
 checkSimple "debug string" "$?" "0";
-echo "blub" | log_debug;
+echo "blub" | class Log debug;
 checkSimple "debug stream" "$?" "0";
 
 checkRegexLines "debug data" "`cat \"$TEST_TEMP_DIR/log.log\"`" \

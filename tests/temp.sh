@@ -15,31 +15,32 @@
 # @version      $Id$
 ################################################################################
 
-loadFunctions 'temp' "$TEST_TEMP_DIR";
+loadClass 'Temp';
+new Temp Temp "$TEST_TEMP_DIR";
 nl=`echo -e '\n\r'`;
 
-dir1=`temp_dir "test"`;
-dir2=`temp_dir "test"`;
-checkSimple "temp_dir" "$dir1" "$dir2" "1";
+dir1=`object Temp dir "test"`;
+dir2=`object Temp dir "test"`;
+checkSimple "object Temp dir" "$dir1" "$dir2" "1";
 
 mkdir "$dir1";
-checkSimple "temp_dir mkdir" "$?" "0";
+checkSimple "object Temp dir mkdir" "$?" "0";
 
-file1=`temp_file "test"`;
-file2=`temp_file "test"`;
-checkSimple "temp_file" "$file1" "$file2" "1";
+file1=`object Temp file "test"`;
+file2=`object Temp file "test"`;
+checkSimple "object Temp file" "$file1" "$file2" "1";
 
 echo "123" > "$file1";
-checkSimple "temp_dir mkdir" "$?" "0";
+checkSimple "object Temp dir mkdir" "$?" "0";
 
-res1=`temp_generateFilename "test"`;
-res2=`temp_generateFilename "test"`;
-checkSimple "temp_generateFilename" "$res1" "$res2" "1";
+res1=`object Temp generateFilename "test"`;
+res2=`object Temp generateFilename "test"`;
+checkSimple "object Temp generateFilename" "$res1" "$res2" "1";
 
-temp_clear;
-checkSimple "temp_clear" "$?" "0";
+object Temp clear;
+checkSimple "object Temp clear" "$?" "0";
 [ -d "$dir1" ]
-checkSimple "temp_clear dir" "$?" "1";
+checkSimple "object Temp clear dir" "$?" "1";
 [ -f "$file1" ]
-checkSimple "temp_clear file" "$?" "1";
+checkSimple "object Temp clear file" "$?" "1";
 

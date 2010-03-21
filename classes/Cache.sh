@@ -15,15 +15,15 @@
 # @version      $Id: cache.sh 17 2010-03-13 00:12:19Z lars $
 ################################################################################
 
-export BASHOR_FUNCTION_CACHE_DIR="$BASHOR_CACHE_DIR";
-if [ -n "$1" ]; then
-    export BASHOR_FUNCTION_CACHE_DIR="$1";
-fi
-
 ##
 # Constructor
-function CLASS_Cache__construct()
+#
+# $1    string  cache dir
+function CLASS_Cache___construct()
 {
+    : ${1?};
+    : ${OBJECT:?};
+    
     this set dir "$1";
 }
 
@@ -36,6 +36,7 @@ function CLASS_Cache__construct()
 function CLASS_Cache_filename()
 {
     : ${1?};
+    : ${OBJECT:?};
     
     loadClass 'Hash';
     
@@ -57,8 +58,9 @@ function CLASS_Cache_set()
 {
     : ${1:?};
     : ${2:?};
+    : ${OBJECT:?};
     
-    local filename=`this call cache_filename "$1"`;
+    local filename=`this call filename "$1"`;
     local time=`date +%s`;
     ((time="$time"+"$2"));
     {
@@ -83,8 +85,9 @@ function CLASS_Cache_set()
 function CLASS_Cache_get()
 {
     : ${1:?};
+    : ${OBJECT:?};
     
-    local filename=`this call cache_filename "$1"`;
+    local filename=`this call filename "$1"`;
     local curTime=`date +%s`;
     if [ -f "$filename" ]; then
         local time=`cat "$filename" | head -n 1`;
@@ -105,8 +108,9 @@ function CLASS_Cache_get()
 function CLASS_Cache_check()
 {
     : ${1:?};
+    : ${OBJECT:?};
     
-    local filename=`this call cache_filename "$1"`;
+    local filename=`this call filename "$1"`;
     cacheCheckByFilename "$filename";	
     return "$?";
 }
@@ -119,6 +123,7 @@ function CLASS_Cache_check()
 function CLASS_Cache_checkByFilename()
 {
     : ${1?};
+    : ${OBJECT:?};
     
     local filename="$1";
     local curTime=`date +%s`;
@@ -138,6 +143,8 @@ function CLASS_Cache_checkByFilename()
 # $?    0:OK    1:ERROR
 function CLASS_Cache_removeOld()
 {
+    : ${OBJECT:?};
+    
     local files=`ls -1 "$BASHOR_DIR_CACHE/file/"`;
     local IFS=`echo -e "\n\r"`;
     for file in $files; do

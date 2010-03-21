@@ -15,25 +15,25 @@
 # @version      $Id$
 ################################################################################
 
-loadFunctions 'lock';
+loadClass 'Lock';
 
-res=`lock_filename 'abc'`;
+res=`class Lock filename 'abc'`;
 checkSimple "filename" "$res" "abc.lock";
 
 lockfile="$TEST_TEMP_DIR/$res";
 {
     flock 200;
     
-    lock_checkRead "$lockfile";
+    class Lock checkRead "$lockfile";
     checkSimple "checkRead locked" "$?" "1";
     
-    lock_checkWrite "$lockfile";
+    class Lock checkWrite "$lockfile";
     checkSimple "checkWrite locked" "$?" "1";
     
 } 200>"$lockfile";
 
-lock_checkRead "$lockfile";
+class Lock checkRead "$lockfile";
 checkSimple "checkRead unlocked" "$?" "0";
 
-lock_checkWrite "$lockfile";
+class Lock checkWrite "$lockfile";
 checkSimple "checkWrite unlocked" "$?" "0";

@@ -19,6 +19,7 @@
 # Load function files.
 #
 # $1    string  namespace
+# $@?   mixed  params
 # $?    0:OK    1:ERROR
 function loadClass()
 {
@@ -30,10 +31,13 @@ function loadClass()
         if [ -f "$filename" ]; then
             shift;
             . "$filename" "$@";
-            _createClassAliases "$ns";
+            #_createClassAliases "$ns";
             
-            declare -F | grep '^declare -f CLASS_'"$ns"'__load$' > /dev/null;
-            [ "$?" == 0 ] && _staticCall "$ns" '_load' "$@";
+            declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null;
+            if [ "$?" == 0 ]; then
+                _staticCall "$ns" '__load' "$@";
+                return "$?";
+            fi
             
             return 0;
         fi
@@ -61,6 +65,30 @@ function _createClassAliases()
         eval 'alias '"$fName"'='"'_staticCall \"$ns\" \"$f\"'";
         [ 0 == "$BASHOR_MODE_COMPATIBLE" ] \
             && eval "alias $ns"'::'"$f"'='"'_staticCall \"$ns\" \"$f\"'";
+    done;
+}
+
+##
+# Create class functions for extended class.
+#
+# $1    string  parent class
+# $1    string  new class
+# $?    0:OK    1:ERROR
+function _createExtendedClassFunctions()
+{
+    : ${1:?};
+    : ${2:?};
+    
+    local nsParent="$1";
+    local nsNew="$2";
+    
+    local fList=`declare -F \
+        | sed -n 's#^declare -f CLASS_'"$nsParent"'_\(.*\)$#\1#p'`;
+    local IFS=`echo -e "\n\r"`;
+    for f in $fList; do
+        local fNameParent='CLASS_'"$nsParent"'_'"$f";
+        local fNameNew='CLASS_'"$nsNew"'_'"$f";
+        eval 'function '"$fNameParent"'() { '"fNameNew"' "$@"; }';
     done;
 }
 
@@ -113,7 +141,20 @@ function _removeObjectAliases()
 }
 
 ##
-# Call a class function
+# Call a class method
+#
+# $1    string  class name
+# $2    string  function name
+# $@    params
+# $?    0:OK    1:ERROR
+function class()
+{
+    _staticCall "$@";
+    return "$?";
+}
+
+##
+# Call a class method
 #
 # $1    string  class name
 # $2    string  function name
@@ -123,13 +164,17 @@ function _staticCall()
 {
     : ${1:?};
     : ${2:?};
-    
+        
     local OLD_CLASS_NAME="$CLASS_NAME";
     local OLD_OBJECT_NAME="$OBJECT_NAME";
-    local OLD_FUNCTION_NAME="$FUNCTION_NAME"
+    local OLD_FUNCTION_NAME="$FUNCTION_NAME";
+    local OLD_STATIC="$STATIC";
+    local OLD_OBJECT="$OBJECT";
     export CLASS_NAME="$1";
     export OBJECT_NAME="";
-    export FUNCTION_NAME="$2"
+    export FUNCTION_NAME="$2";
+    export STATIC='1';
+    export OBJECT='';
     local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
     shift 2;
     "$fName" "$@";    
@@ -137,39 +182,66 @@ function _staticCall()
     export CLASS_NAME="$OLD_CLASS_NAME";
     export OBJECT_NAME="$OLD_OBJECT_NAME";
     export FUNCTION_NAME="$OLD_FUNCTION_NAME"
+    export STATIC="$OLD_STATIC";
+    export OBJECT="$OLD_OBJECT";
     return "$res";
 }
 
 ##
-# Call a class function
+# Call a object method
 #
 # $1    string  class name
 # $2    string  object name
 # $3    string  function name
 # $@    params
 # $?    0:OK    1:ERROR
+function object()
+{
+    _objectCall "$@";
+    return "$?";
+}
+
+##
+# Call a object method
+#
+# $1    string  object name
+# $2    string  function name
+# $@    params
+# $?    0:OK    1:ERROR
 function _objectCall()
 {
     : ${1:?};
     : ${2:?};
-    : ${3:?};
-    
+        
     local OLD_CLASS_NAME="$CLASS_NAME";
     local OLD_OBJECT_NAME="$OBJECT_NAME";
-    local OLD_FUNCTION_NAME="$FUNCTION_NAME"
-    export CLASS_NAME="$1";
-    export OBJECT_NAME="$2";
-    export FUNCTION_NAME="$3"
+    local OLD_FUNCTION_NAME="$FUNCTION_NAME";
+    local OLD_STATIC="$STATIC";
+    local OLD_OBJECT="$OBJECT";
+    eval 'export CLASS_NAME="$_OBJECT_CLASS_'"$1"'";';
+    export OBJECT_NAME="$1";
+    export FUNCTION_NAME="$2";
+    export STATIC='';
+    export OBJECT='1';
     local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
-    shift 3;
+    shift 2;
     "$fName" "$@";
     local res="$?"
     export CLASS_NAME="$OLD_CLASS_NAME";
     export OBJECT_NAME="$OLD_OBJECT_NAME";
-    export FUNCTION_NAME="$OLD_FUNCTION_NAME"
+    export FUNCTION_NAME="$OLD_FUNCTION_NAME";
+    export STATIC="$OLD_STATIC";
+    export OBJECT="$OLD_OBJECT";
     return "$res";
 }
 
+##
+# Create a new object from class.
+#
+# $1    string  class name
+# $2    string  object name
+# $@?   mixed  params
+# $?    0:OK    1:ERROR
 function new()
 {
     : ${1:?};
@@ -179,14 +251,46 @@ function new()
     local nsObj="$2";
     
     shift 2;    
-    _createObjectAliases "$ns" "$nsObj";
-	
+    #_createObjectAliases "$ns" "$nsObj";
+    
+    eval 'export _OBJECT_CLASS_'"$nsObj""='$ns';";
     eval 'export _OBJECT_DATA_'"$nsObj"'="";';
 
-    declare -F | grep '^declare -f CLASS_'"$ns"'__construct$' > /dev/null;
-    [ "$?" == 0 ] && _objectCall "$ns" "$nsObj" '_construct' "$@";
+    declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null;
+    if [ "$?" == 0 ]; then
+        _objectCall "$nsObj" '__construct' "$@";
+        local res="$?";
+        [ "$res" != 0 ] && 
+        return "$res";
+    fi
+    
+    return 0;
 }
 
+##
+# Create a new object from class.
+#
+# $1    string  class name
+# $2    string  object name
+# $@?   mixed  params
+# $?    0:OK    1:ERROR
+function extends()
+{
+    : ${1:?};
+    : ${2:?};
+  
+    _createExtendedClassFunctions "$1" "$2";
+    
+    return 0;
+}
+
+##
+# Clone object.
+#
+# $1    string  object name
+# $2    string  cloned object name
+# $@?   mixed  params
+# $?    0:OK    1:ERROR
 function clone()
 {
     : ${1:?};
@@ -196,37 +300,75 @@ function clone()
     local nsObjNew="$2";
     local nsObjVarOld='_OBJECT_DATA_'"$1";
     local nsObjVarNew='_OBJECT_DATA_'"$2";
-    
-    local ns=`alias \
-        | sed -n 's#^alias OBJECT_'"$nsObjOld"'_[^=]\+='\''_objectCall "\([^"]\+\).*#\1#p' \
-        | head -n 1`;
-    
+
+    eval 'local ns="$_OBJECT_CLASS_'"$1"'";';
     shift 2;
     
     new "$ns" "$nsObjNew" "$@";
     eval 'export '"$nsObjVarNew"'="$'"$nsObjVarOld"'";';
     
+    declare -F | grep '^declare -f CLASS_'"$ns"'___clone$' > /dev/null;
+    if [ "$?" == 0 ]; then
+        _objectCall "$nsObj" '__clone';
+        local res="$?";
+        [ "$res" != 0 ] && 
+        return "$res";
+    fi
+    
+    return 0;    
 }
 
+##
+# Remove a object.
+#
+# $1    string  object name
+# $@?   mixed  params
+# $?    0:OK    1:ERROR
 function remove()
 {
     : ${1:?};
 
-    local nsObj="$1";
-    local nsObjVarOld='_OBJECT_DATA_'"$1";
-    local ns=`alias \
-        | sed -n 's#^alias OBJECT_'"$nsObj"'_[^=]\+='\''_objectCall "\([^"]\+\).*#\1#p' \
-        | head -n 1`;
-    
-    shift 1;
-        
-    declare -F | grep '^declare -f CLASS_'"$ns"'__destruct$' > /dev/null;
-    [ "$?" == 0 ] && _objectCall "$ns" "$nsObj" '_destruct' "$@";
-    
-    _removeObjectAliases "$ns" "$nsObj";
-    eval 'unset -v '"$nsObjVarOld"; 
+    _objectRemove "$1" "1";    
+    return "$?";
 }
 
+##
+# Remove a object.
+#
+# $1    string  object name
+# $2    integer call _destruct 1:true 0:false
+# $@?   mixed  params
+# $?    0:OK    1:ERROR
+function _objectRemove()
+{
+    : ${1:?};
+    : ${2:?};
+
+    local res="0";
+    local nsObj="$1";
+    local doCall="$2";
+    local nsObjVarOld='_OBJECT_DATA_'"$1";
+    local nsObjClassOld='_OBJECT_CLASS_'"$1";
+    eval 'local ns="$'"$nsObjClassOld"'";';
+        
+    if [ "$2" == 1 ]; then
+        declare -F | grep '^declare -f CLASS_'"$ns"'___destruct$' > /dev/null;
+        [ "$?" == 0 ] && _objectCall "$ns" "$nsObj" '__destruct';
+        local res="$?";
+    fi
+        
+    #_removeObjectAliases "$ns" "$nsObj";
+    eval 'unset -v '"$nsObjVarOld";
+    eval 'unset -v '"$nsObjClassOld";
+    return "$res";
+}
+
+##
+# Get object var name.
+#
+# $CLASS_NAME   string  class name
+# &1    string var name
+# $?    0:OK    1:ERROR
 function _objectVarName()
 {
     : ${CLASS_NAME:?};
@@ -237,45 +379,69 @@ function _objectVarName()
     return 0;
 }
 
+##
+# Access to the object.
+#
+# $1    string  object name
+# $CLASS_NAME   string  class name
+# $@?   mixed   params
+# &1    mixed
+# $?    0:OK    1:ERROR
 function this()
 {
     : ${1:?};
-    : ${2:?};
     : ${CLASS_NAME:?};
     
     local dataVarName=`_objectVarName`;
     
     case "$1" in
         set)
+            : ${2:?};
             : ${3?};
             _objectSet "$dataVarName" "$2" "$3";
             return "$?";
             ;;
         get)
+            : ${2:?};
             _objectGet "$dataVarName" "$2";
             return "$?";
             ;;
         unset)
+            : ${2:?};
             _objectUnset "$dataVarName" "$2";
             return "$?";
             ;;
         isset)
+            : ${2:?};
             _objectIsset "$dataVarName" "$2";
             return "$?";
             ;;
         call)
+            : ${2:?};
             local fName="$2"
             shift 2;
-            [ -z "$OBJECT_NAME" ] && _staticCall "$CLASS_NAME" "$fName" "$@";
-            [ -n "$OBJECT_NAME" ] && _objectCall "$CLASS_NAME" "$OBJECT_NAME" "$fName" "$@";
-            return "$?";
+            if [ -z "$OBJECT_NAME" ]; then
+                _staticCall "$CLASS_NAME" "$fName" "$@";
+                return "$?";
+            fi
+            if [ -n "$OBJECT_NAME" ]; then
+                _objectCall "$OBJECT_NAME" "$fName" "$@";
+                return "$?";
+            fi
             ;;
     esac
 }
 
+##
+# Access to the object.
+#
+# $CLASS_NAME   string  class name
+# $OBJECT_NAME  string  object name
+# $?    0:OK    1:ERROR
 function isStatic()
 {
     : ${CLASS_NAME:?};   
+    : ${OBJECT_NAME?};
     [ -z "$OBJECT_NAME" ];
     return "$?";
 }

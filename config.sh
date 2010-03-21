@@ -15,12 +15,10 @@
 ################################################################################
 
 # Directorys
-export BASHOR_CACHE_DIR="./cache";
 export BASHOR_LOG_FILE="./error.log";
-export BASHOR_TEMP_DIR="./temp";
 
 # Compatibility
-export BASHOR_USE_GETOPT="1"; # 0|1
+export BASHOR_USE_GETOPT="0"; # 0|1
 export BASHOR_MODE_COMPATIBLE="0";
 
 # Options
@@ -35,12 +33,6 @@ export BASHOR_WARNING_BACKTRACE="1";
 export BASHOR_DEBUG_LOG="0";
 export BASHOR_DEBUG_OUTPUT="1";
 export BASHOR_DEBUG_BACKTRACE="1";
-
-export BASHOR_REGISTRY_FILE="./registry";
-export BASHOR_REGISTRY_COMPRESS="0"
-
-export BASHOR_SESSION_SIZE="65536" # 64K
-export BASHOR_SESSION_COMPRESS="1"
 
 # Bash options
 set -B # enable brace expansion;

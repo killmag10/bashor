@@ -12,13 +12,21 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id$
+# @version      $Id: temp.sh 16 2010-03-12 23:35:45Z lars $
 ################################################################################
 
-export BASHOR_FUNCTION_TEMP_DIR="$BASHOR_TEMP_DIR";
-if [ -n "$1" ]; then
-    export BASHOR_FUNCTION_TEMP_DIR="$1";
-fi
+##
+# Constructor
+#
+# $1    string  temp dir
+function CLASS_Temp___construct()
+{
+    : ${1?};
+    : ${OBJECT:?};
+    
+    this set dir "$1";
+}
+
 
 ##
 # Get a temp dir path.
@@ -26,12 +34,14 @@ fi
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  path
-function temp_dir()
+function CLASS_Temp_dir()
 {
     : ${1:?};
+    : ${OBJECT:?};
     
-    mkdir -p "$BASHOR_FUNCTION_TEMP_DIR/";
-    echo -n "$BASHOR_FUNCTION_TEMP_DIR/"`temp_generateFilename "$1"`;
+    local dir=`this get dir`;
+    mkdir -p "$dir/";
+    echo -n "$dir/"`this call generateFilename "$1"`;
     return "$?";
 }
 
@@ -41,11 +51,12 @@ function temp_dir()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  path
-function temp_file()
+function CLASS_Temp_file()
 {
     : ${1:?};
+    : ${OBJECT:?};
 
-    echo "`temp_dir \"$1\"`"'.tmp';
+    echo "`this call dir \"$1\"`"'.tmp';
     return "$?";
 }
 
@@ -55,7 +66,7 @@ function temp_file()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  name
-function temp_generateFilename()
+function CLASS_Temp_generateFilename()
 {
     : ${1?};
 
@@ -67,9 +78,13 @@ function temp_generateFilename()
 # Clear the temp dir.
 #
 # $?    0:OK    1:ERROR
-function temp_clear {
-    if [ -n "$BASHOR_FUNCTION_TEMP_DIR" ] && [ -d "$BASHOR_FUNCTION_TEMP_DIR" ]; then
-        rm -r "$BASHOR_FUNCTION_TEMP_DIR/"*;
+function CLASS_Temp_clear()
+{
+    : ${OBJECT:?};
+    
+    local dir=`this get dir`;
+    if [ -n "$dir" ] && [ -d "$dir" ]; then
+        rm -r "$dir/"*;
         return "$?";
     fi
 }

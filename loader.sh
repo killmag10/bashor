@@ -29,13 +29,7 @@ export BASHOR_DIR_FUNCTIONS="${BASHOR_DIR}/functions";
 export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
 
 # Defaults
-export BASHOR_CACHE_DIR="./cache";
 export BASHOR_LOG_FILE="./error.log";
-export BASHOR_REGISTRY_FILE="./registry";
-export BASHOR_REGISTRY_COMPRESS="0"
-export BASHOR_TEMP_DIR="./temp";
-export BASHOR_SESSION_SIZE="65536" # 64K
-export BASHOR_SESSION_COMPRESS="1"
 export BASHOR_MODE_COMPATIBLE="0";
 
 . "${BASHOR_DIR}/config.sh";

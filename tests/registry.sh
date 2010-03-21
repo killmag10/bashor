@@ -15,26 +15,33 @@
 # @version      $Id$
 ################################################################################
 
-loadFunctions 'registry' "$TEST_TEMP_DIR/registry";
+loadClass 'Registry';
+new 'Registry' 'Registry' "$TEST_TEMP_DIR/registry" -c
 nl=`echo -e '\n\r'`;
 
-registry_set "test" "blub 123blub";
+object Registry set "test" "blub 123blub";
 checkSimple "set 1" "$?" "0";
 
-registry_set "bli" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
+object Registry set "bli" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
 checkSimple "set 2" "$?" "0";
 
-res=`registry_get "test"`;
+res=`object Registry get "test"`;
 checkSimple "get 1" "$res" "blub 123blub";
 
-res=`registry_get "bli"`;
+res=`object Registry get "bli"`;
 checkSimple "get 2" "$res" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
 
-registry_isset "test";
+object Registry isset "test";
 checkSimple "isset isset 1" "$?" "0";
 
-registry_remove "test";
+object Registry remove "test";
 checkSimple "remove 1" "$?" "0";
 
-registry_isset "test";
+object Registry isset "test";
 checkSimple "isset notset 1" "$?" "1";
+
+object Registry isCompressed;
+checkSimple "isCompressed" "$?" "0";
+
+object Registry isset "bli";
+checkSimple "isset isset 2" "$?" "0";

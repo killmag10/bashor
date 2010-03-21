@@ -12,13 +12,26 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id$
+# @version      $Id: registry.sh 22 2010-03-14 04:16:22Z lars $
 ################################################################################
 
-export BASHOR_FUNCTION_REGISTRY_FILE="$BASHOR_REGISTRY_FILE";
-if [ -n "$1" ]; then
-    export BASHOR_FUNCTION_REGISTRY_FILE="$1";
-fi
+##
+# Constructor
+#
+# $1    string  registry file
+function CLASS_Registry___construct()
+{
+    : ${1?};
+    : ${OBJECT:?};
+    
+    optSetOpts 'c';
+    optSetArgs "$@";
+    
+    this set compress "0";
+    optIsset 'c' && this set compress "1";
+    
+    this set file "$1";
+}
 
 ##
 # Save in registry.
@@ -27,9 +40,10 @@ fi
 # $2    string  Data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function registry_set()
+function CLASS_Registry_set()
 {
     : ${1:?};
+    : ${OBJECT:?};
     
     if [ -p /dev/stdin ]; then
         local value=`cat -`;
@@ -37,23 +51,23 @@ function registry_set()
         local value="$2";
     fi
     
-    loadFunctions 'lock';
-    local lockFile=`lock_filename '$BASHOR_FUNCTION_REGISTRY_FILE'`;
+    loadClass 'lock';
+    local file=`this get file`;
+    local lockFile=`CLASS_Lock_filename '$file'`;
     
     {
         flock 200;
         
         local key=`echo "$1" | base64 -w 0`;
         local value=`echo "$value" | base64 -w 0`;
-        [ ! -f "$BASHOR_FUNCTION_REGISTRY_FILE" ] \
-            && echo " " | _registry_compress 'c' > "$BASHOR_FUNCTION_REGISTRY_FILE";   
-        local data=`cat "$BASHOR_FUNCTION_REGISTRY_FILE" | _registry_compress 'd'`;
+        [ ! -f "$file" ] \
+            && echo "" | this call _compress 'c' > "$file";   
+        local data=`cat "$file" | this call _compress 'd'`;
         local data=`echo "$data" | sed "s#^${key}\s\+.*##"`;
         local data=`echo "$key $value"; echo -n "$data";`;
-        echo "$data" | sort -u | _registry_compress 'c' \
-            > "$BASHOR_FUNCTION_REGISTRY_FILE";
+        echo "$data" | sort -u | this call _compress 'c' > "$file";
     } 200>"$lockFile";
-    lock_delete "$lockFile";
+    CLASS_Lock_delete "$lockFile";
     
     return "$?"
 }
@@ -63,25 +77,27 @@ function registry_set()
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function registry_remove()
+function CLASS_Registry_remove()
 {
     : ${1:?};
+    : ${OBJECT:?};
     
-    loadFunctions 'lock';
-    local lockFile=`lock_filename '$BASHOR_FUNCTION_REGISTRY_FILE'`;
+    loadClass 'lock';
+    local file=`this get file`;
+    local lockFile=`CLASS_Lock_filename '$file'`;
     local key=`echo "$1" | base64 -w 0`;
     
-    if [ -f "$BASHOR_FUNCTION_REGISTRY_FILE" ]; then
+    if [ -f "$file" ]; then
         {
             flock 200;
             
-            cat "$BASHOR_FUNCTION_REGISTRY_FILE" \
-                | _registry_compress 'd' \
+            cat "$file" \
+                | this call _compress 'd' \
                 | sed "s#^${key}\s\+.*##" \
                 | sort -u \
-                | _registry_compress 'c' > "$BASHOR_FUNCTION_REGISTRY_FILE";
+                | this call _compress 'c' > "$file";
         } 200>"$lockFile";
-        lock_delete "$lockFile";
+        class Lock delete "$lockFile";
         
         return "$?"
     fi
@@ -93,14 +109,17 @@ function registry_remove()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function registry_get()
+function CLASS_Registry_get()
 {
     : ${1:?};
+    : ${OBJECT:?};
     
-    if [ -f "$BASHOR_FUNCTION_REGISTRY_FILE" ]; then
+    local file=`this get file`;
+    
+    if [ -f "$file" ]; then
         local key=`echo "$1" | base64`;
-        local res=`cat "$BASHOR_FUNCTION_REGISTRY_FILE" \
-            | _registry_compress 'd' | grep "^$key "`;
+        local res=`cat "$file" \
+            | this call _compress 'd' | grep "^$key "`;
         if [ -n "$res" ]; then
             echo "$res" | sed 's#\S\+\s\+##' | base64 -d;
             return 0;
@@ -116,14 +135,17 @@ function registry_get()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function registry_isset()
+function CLASS_Registry_isset()
 {
     : ${1:?};
+    : ${OBJECT:?};
     
-    if [ -f "$BASHOR_FUNCTION_REGISTRY_FILE" ]; then
+    local file=`this get file`;
+    
+    if [ -f "$file" ]; then
         local key=`echo "$1" | base64`;
-        local res=`cat "$BASHOR_FUNCTION_REGISTRY_FILE" \
-            | _registry_compress 'd' | grep "^$key "`;
+        local res=`cat "$file" \
+            | this call _compress 'd' | grep "^$key "`;
         if [ -n "$res" ]; then
             return 0;
         fi
@@ -133,20 +155,36 @@ function registry_isset()
 }
 
 ##
-# Isset in registry.
+# Compress/Decompress a string if -c is set
 #
 # $1    mode c:compress d:decompress
 # &0    string Data
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function _registry_compress()
+function CLASS_Registry__compress()
 {
     : ${1:?};
+    : ${OBJECT:?};
     
-    if [ "$BASHOR_REGISTRY_COMPRESS" == 1 ]; then
+    local compress=`this get compress`;
+    
+    if [ "$compress" == 1 ]; then
         [ "$1" == 'c' ] && gzip;
         [ "$1" == 'd' ] && gzip -d;
     else
         cat -;
     fi
+}
+
+##
+# Check if registry is compressed.
+#
+# $?    0:YES   1:NO
+function CLASS_Registry_isCompressed()
+{
+    : ${OBJECT:?};
+    
+    local compress=`this get compress`;
+    [ "$compress" == 1 ];
+    return "$?";
 }

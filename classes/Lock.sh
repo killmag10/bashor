@@ -12,7 +12,7 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id$
+# @version      $Id: lock.sh 16 2010-03-12 23:35:45Z lars $
 ################################################################################
 
 ##
@@ -20,7 +20,7 @@
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function lock_filename()
+function CLASS_Lock_filename()
 {
     : ${1:?};
     
@@ -33,7 +33,7 @@ function lock_filename()
 #
 # $1    string  file
 # $?    0:OK    1:LOCKED    2:ERROR
-function lock_delete()
+function CLASS_Lock_delete()
 {
     : ${1:?};
     
@@ -50,7 +50,7 @@ function lock_delete()
 #
 # $1    string  file
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
-function lock_checkRead()
+function CLASS_Lock_checkRead()
 {
     : ${1:?};
     
@@ -67,7 +67,7 @@ function lock_checkRead()
 #
 # $1    string  file
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
-function lock_checkWrite
+function CLASS_Lock_checkWrite()
 {
     : ${1:?};
     

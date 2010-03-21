@@ -12,7 +12,7 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id$
+# @version      $Id: display.sh 17 2010-03-13 00:12:19Z lars $
 ################################################################################
 
 ##
@@ -22,7 +22,7 @@
 # $1?   string bar
 # $2?   string pre
 # $3?   string post
-function display_simpleRotateBar()
+function CLASS_Display_simpleRotateBar()
 {
     : ${1:?};
     
