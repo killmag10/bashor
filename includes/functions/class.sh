@@ -29,21 +29,36 @@ function loadClass()
         local filename="$BASHOR_DIR_CLASS/""$1"'.sh';
         local ns="$1";
         if [ -f "$filename" ]; then
-            shift;
-            . "$filename" "$@";
-            #_createClassAliases "$ns";
-            
-            declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null;
-            if [ "$?" == 0 ]; then
-                _staticCall "$ns" '__load' "$@";
-                return "$?";
-            fi
-            
-            return 0;
+            . "$filename";
+            addClass "$@";
+            return "$?";
         fi
     fi
     
     return 1;
+}
+
+##
+# Add Class functions.
+#
+# $1    string  namespace
+# $@?   mixed  params
+# $?    0:OK    1:ERROR
+function addClass()
+{
+    : ${1:?};
+    
+    local ns="$1";
+    shift;
+    #_createClassAliases "$ns";
+    
+    declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null;
+    if [ "$?" == 0 ]; then
+        _staticCall "$ns" '__load' "$@";
+        return "$?";
+    fi
+    
+    return 0;
 }
 
 ##
