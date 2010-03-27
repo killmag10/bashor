@@ -40,7 +40,7 @@ function CLASS_Cache_filename()
     
     loadClass 'Hash';
     
-    local hashMd5=`CLASS_Hash_md5 "$1"`;
+    local hashMd5=`class Hash md5 "$1"`;
     local hashCrc32=`echo "$1" | cksum | tr ' ' '_'`;
     echo `this get dir`"/CACHE_${hashMd5}_${hashCrc32}";
     return 0;

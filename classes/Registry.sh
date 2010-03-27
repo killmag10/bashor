@@ -51,9 +51,9 @@ function CLASS_Registry_set()
         local value="$2";
     fi
     
-    loadClass 'lock';
+    loadClass 'Lock';
     local file=`this get file`;
-    local lockFile=`CLASS_Lock_filename '$file'`;
+    local lockFile=`class Lock filename '$file'`;
     
     {
         flock 200;
@@ -67,7 +67,7 @@ function CLASS_Registry_set()
         local data=`echo "$key $value"; echo -n "$data";`;
         echo "$data" | sort -u | this call _compress 'c' > "$file";
     } 200>"$lockFile";
-    CLASS_Lock_delete "$lockFile";
+    class Lock delete "$lockFile";
     
     return "$?"
 }
@@ -82,9 +82,9 @@ function CLASS_Registry_remove()
     : ${1:?};
     : ${OBJECT:?};
     
-    loadClass 'lock';
+    loadClass 'Lock';
     local file=`this get file`;
-    local lockFile=`CLASS_Lock_filename '$file'`;
+    local lockFile=`class Lock filename '$file'`;
     local key=`echo "$1" | base64 -w 0`;
     
     if [ -f "$file" ]; then
