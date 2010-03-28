@@ -18,7 +18,7 @@
 ##
 # Constructor
 #
-# $1    string  log file
+# -s   integer session size (Default:65536)
 function CLASS_Session___load()
 {
     this call __construct "$@";
@@ -27,8 +27,7 @@ function CLASS_Session___load()
 ##
 # Constructor
 #
-# $1    string  session file
-# $2?   integer session size (Default:65536)
+# -s   integer session size (Default:65536)
 function CLASS_Session___construct()
 {    
     optSetOpts 'cs:';

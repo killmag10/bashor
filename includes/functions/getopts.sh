@@ -109,9 +109,7 @@ function optSetOpts()
 # $@    arguments
 # $?    0:OK 1:ERROR
 function optSetArgs()
-{ 
-    : ${@:?};
-       
+{        
     OPT_ARGS="$@";
     return "$?";
 }

@@ -91,9 +91,8 @@ function CLASS_Registry_remove()
         {
             flock 200;
             
-            cat "$file" \
-                | this call _compress 'd' \
-                | sed "s#^${key}\s\+.*##" \
+            local data=`cat "$file" | this call _compress 'd'`;
+            echo "$data" | sed "s#^${key}\s\+.*##" \
                 | sort -u \
                 | this call _compress 'c' > "$file";
         } 200>"$lockFile";

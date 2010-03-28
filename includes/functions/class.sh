@@ -86,16 +86,16 @@ function _createClassAliases()
 ##
 # Create class functions for extended class.
 #
-# $1    string  parent class
 # $1    string  new class
+# $1    string  parent class
 # $?    0:OK    1:ERROR
 function _createExtendedClassFunctions()
 {
     : ${1:?};
     : ${2:?};
     
-    local nsParent="$1";
-    local nsNew="$2";
+    local nsParent="$2";
+    local nsNew="$1";
     
     local fList=`declare -F \
         | sed -n 's#^declare -f CLASS_'"$nsParent"'_\(.*\)$#\1#p'`;
@@ -173,6 +173,7 @@ function class()
 #
 # $1    string  class name
 # $2    string  function name
+# $PARENT?   string  child class name
 # $@    params
 # $?    0:OK    1:ERROR
 function _staticCall()
@@ -186,6 +187,7 @@ function _staticCall()
     local OLD_STATIC="$STATIC";
     local OLD_OBJECT="$OBJECT";
     export CLASS_NAME="$1";
+    [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
     export OBJECT_NAME="";
     export FUNCTION_NAME="$2";
     export STATIC='1';
@@ -221,6 +223,7 @@ function object()
 #
 # $1    string  object name
 # $2    string  function name
+# $PARENT?   string  child class name
 # $@    params
 # $?    0:OK    1:ERROR
 function _objectCall()
@@ -234,6 +237,7 @@ function _objectCall()
     local OLD_STATIC="$STATIC";
     local OLD_OBJECT="$OBJECT";
     eval 'export CLASS_NAME="$_OBJECT_CLASS_'"$1"'";';
+    [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
     export OBJECT_NAME="$1";
     export FUNCTION_NAME="$2";
     export STATIC='';
@@ -293,7 +297,8 @@ function extends()
 {
     : ${1:?};
     : ${2:?};
-  
+    
+    eval 'export _OBJECT_CLASS_'"$1"_EXTENDS"='$2';";
     _createExtendedClassFunctions "$1" "$2";
     
     return 0;
@@ -445,6 +450,43 @@ function this()
             fi
             ;;
     esac
+}
+
+##
+# Access to the parent object.
+#
+# $1    string  object name
+# $CLASS_NAME   string  class name
+# $@?   mixed   params
+# &1    mixed
+# $?    0:OK    1:ERROR
+function parent()
+{
+    : ${1:?};
+    : ${CLASS_NAME:?};
+    
+    eval 'export CLASS_PARENT="$_OBJECT_CLASS_'"$CLASS_NAME"'_EXTENDS";';
+    
+    case "$1" in
+        call)
+            : ${2:?};
+            local fName="$2"
+            shift 2;
+            if [ -z "$OBJECT_NAME" ]; then
+                _staticCall "$CLASS_NAME" "$fName" "$@";
+                return "$?";
+            fi
+            if [ -n "$OBJECT_NAME" ]; then
+                _objectCall "$OBJECT_NAME" "$fName" "$@";
+                return "$?";
+            fi
+            ;;
+        *)
+            this "$@";
+            ;;
+    esac
+    
+    unset -v CLASS_PARENT;
 }
 
 ##

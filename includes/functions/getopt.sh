@@ -181,9 +181,7 @@ function optSetOpts()
 # $@    arguments
 # $?    0:FOUND 1:NOT FOUND
 function optSetArgs()
-{
-    : ${@:?};
-    
+{    
     OPT_ARGS=`getopt -o "$OPT_OPTS" --long "$OPT_OPTS_LONG" -- "$@"`;
     return "$?";
 }
