@@ -103,7 +103,7 @@ function _createExtendedClassFunctions()
     for f in $fList; do
         local fNameParent='CLASS_'"$nsParent"'_'"$f";
         local fNameNew='CLASS_'"$nsNew"'_'"$f";
-        eval 'function '"$fNameParent"'() { '"fNameNew"' "$@"; }';
+        eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return "$?"; }';
     done;
 }
 

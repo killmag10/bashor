@@ -15,32 +15,37 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Session' "$TEST_TEMP_DIR/registry" -c;
+loadClass 'Session';
+new 'Session' 'Session' "$TEST_TEMP_DIR/registry" -c
 nl=`echo -e '\n\r'`;
 
-class Session set "test" "blub 123blub";
+object Session set "test" "blub 123blub";
 checkSimple "set 1" "$?" "0";
 
-class Session set "bli" "`dd if=\"$TEST_RESOURCE_DIR/random.dat\" bs=32K count=1 2>/dev/null`";
+object Session set "bli" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
 checkSimple "set 2" "$?" "0";
 
-res=`class Session get "test"`;
+res=`object Session get "test"`;
 checkSimple "get 1" "$res" "blub 123blub";
 
-res=`class Session get "bli"`;
-checkSimple "get 2" "$res" "`dd if=\"$TEST_RESOURCE_DIR/random.dat\" bs=32K count=1 2>/dev/null`";
+res=`object Session get "bli"`;
+checkSimple "get 2" "$res" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
 
-class Session isset "test";
+object Session isset "test";
 checkSimple "isset isset 1" "$?" "0";
 
-class Session remove "test";
+object Session remove "test";
 checkSimple "remove 1" "$?" "0";
 
-class Session isset "test";
+object Session isset "test";
 checkSimple "isset notset 1" "$?" "1";
 
-class Session isCompressed;
+object Session isCompressed;
 checkSimple "isCompressed" "$?" "0";
 
-res=`class Session size`;
-checkSimple "size" "$res" "28795";
+object Session isset "bli";
+checkSimple "isset isset 2" "$?" "0";
+
+res=`object Session getFilename`;
+checkSimple "getFilename" "$?" "0";
+checkRegex "getFilename data" "$res" '/registry$';

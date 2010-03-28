@@ -187,3 +187,16 @@ function CLASS_Registry_isCompressed()
     [ "$compress" == 1 ];
     return "$?";
 }
+
+##
+# Get the registry filename.
+#
+# &1    string  filename
+# $?    0:YES   1:NO
+function CLASS_Registry_getFilename()
+{
+    : ${OBJECT:?};
+    
+    echo "`this get file`";
+    return "$?";
+}

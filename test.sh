@@ -69,7 +69,7 @@ function checkSimple()
 
 function checkRegex()
 {
-    local res=`echo "$2" | grep "$3"`;
+    echo "$2" | grep "$3" > /dev/null;
     printResult "$1" "$?" "$4";
 }
 
@@ -88,7 +88,7 @@ doTest 'lock';
 doTest 'hash';
 doTest 'registry';
 doTest 'data';
-#doTest 'session';
+doTest 'session';
 doTest 'log';
 doTest 'escape';
 doTest 'temp';

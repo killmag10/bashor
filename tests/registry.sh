@@ -45,3 +45,7 @@ checkSimple "isCompressed" "$?" "0";
 
 object Registry isset "bli";
 checkSimple "isset isset 2" "$?" "0";
+
+res=`object Registry getFilename`;
+checkSimple "getFilename" "$?" "0";
+checkRegex "getFilename data" "$res" '/registry$';
