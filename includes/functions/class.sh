@@ -50,8 +50,8 @@ function addClass()
     
     local ns="$1";
     shift;
-    #_createClassAliases "$ns";
     
+    eval 'export _OBJECT_CLASS_'"$ns"_EXTENDS"='';";
     declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null;
     if [ "$?" == 0 ]; then
         _staticCall "$ns" '__load' "$@";
@@ -59,28 +59,6 @@ function addClass()
     fi
     
     return 0;
-}
-
-##
-# Create aliases for class functions.
-#
-# $1    string  namespace
-# $?    0:OK    1:ERROR
-function _createClassAliases()
-{
-    : ${1:?};
-    
-    local ns="$1";
-    
-    local fList=`declare -F \
-        | sed -n 's#^declare -f CLASS_'"$ns"'_\(.*\)$#\1#p'`;
-    local IFS=`echo -e "\n\r"`;
-    for f in $fList; do
-        local fName='CLASS_'"$ns"'_'"$f";
-        eval 'alias '"$fName"'='"'_staticCall \"$ns\" \"$f\"'";
-        [ 0 == "$BASHOR_MODE_COMPATIBLE" ] \
-            && eval "alias $ns"'::'"$f"'='"'_staticCall \"$ns\" \"$f\"'";
-    done;
 }
 
 ##
@@ -104,54 +82,6 @@ function _createExtendedClassFunctions()
         local fNameParent='CLASS_'"$nsParent"'_'"$f";
         local fNameNew='CLASS_'"$nsNew"'_'"$f";
         eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return "$?"; }';
-    done;
-}
-
-##
-# Create aliases for object functions.
-#
-# $1    string  namespace class
-# $2    string  namespace object
-# $?    0:OK    1:ERROR
-function _createObjectAliases()
-{
-    : ${1:?};
-    : ${2:?};
-    
-    local ns="$1";
-    local nsObj="$2";
-    
-    local fList=`declare -F \
-        | sed -n 's#^declare -f CLASS_'"$ns"'_\(.*\)$#\1#p'`;
-    local IFS=`echo -e "\n\r"`;
-    for f in $fList; do
-        eval 'alias OBJECT_'"$nsObj"'_'"$f"'='"'_objectCall \"$ns\" \"$nsObj\" \"$f\"'";
-        [ 0 == "$BASHOR_MODE_COMPATIBLE" ] \
-            && eval "alias $nsObj"'.'"$f"'='"'_objectCall \"$ns\" \"$nsObj\" \"$f\"'";
-    done;
-}
-
-##
-# Remove aliases for object functions.
-#
-# $1    string  namespace class
-# $2    string  namespace object
-# $?    0:OK    1:ERROR
-function _removeObjectAliases()
-{
-    : ${1:?};
-    : ${2:?};
-    
-    local ns="$1";
-    local nsObj="$2";
-    
-    local fList=`declare -F \
-        | sed -n 's#^declare -f CLASS_'"$ns"'_\(.*\)$#\1#p'`;
-    local IFS=`echo -e "\n\r"`;
-    for f in $fList; do
-        eval 'unalias OBJECT_'"$nsObj"'_'"$f";
-        [ 0 == "$BASHOR_MODE_COMPATIBLE" ] \
-            && eval "unalias $nsObj"'.'"$f";
     done;
 }
 
@@ -465,7 +395,12 @@ function parent()
     : ${1:?};
     : ${CLASS_NAME:?};
     
-    eval 'export CLASS_PARENT="$_OBJECT_CLASS_'"$CLASS_NAME"'_EXTENDS";';
+    local OLD_CLASS_PARENT="$CLASS_PARENT";
+    if [ -n "$CLASS_PARENT" ]; then
+        eval 'export CLASS_PARENT="$_OBJECT_CLASS_'"$CLASS_PARENT"'_EXTENDS";';
+    else
+        eval 'export CLASS_PARENT="$_OBJECT_CLASS_'"$CLASS_NAME"'_EXTENDS";';
+    fi
     
     case "$1" in
         call)
@@ -486,7 +421,7 @@ function parent()
             ;;
     esac
     
-    unset -v CLASS_PARENT;
+    export CLASS_PARENT="$OLD_CLASS_PARENT";
 }
 
 ##
