@@ -111,7 +111,12 @@ function optSetOpts()
 function optSetArgs()
 {        
     OPT_ARGS="$@";
-    OPT_ARGS_QUOTED=`for v in "$@"; do echo \""$v"\"" "; done; echo;`;
+    OPT_ARGS_QUOTED=`for v in "$@"; do echo -n \""$v"\"" "; done; echo;`;
+    OPT_PARAM_QUOTED=`
+        echo -n "$OPT_ARGS_QUOTED" | sed -n 's#\(\|\(.\)\s\)"-.*#\2#p';
+        echo -n " ";
+        echo "$OPT_ARGS_QUOTED" | grep -o -- '"--".*' | sed 's/"--"\s\?//';
+    `;
     return "$?";
 }
 
@@ -146,15 +151,11 @@ function argList()
 {
     (
         local return=1;
-        eval set -- $OPT_ARGS_QUOTED;    
+        eval set -- $OPT_PARAM_QUOTED;    
 
         local first=0;
         while shift "$first"; do
             local first=1;
-            [ "$1" == "--" ] && break;
-        done
-
-        while shift "$first"; do
             echo "$1";
             local return=0;
         done;
@@ -177,13 +178,12 @@ function argValue()
     (
         local key="$1";
         local return=1;
-        eval set -- $OPT_ARGS_QUOTED;
-        while [ "$1" != "--" ]; do
-            shift 1;
-        done
+        eval set -- $OPT_PARAM_QUOTED;
 
         num=0;
-        while shift 1; do
+        local first=0;
+        while shift "$first"; do
+            local first=1;
             ((num++))
             if [ "$num" == "$key" ]; then
                 echo "$1";
@@ -207,12 +207,8 @@ function argIsset()
     : ${1:?};
     
     local key="$1";
-    eval set -- $OPT_ARGS_QUOTED;
-    
-    while [ "$1" != "--" ]; do
-        shift 1;
-    done
+    eval set -- $OPT_PARAM_QUOTED;
 
-    [ "$#" -gt "$key" ] && [ "0" -lt "$key" ];
+    [ "$#" -ge "$key" ] && [ "0" -lt "$key" ];
     return "$?";
 }

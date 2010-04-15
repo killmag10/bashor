@@ -21,7 +21,7 @@ nl=`echo -e '\n\r'`;
 
 function test_getopts()
 {   
-    optSetOpts "abc:d";
+    optSetOpts "abc:df:";
     optSetArgs "$@";
 
     optIsset "b";    
@@ -37,12 +37,30 @@ function test_getopts()
     res=`optKeys`;
     checkSimple "optKeys" "$res" "d
 c
+f
 b";
 
     res=`optList`;
     checkSimple "optList" "$res" "d=
 c=123
+f=456
 b=";
+
+    res=`argList`;
+    checkSimple "argList" "$res" "aaa bbb
+ccc
+--
+gg";
+
+    res=`argValue 2`;    
+    checkSimple "argValue" "$?" "0";
+    checkSimple "argValue data" "$res" "ccc";
+
+    argIsset 4;    
+    checkSimple "argIsset is set" "$?" "0";
+    
+    argIsset 5;    
+    checkSimple "argIsset not set" "$?" "1";
 }
 
-test_getopts "aaa bbb" "ccc" -d -c "123" -b
+test_getopts "aaa bbb" "ccc" -d -c "123" -f "456" -b -- -- gg
