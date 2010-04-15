@@ -111,6 +111,7 @@ function optSetOpts()
 function optSetArgs()
 {        
     OPT_ARGS="$@";
+    OPT_ARGS_QUOTED=`for v in "$@"; do echo \""$v"\"" "; done; echo;`;
     return "$?";
 }
 
@@ -135,4 +136,83 @@ function optGetArgs()
 {        
     echo "$OPT_ARGS";
     return "0";
+}
+
+##
+# Get argument list
+#
+# $?    0:OK    1:ERROR
+function argList()
+{
+    (
+        local return=1;
+        eval set -- $OPT_ARGS_QUOTED;    
+
+        local first=0;
+        while shift "$first"; do
+            local first=1;
+            [ "$1" == "--" ] && break;
+        done
+
+        while shift "$first"; do
+            echo "$1";
+            local return=0;
+        done;
+        
+        return "$return";
+    ) | head -n -1;
+
+    return "$?";
+}
+
+##
+# Get a argument value
+#
+# $1    string  key
+# $?    0:OK    1:ERROR
+function argValue()
+{
+    : ${1:?};
+    
+    (
+        local key="$1";
+        local return=1;
+        eval set -- $OPT_ARGS_QUOTED;
+        while [ "$1" != "--" ]; do
+            shift 1;
+        done
+
+        num=0;
+        while shift 1; do
+            ((num++))
+            if [ "$num" == "$key" ]; then
+                echo "$1";
+                return 0;
+            fi
+        done;
+        
+        return "$return";
+    );
+
+    return "$?";
+}
+
+##
+# Get argument list
+#
+# $1    string  key
+# $?    0:OK    1:ERROR
+function argIsset()
+{
+    : ${1:?};
+    
+    local key="$1";
+    eval set -- $OPT_ARGS_QUOTED;
+    
+    while [ "$1" != "--" ]; do
+        shift 1;
+    done
+
+    [ "$#" -gt "$key" ] && [ "0" -lt "$key" ];
+    return "$?";
 }
