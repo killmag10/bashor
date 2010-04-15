@@ -19,10 +19,10 @@ BASE_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
 if [[ ! "$BASE_DIR" =~ ^/ ]]; then
     BASE_DIR=`echo "$PWD/$BASE_DIR" | sed 's#/\.\?$##'`;
 fi
-TEST_DIR="$BASE_DIR/tests";
-TEST_TEMP_DIR="$TEST_DIR/temp";
-TEST_RESOURCE_DIR="$TEST_DIR/resources";
-TESTS_FAIL='0';
+export TEST_DIR="$BASE_DIR/tests";
+export TEST_TEMP_DIR="$TEST_DIR/temp";
+export TEST_RESOURCE_DIR="$TEST_DIR/resources";
+export TESTS_FAIL='0';
 
 . "$BASE_DIR/loader.sh"
 

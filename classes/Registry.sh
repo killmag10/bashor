@@ -53,7 +53,7 @@ function CLASS_Registry_set()
     
     loadClass 'Lock';
     local file=`this get file`;
-    local lockFile=`class Lock filename '$file'`;
+    local lockFile=`class Lock filename "$file"`;
     
     {
         flock 200;
@@ -84,7 +84,7 @@ function CLASS_Registry_remove()
     
     loadClass 'Lock';
     local file=`this get file`;
-    local lockFile=`class Lock filename '$file'`;
+    local lockFile=`class Lock filename "$file"`;
     local key=`echo "$1" | base64 -w 0`;
     
     if [ -f "$file" ]; then

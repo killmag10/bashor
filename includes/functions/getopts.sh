@@ -25,7 +25,7 @@ function optIsset()
     : ${1:?};
     
     local OPTIND='1';    
-    local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
+    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
     do
         [ "$key" == "$1" ] && return 0;
@@ -44,7 +44,7 @@ function optValue()
     : ${1:?};
        
     local OPTIND='1';    
-    local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
+    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
     do
         if [ "$key" == "$1" ]; then
@@ -63,7 +63,7 @@ function optValue()
 function optKeys()
 {
     local OPTIND='1';    
-    local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
+    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
     do
         echo "$key";
@@ -79,7 +79,7 @@ function optKeys()
 function optList()
 {
     local OPTIND='1';    
-    local pArgs=`echo $OPT_ARGS | sed 's#^[^-]*##'`;
+    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
     do
         echo "$key=$OPTARG";

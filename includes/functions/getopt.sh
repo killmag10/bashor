@@ -16,7 +16,7 @@
 ################################################################################
 
 ##
-# Check if argument exists
+# Check if option exists
 #
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
@@ -53,7 +53,27 @@ function optIsset()
 }
 
 ##
-# Get argument value
+# Get argument list
+#
+# $1    string  key
+# $?    0:OK    1:ERROR
+function argIsset()
+{
+    : ${1:?};
+    
+    local key="$1";
+    eval set -- "$OPT_ARGS";
+    
+    while [ "$1" != "--" ]; do
+        shift 1;
+    done
+
+    [ "$#" -gt "$key" ] && [ "0" -lt "$key" ];
+    return "$?";
+}
+
+##
+# Get option value
 #
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
@@ -91,12 +111,43 @@ function optValue()
 }
 
 ##
-# Get argument keys
+# Get a argument value
+#
+# $1    string  key
+# $?    0:OK    1:ERROR
+function argValue()
+{
+    : ${1:?};
+    
+    (
+        local key="$1";
+        local return=1;
+        eval set -- "$OPT_ARGS";
+        while [ "$1" != "--" ]; do
+            shift 1;
+        done
+
+        num=0;
+        while shift 1; do
+            ((num++))
+            if [ "$num" == "$key" ]; then
+                echo "$1";
+                return 0;
+            fi
+        done;
+        
+        return "$return";
+    );
+
+    return "$?";
+}
+
+##
+# Get option keys
 #
 # $?    0:OK    1:ERROR
 function optKeys()
 {
-    local key="$1";
     local return=1;
     eval set -- "$OPT_ARGS";    
 
@@ -125,12 +176,11 @@ function optKeys()
 }
 
 ##
-# Get argument keys and valus seperate by :
+# Get option keys and valus seperate by :
 #
 # $?    0:OK    1:ERROR
 function optList()
 {
-    local key="$1";
     local return=1;
     eval set -- "$OPT_ARGS";    
 
@@ -158,6 +208,33 @@ function optList()
     done
         
     return "$return";
+}
+
+##
+# Get argument list
+#
+# $?    0:OK    1:ERROR
+function argList()
+{
+    (
+        local return=1;
+        eval set -- "$OPT_ARGS";    
+
+        local first=0;
+        while shift "$first"; do
+            local first=1;
+            [ "$1" == "--" ] && break;
+        done
+
+        while shift "$first"; do
+            echo "$1";
+            local return=0;
+        done;
+        
+        return "$return";
+    ) | head -n -1;
+
+    return "$?";
 }
 
 ##

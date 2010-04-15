@@ -131,7 +131,7 @@ function handleError()
 # Backtrace for error signal
 function signalErrBacktrace()
 {
-    [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+    [ "$BASHOR_ERROR_BACKTRACE" == 1 ] && \
         getBacktrace | tail -n +2  | sed 's#^#    #';
 }
 trap 'signalErrBacktrace' ERR;
