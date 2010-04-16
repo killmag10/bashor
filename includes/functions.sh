@@ -25,12 +25,17 @@ function loadFunctions()
     : ${1:?};
     
     if [ -n "$1" ]; then
-        local filename="$BASHOR_DIR_FUNCTIONS/""$1"'.sh';
-        if [ -f "$filename" ]; then
-            shift;
-            . "$filename" "$@";
-            return 0;
-        fi
+        local ns="$1";
+        local nsFile=`echo "$ns" | tr '_' '/'`;
+        
+        local IFS=`echo -e "\r\n"`;
+        for dn in $BASHOR_DIR_FUNCTIONS; do
+            local filename="$dn/""$nsFile"'.sh';
+            if [ -f "$filename" ]; then
+                . "$filename";
+                return "$?";
+            fi
+        done;
     fi
     
     return 1;

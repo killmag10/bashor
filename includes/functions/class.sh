@@ -26,13 +26,18 @@ function loadClass()
     : ${1:?};
     
     if [ -n "$1" ]; then
-        local filename="$BASHOR_DIR_CLASS/""$1"'.sh';
         local ns="$1";
-        if [ -f "$filename" ]; then
-            . "$filename";
-            addClass "$@";
-            return "$?";
-        fi
+        local nsFile=`echo "$ns" | tr '_' '/'`;
+        
+        local IFS=`echo -e "\n\r"`;
+        for dn in $BASHOR_DIR_CLASS; do
+            local filename="$dn/""$nsFile"'.sh';
+            if [ -f "$filename" ]; then
+                . "$filename";
+                addClass "$@";
+                return "$?";
+            fi
+        done;
     fi
     
     return 1;
