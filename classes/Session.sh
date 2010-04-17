@@ -20,8 +20,19 @@ extends Session Registry;
 ##
 # Constructor
 #
-# $1    string  registry dir
+# $1    string  session dir
 function CLASS_Session___construct()
 {
-    parent call __construct "$@";
+    : ${OBJECT:?};
+    
+    optSetOpts 'c';
+    optSetArgs "$@";
+    
+    argIsset "1" || error "session dir not set";
+    local sessionDir=`argValue "1"`;
+
+    local optionCompress='';
+    optIsset 'c' && local optionCompress='-c';
+    
+    parent call __construct $optionCompress -- "$sessionDir";
 }

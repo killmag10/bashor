@@ -29,8 +29,11 @@ function CLASS_Registry___construct()
     
     this set compress "0";
     optIsset 'c' && this set compress "1";
+  
+    argIsset "1" || error "registry file not set";
+    local registryDir=`argValue "1"`;
     
-    this set file "$1";
+    this set file "$registryDir";
 }
 
 ##
