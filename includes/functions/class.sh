@@ -143,14 +143,49 @@ function _staticCall()
 ##
 # Call a object method
 #
-# $1    string  class name
-# $2    string  object name
-# $3    string  function name
+# $1    string  object name
+# $2    string  function name
 # $@    params
 # $?    0:OK    1:ERROR
 function object()
 {
     _objectCall "$@";
+    return "$?";
+}
+
+##
+# Save object data
+#
+# $1    string  object name
+# $2    mixed   data
+# $?    0:OK    1:ERROR
+function _objectLoadData()
+{
+    : ${1:?};
+    : ${2?};
+    
+    if [ -p /dev/stdin ]; then
+        local value=`cat -`;
+    else
+        local value="$2";
+    fi
+    
+    local value=`echo "$value" | tail -n +2 | base64 -d`;
+    
+    eval 'export '"$1"'="$value";';
+    return "$?";
+}
+
+##
+# load object data
+#
+# $1    string  object name
+# $?    0:OK    1:ERROR
+function _objectSaveData()
+{
+    : ${1:?};
+    echo "bashor dump 0.0.0 objectData";    
+    eval 'echo "$'"$1"'"' | base64;
     return "$?";
 }
 
@@ -204,14 +239,11 @@ function new()
     : ${2:?};
     
     local ns="$1";
-    local nsObj="$2";
-    
-    shift 2;    
-    #_createObjectAliases "$ns" "$nsObj";
+    local nsObj="$2";    
+    shift 2;
     
     eval 'export _OBJECT_CLASS_'"$nsObj""='$ns';";
     eval 'export _OBJECT_DATA_'"$nsObj"'="";';
-
     declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null;
     if [ "$?" == 0 ]; then
         _objectCall "$nsObj" '__construct' "$@";
@@ -323,15 +355,17 @@ function _objectRemove()
 ##
 # Get object var name.
 #
-# $CLASS_NAME   string  class name
+# $1   string  class name
+# $2   string  class name
 # &1    string var name
 # $?    0:OK    1:ERROR
 function _objectVarName()
 {
-    : ${CLASS_NAME:?};
+    : ${1?};
+    : ${2?};
     
-    local dataVarName='_CLASS_DATA_'"$CLASS_NAME";    
-    [ -n "$OBJECT_NAME" ] && local dataVarName='_OBJECT_DATA_'"$OBJECT_NAME";
+    local dataVarName='_CLASS_DATA_'"$1";    
+    [ -n "$2" ] && local dataVarName='_OBJECT_DATA_'"$2";
     echo "$dataVarName";
     return 0;
 }
@@ -349,7 +383,7 @@ function this()
     : ${1:?};
     : ${CLASS_NAME:?};
     
-    local dataVarName=`_objectVarName`;
+    local dataVarName=`_objectVarName "$CLASS_NAME" "$OBJECT_NAME"`;
     
     case "$1" in
         set)
@@ -385,6 +419,14 @@ function this()
                 _objectCall "$OBJECT_NAME" "$fName" "$@";
                 return "$?";
             fi
+            ;;
+        save)
+            _objectSaveData "$dataVarName";
+            return "$?";
+            ;;
+        load)
+            _objectLoadData "$dataVarName" "$2";
+            return "$?";
             ;;
     esac
 }
@@ -458,8 +500,13 @@ function _objectSet()
     : ${1:?};
     : ${2:?};
     : ${3?};
-    
-    local value="$3";            
+
+    if [ -p /dev/stdin ]; then
+        local value=`cat -`;
+    else
+        local value="$3";
+    fi
+                
     local key=`echo "$2" | base64 -w 0`;
     local value=`echo "$value" | base64 -w 0`;
     

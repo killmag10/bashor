@@ -15,6 +15,7 @@
 # @version      $Id$
 ################################################################################
 
+loadClass 'Registry';
 loadClass 'Session';
 new 'Session' 'Session' "$TEST_TEMP_DIR/registry" -c
 nl=`echo -e '\n\r'`;
