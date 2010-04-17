@@ -56,7 +56,7 @@ function addClass()
     local ns="$1";
     shift;
     
-    eval 'export _OBJECT_CLASS_'"$ns"_EXTENDS"='';";
+    eval '[ -z "_OBJECT_CLASS_'"$ns"'_EXTENDS" ] && export _OBJECT_CLASS_'"$ns"'_EXTENDS'"='';";
     declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null;
     if [ "$?" == 0 ]; then
         _staticCall "$ns" '__load' "$@";
@@ -123,6 +123,7 @@ function _staticCall()
     local OLD_OBJECT="$OBJECT";
     export CLASS_NAME="$1";
     [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
+    export CLASS_PARENT="";
     export OBJECT_NAME="";
     export FUNCTION_NAME="$2";
     export STATIC='1';
@@ -173,6 +174,7 @@ function _objectCall()
     local OLD_OBJECT="$OBJECT";
     eval 'export CLASS_NAME="$_OBJECT_CLASS_'"$1"'";';
     [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
+    export CLASS_PARENT="";
     export OBJECT_NAME="$1";
     export FUNCTION_NAME="$2";
     export STATIC='';

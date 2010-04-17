@@ -23,14 +23,5 @@ extends Session Registry;
 # $1    string  registry dir
 function CLASS_Session___construct()
 {
-    : ${1?};
-    : ${OBJECT:?};
-    
-    optSetOpts 'c';
-    optSetArgs "$@";
-    
-    this set compress "0";
-    optIsset 'c' && this set compress "1";
-    
-    this set file "$1";
+    parent call __construct "$@";
 }
