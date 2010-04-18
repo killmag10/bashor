@@ -14,32 +14,29 @@
 # @version      $Id$
 ################################################################################
 
-BASHOR_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
-if [[ ! "$BASHOR_DIR" =~ ^/ ]]; then
-    BASHOR_DIR=`echo "$PWD/$BASHOR_DIR" | sed 's#/\.\?$##'`;
+BASHOR_PATH=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
+if [[ ! "$BASHOR_PATH" =~ ^/ ]]; then
+    BASHOR_PATH=`echo "$PWD/$BASHOR_PATH" | sed 's#/\.\?$##'`;
 fi
 
 shopt -s expand_aliases;
 export nl=`echo -e '\n\r'`;
 
 # Set paths
-export BASHOR_DIR;
-export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
+export BASHOR_PATH;
+export BASHOR_PATH_INCLUDES="${BASHOR_PATH}/includes";
 
-export BASHOR_PATHS_CLASS="${BASHOR_DIR}/classes";
-export BASHOR_PATHS_FUNCTIONS="${BASHOR_DIR}/functions";
+export BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
+export BASHOR_PATHS_FUNCTIONS="${BASHOR_PATH}/functions";
 
 # Defaults
 export BASHOR_LOG_FILE="./error.log";
 export BASHOR_MODE_COMPATIBLE="0";
 
-. "${BASHOR_DIR}/config.sh";
+. "${BASHOR_PATH}/config.sh";
 
 # Add debuging channel
 exec 3>&1;
 
 # Load general functions
-. "${BASHOR_DIR_INCLUDES}/functions.sh";
-
-# Load Object Support
-#. "${BASHOR_DIR_INCLUDES}/object.sh"
+. "${BASHOR_PATH_INCLUDES}/functions.sh";

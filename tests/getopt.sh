@@ -15,7 +15,7 @@
 # @version      $Id$
 ################################################################################
 
-. "$BASHOR_DIR_INCLUDES/functions/getopt.sh";
+. "$BASHOR_PATH_INCLUDES/functions/getopt.sh";
 
 nl=`echo -e '\n\r'`;
 
