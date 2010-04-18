@@ -30,7 +30,7 @@ function loadClass()
         local nsFile=`echo "$ns" | tr '_' '/'`;
         
         local IFS=`echo -e "\n\r"`;
-        for dn in $BASHOR_DIR_CLASS; do
+        for dn in $BASHOR_PATHS_CLASS; do
             local filename="$dn/""$nsFile"'.sh';
             if [ -f "$filename" ]; then
                 . "$filename";

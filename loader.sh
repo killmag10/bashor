@@ -26,8 +26,8 @@ export nl=`echo -e '\n\r'`;
 export BASHOR_DIR;
 export BASHOR_DIR_INCLUDES="${BASHOR_DIR}/includes";
 
-export BASHOR_DIR_CLASS="${BASHOR_DIR}/classes";
-export BASHOR_DIR_FUNCTIONS="${BASHOR_DIR}/functions";
+export BASHOR_PATHS_CLASS="${BASHOR_DIR}/classes";
+export BASHOR_PATHS_FUNCTIONS="${BASHOR_DIR}/functions";
 
 # Defaults
 export BASHOR_LOG_FILE="./error.log";

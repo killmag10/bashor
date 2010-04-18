@@ -29,7 +29,7 @@ function loadFunctions()
         local nsFile=`echo "$ns" | tr '_' '/'`;
         
         local IFS=`echo -e "\r\n"`;
-        for dn in $BASHOR_DIR_FUNCTIONS; do
+        for dn in $BASHOR_PATHS_FUNCTIONS; do
             local filename="$dn/""$nsFile"'.sh';
             if [ -f "$filename" ]; then
                 . "$filename";
