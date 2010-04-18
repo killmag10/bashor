@@ -15,7 +15,7 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Log' "$TEST_TEMP_DIR/log.log";
+loadClass 'Log';
 nl=`echo -e '\n\r'`;
 
 class Log remove;

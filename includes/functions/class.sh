@@ -59,7 +59,7 @@ function addClass()
     eval '[ -z "_OBJECT_CLASS_'"$ns"'_EXTENDS" ] && export _OBJECT_CLASS_'"$ns"'_EXTENDS'"='';";
     declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null;
     if [ "$?" == 0 ]; then
-        _staticCall "$ns" '__load' "$@";
+        _staticCall "$ns" '__load';
         return "$?";
     fi
     

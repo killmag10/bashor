@@ -24,7 +24,9 @@ export TEST_TEMP_DIR="$TEST_DIR/temp";
 export TEST_RESOURCE_DIR="$TEST_DIR/resources";
 export TESTS_FAIL='0';
 
-. "$BASE_DIR/loader.sh"
+. "$BASE_DIR/loader.sh";
+
+export BASHOR_LOG_FILE="$TEST_TEMP_DIR/log.log";
 
 function doTest()
 {

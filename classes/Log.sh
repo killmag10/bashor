@@ -21,11 +21,7 @@
 # $1    string  log file
 function CLASS_Log___load()
 {
-    if [ -n "$1" ]; then
-        this set file "$1";
-    else
-        this set file "$BASHOR_LOG_FILE";
-    fi
+    this set file "$BASHOR_LOG_FILE";
 }
 
 ##

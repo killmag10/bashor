@@ -33,7 +33,9 @@ export BASHOR_PATHS_FUNCTIONS="${BASHOR_PATH}/functions";
 export BASHOR_LOG_FILE="./error.log";
 export BASHOR_MODE_COMPATIBLE="0";
 
-. "${BASHOR_PATH}/config.sh";
+[ -z "$BASHOR_PATH_CONFIG" ] && export BASHOR_PATH_CONFIG="${BASHOR_PATH}/config.sh";
+
+. "$BASHOR_PATH_CONFIG";
 
 # Add debuging channel
 exec 3>&1;

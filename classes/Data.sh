@@ -20,18 +20,10 @@
 #
 # -s   integer session size (Default:65536)
 # -c   compress
-function CLASS_Data___load()
-{
-    this call __construct "$@";
-}
-
-##
-# Constructor
-#
-# -s   integer session size (Default:65536)
-# -c   compress
 function CLASS_Data___construct()
 {    
+    : ${OBJECT:?};
+    
     optSetOpts 'cs:';
     optSetArgs "$@";
     
@@ -52,6 +44,7 @@ function CLASS_Data___construct()
 # &0    string  Data
 function CLASS_Data_set()
 {
+    : ${OBJECT:?};
     : ${1:?};
     
     if [ -p /dev/stdin ]; then
@@ -82,6 +75,7 @@ function CLASS_Data_set()
 # $?    0:OK    1:ERROR
 function CLASS_Data_remove()
 {
+    : ${OBJECT:?};
     : ${1:?};
     
     local key=`echo "$1" | base64 -w 0`;
@@ -102,6 +96,7 @@ function CLASS_Data_remove()
 # &1    string Data 
 function CLASS_Data_get()
 {
+    : ${OBJECT:?};
     : ${1:?};
     
     local key=`echo "$1" | base64`;
@@ -123,6 +118,7 @@ function CLASS_Data_get()
 # &1    string Data 
 function CLASS_Data_isset()
 {
+    : ${OBJECT:?};
     : ${1:?};
     
     local key=`echo "$1" | base64`;
@@ -144,6 +140,7 @@ function CLASS_Data_isset()
 # &1    string Data 
 function CLASS_Data__compress()
 {
+    : ${OBJECT:?};
     : ${1:?};
     
     local compress=`this get compress`;
@@ -161,7 +158,9 @@ function CLASS_Data__compress()
 #
 # $?    0:YES   1:NO
 function CLASS_Data_isCompressed()
-{    
+{
+    : ${OBJECT:?};
+    
     local compress=`this get compress`;
     [ "$compress" == 1 ];
     return "$?";
@@ -172,7 +171,9 @@ function CLASS_Data_isCompressed()
 #
 # $?    0:OK    1:ERROR
 function CLASS_Data_size()
-{    
+{
+    : ${OBJECT:?};
+    
     this get data | wc -c;
     return "$?";
 }
