@@ -19,5 +19,5 @@ loadClass 'Terminal';
 
 res=`class Terminal getColumns`;
 checkRegex "getColumns" "$res" '[1-9][0-9]*';
-res=`class Terminal getRows`;
-checkRegex "getRows" "$res" '[1-9][0-9]*';
+res=`class Terminal getLines`;
+checkRegex "getLines" "$res" '[1-9][0-9]*';
