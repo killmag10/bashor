@@ -31,6 +31,8 @@
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_setBackgroundColor()
 {
+    : ${1:?};
+    
     tput setb "$1";
     return $?
 }
@@ -51,6 +53,8 @@ function CLASS_Terminal_setBackgroundColor()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_setBackgroundColorAnsi()
 {
+    : ${1:?};
+    
     tput setab "$1";
     return $?
 }
@@ -71,6 +75,8 @@ function CLASS_Terminal_setBackgroundColorAnsi()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_setFordergroundColor()
 {
+    : ${1:?};
+    
     tput setf "$1";
     return $?
 }
@@ -91,6 +97,8 @@ function CLASS_Terminal_setFordergroundColor()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_setFordergroundColorAnsi()
 {
+    : ${1:?};
+    
     tput setaf "$1";
     return $?
 }
@@ -105,6 +113,8 @@ function CLASS_Terminal_setFordergroundColorAnsi()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_setStyleBold()
 {
+    : ${1:?};
+    
     if [ "$1" == 1 ]; then
         tput bold;
     else
@@ -123,6 +133,8 @@ function CLASS_Terminal_setStyleBold()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_setStyleUnderline()
 {
+    : ${1:?};
+    
     if [ "$1" == 1 ]; then
         tput smul;
     else
@@ -137,7 +149,7 @@ function CLASS_Terminal_setStyleUnderline()
 # $1    integer count
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_resetStyle()
-{
+{    
     tput sgr0;
     return $?
 }
@@ -189,6 +201,8 @@ function CLASS_Terminal_saveCurser()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_moveCurserUp()
 {
+    : ${1:?};
+    
     tput cuu "$1";
     return $?
 }
@@ -200,6 +214,8 @@ function CLASS_Terminal_moveCurserUp()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_moveCurserDown()
 {
+    : ${1:?};
+    
     tput cud "$1";
     return $?
 }
@@ -211,6 +227,8 @@ function CLASS_Terminal_moveCurserDown()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_moveCurserForward()
 {
+    : ${1:?};
+    
     tput cuf "$1";
     return $?
 }
@@ -222,6 +240,8 @@ function CLASS_Terminal_moveCurserForward()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_moveCurserBackward()
 {
+    : ${1:?};
+    
     tput cub "$1";
     return $?
 }
@@ -234,6 +254,9 @@ function CLASS_Terminal_moveCurserBackward()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_moveCurserTo()
 {
+    : ${1:?};
+    : ${2:?};
+    
     tput cup "$1" "$2";
     return $?
 }
