@@ -35,6 +35,20 @@ function optIsset()
 }
 
 ##
+# Is option not empty
+#
+# $1    string  key
+# $?    0:OK    1:ERROR
+function optIsNotEmpty()
+{
+    : ${1:?};
+    
+    local tmp=`optValue "$@"`;
+    [ "$tmp" != '' ];
+    return "$?";
+}
+
+##
 # Get argument value
 #
 # $1    string  key
@@ -210,5 +224,19 @@ function argIsset()
     eval set -- $OPT_PARAM_QUOTED;
 
     [ "$#" -ge "$key" ] && [ "0" -lt "$key" ];
+    return "$?";
+}
+
+##
+# Is argument not empty
+#
+# $1    string  key
+# $?    0:OK    1:ERROR
+function argIsNotEmpty()
+{
+    : ${1:?};
+    
+    local tmp=`argValue "$@"`;
+    [ "$tmp" != '' ];
     return "$?";
 }

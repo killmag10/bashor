@@ -53,7 +53,21 @@ function optIsset()
 }
 
 ##
-# Get argument list
+# Is option not empty
+#
+# $1    string  key
+# $?    0:OK    1:ERROR
+function optIsNotEmpty()
+{
+    : ${1:?};
+    
+    local tmp=`optValue "$@"`;
+    [ "$tmp" != '' ];
+    return "$?";
+}
+
+##
+# Is argument set
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
@@ -69,6 +83,20 @@ function argIsset()
     done
 
     [ "$#" -gt "$key" ] && [ "0" -lt "$key" ];
+    return "$?";
+}
+
+##
+# Is argument not empty
+#
+# $1    string  key
+# $?    0:OK    1:ERROR
+function argIsNotEmpty()
+{
+    : ${1:?};
+    
+    local tmp=`argValue "$@"`;
+    [ "$tmp" != '' ];
     return "$?";
 }
 

@@ -97,6 +97,7 @@ function getBacktrace()
     while caller "$pos"; do        
         ((pos++));
         local res=0;
+        echo -n "- $pos: ";
     done
     return "$res";
 }
@@ -168,7 +169,7 @@ function error()
             && local msgLog="$msgOut""$nl""$trace";
         echo "$msgLog" | class log error;
     fi
-    exit ${2:-1};
+    #exit ${2:-1};
 }
 
 ##

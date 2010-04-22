@@ -257,7 +257,7 @@ function CLASS_Terminal_moveCurserTo()
     : ${1:?};
     : ${2:?};
     
-    tput cup "$1" "$2";
+    tput cup "$2" "$1";
     return $?
 }
 
