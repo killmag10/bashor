@@ -38,8 +38,8 @@ function CLASS_Terminal_Graphic_setPixel()
 
     class Terminal saveCurser;
     class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
-    [ -n "`argValue 4`" ] && class Terminal setBackgroundColor "`argValue 4`";
-    [ -n "`argValue 5`" ] && class Terminal setFordergroundColor "`argValue 5`";    
+    [ -n "`argValue 4`" ] && class Terminal setBackgroundColorAnsi "`argValue 4`";
+    [ -n "`argValue 5`" ] && class Terminal setFordergroundColorAnsi "`argValue 5`";    
     
     optIsset 'B' && class Terminal setStyleBold 1;
     optIsset 'U' && class Terminal setStyleUnderline 1;
@@ -77,8 +77,8 @@ function CLASS_Terminal_Graphic_printText()
 
     class Terminal saveCurser;
     class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
-    [ -n "`argValue 4`" ] && class Terminal setBackgroundColor "`argValue 4`";
-    [ -n "`argValue 5`" ] && class Terminal setFordergroundColor "`argValue 5`";    
+    [ -n "`argValue 4`" ] && class Terminal setBackgroundColorAnsi "`argValue 4`";
+    [ -n "`argValue 5`" ] && class Terminal setFordergroundColorAnsi "`argValue 5`";    
     
     optIsset 'B' && class Terminal setStyleBold 1;
     optIsset 'U' && class Terminal setStyleUnderline 1;
@@ -121,8 +121,8 @@ function CLASS_Terminal_Graphic_printRectangleFilled()
         local h="`argValue 4`";        
         class Terminal saveCurser;
         
-        argIsNotEmpty 6 && class Terminal setBackgroundColor "`argValue 6`";
-        argIsNotEmpty 7 && class Terminal setFordergroundColor "`argValue 7`";
+        argIsNotEmpty 6 && class Terminal setBackgroundColorAnsi "`argValue 6`";
+        argIsNotEmpty 7 && class Terminal setFordergroundColorAnsi "`argValue 7`";
         optIsset 'B' && class Terminal setStyleBold 1;
         optIsset 'U' && class Terminal setStyleUnderline 1;
         
