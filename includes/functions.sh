@@ -229,7 +229,7 @@ function debug()
     fi
 }
 
-function bufferData()
+function bufferStream()
 {
     local tmp=`cat -`;
     echo -n "$tmp";   
