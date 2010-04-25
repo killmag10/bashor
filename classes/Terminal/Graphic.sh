@@ -16,17 +16,6 @@
 ################################################################################
 
 ##
-# buffer graphic
-#
-# &1    string data
-function CLASS_Terminal_Graphic__buffer()
-{
-    local tmp=`cat -`;
-    echo -n "$tmp";   
-    return "$?";
-}
-
-##
 # set one pixel
 #
 # $1    integer x
@@ -42,14 +31,13 @@ function CLASS_Terminal_Graphic_setPixel()
     optSetOpts "BU";
     optSetArgs "$@";
 
-    argIsset 1 || error "Param 1 not set";
-    argIsset 2 || error "Param 2 not set";
-    argIsset 3 || error "Param 3 not set";
+    argIsNotEmpty 1 || error "Param 1 not set";
+    argIsNotEmpty 2 || error "Param 2 not set";
 
     loadClass 'Terminal';
 
     class Terminal saveCurser;
-    class Terminal moveCurserTo "`argValue 1`" "`argValue 2`";
+    class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
     [ -n "`argValue 4`" ] && class Terminal setBackgroundColor "`argValue 4`";
     [ -n "`argValue 5`" ] && class Terminal setFordergroundColor "`argValue 5`";    
     
@@ -59,6 +47,43 @@ function CLASS_Terminal_Graphic_setPixel()
     local char="`argValue 3`";
     local char="${char:- }";
     echo -n "${char:0:1}";
+    class Terminal resetStyle;
+    class Terminal restoreCurser;
+    
+    return "$?";
+}
+
+##
+# print a text
+#
+# $1    integer x
+# $2    integer y
+# $3    char    a char
+# $4    integer background color
+# $5    integer forderground color
+# -B    -       Bold
+# -U    -       Underline
+# $?    0:OK    1:ERROR
+function CLASS_Terminal_Graphic_printText()
+{
+    optSetOpts "BU";
+    optSetArgs "$@";
+
+    argIsNotEmpty 1 || error "Param 1 not set";
+    argIsNotEmpty 2 || error "Param 2 not set";
+    argIsNotEmpty 3 || error "Param 3 not set";
+
+    loadClass 'Terminal';
+
+    class Terminal saveCurser;
+    class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
+    [ -n "`argValue 4`" ] && class Terminal setBackgroundColor "`argValue 4`";
+    [ -n "`argValue 5`" ] && class Terminal setFordergroundColor "`argValue 5`";    
+    
+    optIsset 'B' && class Terminal setStyleBold 1;
+    optIsset 'U' && class Terminal setStyleUnderline 1;
+    
+    echo -n "`argValue 3`";
     class Terminal resetStyle;
     class Terminal restoreCurser;
     
@@ -81,31 +106,39 @@ function CLASS_Terminal_Graphic_printRectangleFilled()
     optSetOpts "BU";
     optSetArgs "$@";
 
-    argIsset 1 || error "Param 1 not set";
-    argIsset 2 || error "Param 2 not set";
-    argIsset 3 || error "Param 3 not set";
-    argIsset 4 || error "Param 4 not set";
+    argIsNotEmpty 1 || error "Param 1 not set";
+    argIsNotEmpty 2 || error "Param 2 not set";
+    argIsNotEmpty 3 || error "Param 3 not set";
+    argIsNotEmpty 4 || error "Param 4 not set";
     argIsset 5 || error "Param 5 not set";
 
     loadClass 'Terminal';
 
     (
-        local char="${5:- }";
+        local char="`argValue 5`";
+        local char="${char:- }";
         local char="${char:0:1}";
-        local y2=`echo "$2 + $4 - 1" | bc`;
-        
+        local h="`argValue 4`";        
         class Terminal saveCurser;
         
-        [ -n "$6" ] && class Terminal setBackgroundColor "$6";
-        [ -n "$7" ] && class Terminal setFordergroundColor "$7";
-        for i in `seq "$2" "$y2"`; do
-            class Terminal moveCurserTo "$1" "$i";
-            dd if=/dev/zero 2>/dev/null bs="$3" count="1" | tr '\0' "$char";
-        done;
+        argIsNotEmpty 6 && class Terminal setBackgroundColor "`argValue 6`";
+        argIsNotEmpty 7 && class Terminal setFordergroundColor "`argValue 7`";
+        optIsset 'B' && class Terminal setStyleBold 1;
+        optIsset 'U' && class Terminal setStyleUnderline 1;
+        
+        class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
+        local v3="`argValue 3`";
+        local tmp=`
+            dd if=/dev/zero 2>/dev/null bs="$v3" count="1" | tr '\0' "$char";
+            class Terminal moveCurserBy -"$v3" 1;
+        `;
+        local out='';
+        for i in `seq "$h"`; do local out="${out}${tmp}"; done;
+        echo -n "$out";
         
         class Terminal resetStyle;    
         class Terminal restoreCurser;
-    ) | this call _buffer
+    )
     
     return "$?";
 }

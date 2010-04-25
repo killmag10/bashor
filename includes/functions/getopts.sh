@@ -187,8 +187,7 @@ function argList()
 # $?    0:OK    1:ERROR
 function argValue()
 {
-    : ${1:?};
-    
+    : ${1:?};    
     (
         local key="$1";
         local return=1;
@@ -203,11 +202,9 @@ function argValue()
                 echo "$1";
                 return 0;
             fi
-        done;
-        
+        done;        
         return "$return";
     );
-
     return "$?";
 }
 
@@ -218,11 +215,9 @@ function argValue()
 # $?    0:OK    1:ERROR
 function argIsset()
 {
-    : ${1:?};
-    
+    : ${1:?};    
     local key="$1";
     eval set -- $OPT_PARAM_QUOTED;
-
     [ "$#" -ge "$key" ] && [ "0" -lt "$key" ];
     return "$?";
 }
@@ -234,9 +229,9 @@ function argIsset()
 # $?    0:OK    1:ERROR
 function argIsNotEmpty()
 {
-    : ${1:?};
-    
-    local tmp=`argValue "$@"`;
+    : ${1:?};    
+    argIsset "$1" && return 0;    
+    local tmp=`argValue "$1"`;
     [ "$tmp" != '' ];
     return "$?";
 }

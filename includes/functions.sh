@@ -169,7 +169,7 @@ function error()
             && local msgLog="$msgOut""$nl""$trace";
         echo "$msgLog" | class log error;
     fi
-    #exit ${2:-1};
+    exit ${2:-1};
 }
 
 ##
@@ -227,6 +227,13 @@ function debug()
             && local msgLog="$msgOut""$nl""$trace";
         echo "$msgLog" | class log debug;
     fi
+}
+
+function bufferData()
+{
+    local tmp=`cat -`;
+    echo -n "$tmp";   
+    return "$?";
 }
 
 . "$BASHOR_PATH_INCLUDES/functions/class.sh";

@@ -73,15 +73,10 @@ function optIsNotEmpty()
 # $?    0:OK    1:ERROR
 function argIsset()
 {
-    : ${1:?};
-    
+    : ${1:?};    
     local key="$1";
-    eval set -- "$OPT_ARGS";
-    
-    while [ "$1" != "--" ]; do
-        shift 1;
-    done
-
+    eval set -- "$OPT_ARGS";    
+    while [ "$1" != "--" ]; do shift 1; done;
     [ "$#" -gt "$key" ] && [ "0" -lt "$key" ];
     return "$?";
 }
@@ -93,9 +88,9 @@ function argIsset()
 # $?    0:OK    1:ERROR
 function argIsNotEmpty()
 {
-    : ${1:?};
-    
-    local tmp=`argValue "$@"`;
+    : ${1:?};    
+    argIsset "$1" && return 0;
+    local tmp=`argValue "$1"`;
     [ "$tmp" != '' ];
     return "$?";
 }
@@ -108,7 +103,6 @@ function argIsNotEmpty()
 function optValue()
 {
     : ${1:?};
-        
     local key="$1";
     eval set -- "$OPT_ARGS";    
 
@@ -121,8 +115,7 @@ function optValue()
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-            local res="${res:1}";
-            local opt=`optGetOptLongExtension "$res"`;
+            local opt=`optGetOptLongExtension "${res:1}"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
         fi
@@ -145,15 +138,12 @@ function optValue()
 # $?    0:OK    1:ERROR
 function argValue()
 {
-    : ${1:?};
-    
+    : ${1:?};    
     (
         local key="$1";
         local return=1;
         eval set -- "$OPT_ARGS";
-        while [ "$1" != "--" ]; do
-            shift 1;
-        done
+        while [ "$1" != "--" ]; do shift 1; done;
 
         num=0;
         while shift 1; do
@@ -162,8 +152,7 @@ function argValue()
                 echo "$1";
                 return 0;
             fi
-        done;
-        
+        done;        
         return "$return";
     );
 
