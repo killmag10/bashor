@@ -125,7 +125,11 @@ function optSetOpts()
 function optSetArgs()
 {        
     OPT_ARGS="$@";
-    OPT_ARGS_QUOTED=`for v in "$@"; do echo -n \""$v"\"" "; done; echo;`;
+    OPT_ARGS_QUOTED=`
+        for v in "$@"; do
+            local v=\`echo "$v" | sed 's/"/\\\\\\\\"/' \`;
+            echo -n \""$v"\"" ";
+        done; echo;`;
     OPT_PARAM_QUOTED=`
         echo -n "$OPT_ARGS_QUOTED" | sed -n 's#\(\|\(.\)\s\)"-.*#\2#p';
         echo -n " ";

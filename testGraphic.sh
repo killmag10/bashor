@@ -98,6 +98,40 @@ function toPrint() {
     class Terminal_Graphic setPixel -- 25 26 '' 5
     class Terminal_Graphic setPixel -- 25 27 '' 6
     class Terminal_Graphic setPixel -- 25 28 '' 7
+    
+    class Terminal_Graphic setPixel -- 30 28 '' 6
+    class Terminal_Graphic setPixel -- 31 28 '' 6
+    class Terminal_Graphic setPixel -- 32 28 '' 6
+    class Terminal_Graphic setPixel -- 33 28 '' 6
+    
+    class Terminal_Graphic setPixel -- 29 27 '' 6
+    class Terminal_Graphic setPixel -B -- 30 27 '\\' 6
+    class Terminal_Graphic setPixel -B -- 31 27 '_' 6
+    class Terminal_Graphic setPixel -B -- 32 27 '_' 6
+    class Terminal_Graphic setPixel -B -- 33 27 '/' 6
+    class Terminal_Graphic setPixel -- 34 27 '' 6
+    
+    class Terminal_Graphic setPixel -- 29 26 '' 6
+    class Terminal_Graphic setPixel -- 30 26 '' 6
+    class Terminal_Graphic setPixel -- 33 26 '' 6
+    class Terminal_Graphic setPixel -- 34 26 '' 6
+
+    class Terminal_Graphic setPixel -B -- 30 25 '"' 6 0
+    class Terminal_Graphic setPixel -B -- 31 25 '"' 6 0
+    class Terminal_Graphic setPixel -B -- 32 25 '"' 6 0
+    class Terminal_Graphic setPixel -B -- 33 25 '"' 6 0
+
+    class Terminal_Graphic setPixel -B -- 31 26 'o' 6 3
+    class Terminal_Graphic setPixel -B -- 32 26 'o' 6 3    
+    class Terminal_Graphic setPixel -B -- 28 26 'q' 0 6
+    class Terminal_Graphic setPixel -B -- 35 26 'p' 0 6
+    
+    class Terminal_Graphic setPixel -B -- 29 23 'H' '' 1
+    class Terminal_Graphic setPixel -B -- 30 23 'e' '' 2
+    class Terminal_Graphic setPixel -B -- 31 23 'l' '' 3
+    class Terminal_Graphic setPixel -B -- 32 23 'l' '' 4
+    class Terminal_Graphic setPixel -B -- 33 23 'o' '' 5
+    class Terminal_Graphic setPixel -B -- 34 23 '!' '' 6
 }
 
 clear;

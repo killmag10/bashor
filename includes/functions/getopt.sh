@@ -115,7 +115,8 @@ function optValue()
         local res=`echo "$1" | sed 's#^-##'`;
         echo "$res" | grep -q '^-';
         if [ "$?" == 0 ]; then
-            local opt=`optGetOptLongExtension "${res:1}"`;
+            local res="${res:1}";
+            local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
         fi
