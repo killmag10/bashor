@@ -28,7 +28,7 @@
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_Graphic_setPixel()
 {
-    optSetOpts "BU";
+    optSetOpts "BUX";
     optSetArgs "$@";
 
     argIsNotEmpty 1 || error "Param 1 not set";
@@ -39,17 +39,18 @@ function CLASS_Terminal_Graphic_setPixel()
     class Terminal saveCurser;
     class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
     [ -n "`argValue 4`" ] && class Terminal setBackgroundColorAnsi "`argValue 4`";
-    [ -n "`argValue 5`" ] && class Terminal setFordergroundColorAnsi "`argValue 5`";    
+    [ -n "`argValue 5`" ] && class Terminal setFordergroundColorAnsi "`argValue 5`";
     
     optIsset 'B' && class Terminal setStyleBold 1;
     optIsset 'U' && class Terminal setStyleUnderline 1;
+    optIsset 'X' && class Terminal setExtendedCharacters 1;
     
     local char="`argValue 3`";
     local char="${char:- }";
     echo -n "${char:0:1}";
+    optIsset 'X' && class Terminal setExtendedCharacters 0;
     class Terminal resetStyle;
     class Terminal restoreCurser;
-    
     return "$?";
 }
 
@@ -66,7 +67,7 @@ function CLASS_Terminal_Graphic_setPixel()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_Graphic_printText()
 {
-    optSetOpts "BU";
+    optSetOpts "BUX";
     optSetArgs "$@";
 
     argIsNotEmpty 1 || error "Param 1 not set";
@@ -82,8 +83,10 @@ function CLASS_Terminal_Graphic_printText()
     
     optIsset 'B' && class Terminal setStyleBold 1;
     optIsset 'U' && class Terminal setStyleUnderline 1;
+    optIsset 'X' && class Terminal setExtendedCharacters 1;
     
     echo -n "`argValue 3`";
+    optIsset 'X' && class Terminal setExtendedCharacters 0;
     class Terminal resetStyle;
     class Terminal restoreCurser;
     
@@ -103,7 +106,7 @@ function CLASS_Terminal_Graphic_printText()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_Graphic_printRectangleFilled()
 {
-    optSetOpts "BU";
+    optSetOpts "BUX";
     optSetArgs "$@";
 
     argIsNotEmpty 1 || error "Param 1 not set";
@@ -125,6 +128,7 @@ function CLASS_Terminal_Graphic_printRectangleFilled()
         argIsNotEmpty 7 && class Terminal setFordergroundColorAnsi "`argValue 7`";
         optIsset 'B' && class Terminal setStyleBold 1;
         optIsset 'U' && class Terminal setStyleUnderline 1;
+        optIsset 'X' && class Terminal setExtendedCharacters 1;
         
         class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
         local v3="`argValue 3`";
@@ -135,7 +139,7 @@ function CLASS_Terminal_Graphic_printRectangleFilled()
         local out='';
         for i in `seq "$h"`; do local out="${out}${tmp}"; done;
         echo -n "$out";
-        
+        optIsset 'X' && class Terminal setExtendedCharacters 0;
         class Terminal resetStyle;    
         class Terminal restoreCurser;
     )

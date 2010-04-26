@@ -140,24 +140,17 @@ function optValue()
 function argValue()
 {
     : ${1:?};    
-    (
+
         local key="$1";
-        local return=1;
         eval set -- "$OPT_ARGS";
         while [ "$1" != "--" ]; do shift 1; done;
 
-        num=0;
-        while shift 1; do
-            ((num++))
-            if [ "$num" == "$key" ]; then
-                echo "$1";
-                return 0;
-            fi
-        done;        
-        return "$return";
-    );
-
-    return "$?";
+        shift $key;
+        if [ "$?" = 0 ]; then
+            echo "$1";
+            return 0;
+        fi    
+        return "1";
 }
 
 ##

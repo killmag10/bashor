@@ -191,25 +191,16 @@ function argList()
 # $?    0:OK    1:ERROR
 function argValue()
 {
-    : ${1:?};    
-    (
-        local key="$1";
-        local return=1;
-        eval set -- $OPT_PARAM_QUOTED;
+    : ${1:?};
+    local key="$1";
+    eval set -- $OPT_PARAM_QUOTED;
 
-        num=0;
-        local first=0;
-        while shift "$first"; do
-            local first=1;
-            ((num++))
-            if [ "$num" == "$key" ]; then
-                echo "$1";
-                return 0;
-            fi
-        done;        
-        return "$return";
-    );
-    return "$?";
+    shift $(( $key - 1 ));
+    if [ "$?" = 0 ]; then
+        echo "$1";
+        return 0;
+    fi
+    return 1;        
 }
 
 ##

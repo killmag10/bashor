@@ -52,8 +52,10 @@ function CLASS_Terminal_setBackgroundColor()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_setBackgroundColorAnsi()
 {
-    : ${1:?};    
-    tput setab "$1";
+    : ${1:?};
+    [ "$1" -lt 0 ] && return 1;
+    [ "$1" -gt 7 ] && return 1;
+    echo -en '\033[4'"$1"'m';
     return $?
 }
 
@@ -94,8 +96,10 @@ function CLASS_Terminal_setFordergroundColor()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_setFordergroundColorAnsi()
 {
-    : ${1:?};    
-    tput setaf "$1";
+    : ${1:?};
+    [ "$1" -lt 0 ] && return 1;
+    [ "$1" -gt 7 ] && return 1;
+    echo -en '\033[3'"$1"'m';
     return $?
 }
 
@@ -111,6 +115,21 @@ function CLASS_Terminal_setStyleBold()
 {
     : ${1:?};    
     [ "$1" == 1 ] && tput bold || tput dim;
+    return $?
+}
+
+##
+# Set extendet Characters
+#
+# 0:Off
+# 1:On
+#
+# $1    integer count
+# $?    0:OK    1:ERROR
+function CLASS_Terminal_setExtendedCharacters()
+{
+    : ${1:?};    
+    [ "$1" == 1 ] && echo -en '\033(0' || echo -en '\033(B';
     return $?
 }
 
@@ -136,7 +155,7 @@ function CLASS_Terminal_setStyleUnderline()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_resetStyle()
 {    
-    tput sgr0;
+    echo -en '\033[0m';
     return $?
 }
 
@@ -166,7 +185,7 @@ function CLASS_Terminal_getLines()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_restoreCurser()
 {
-    tput rc;
+    echo -en '\033[u';
     return $?
 }
 
@@ -176,7 +195,7 @@ function CLASS_Terminal_restoreCurser()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_saveCurser()
 {
-    tput sc;
+    echo -en '\033[s';
     return $?
 }
 
@@ -188,7 +207,7 @@ function CLASS_Terminal_saveCurser()
 function CLASS_Terminal_moveCurserUp()
 {
     : ${1:?};    
-    tput cuu "$1";
+    echo -en '\033['"$1"'A';
     return $?
 }
 
@@ -200,7 +219,7 @@ function CLASS_Terminal_moveCurserUp()
 function CLASS_Terminal_moveCurserDown()
 {
     : ${1:?};    
-    tput cud "$1";
+    echo -en '\033['"$1"'B';
     return $?
 }
 
@@ -211,8 +230,8 @@ function CLASS_Terminal_moveCurserDown()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_moveCurserForward()
 {
-    : ${1:?};    
-    tput cuf "$1";
+    : ${1:?};
+    echo -en '\033['"$1"'C';
     return $?
 }
 
@@ -223,8 +242,8 @@ function CLASS_Terminal_moveCurserForward()
 # $?    0:OK    1:ERROR
 function CLASS_Terminal_moveCurserBackward()
 {
-    : ${1:?};    
-    tput cub "$1";
+    : ${1:?};
+    echo -en '\033['"$1"'D';
     return $?
 }
 
@@ -255,7 +274,7 @@ function CLASS_Terminal_moveCurserTo()
 {
     : ${1:?};
     : ${2:?};    
-    tput cup "$2" "$1";
+    echo -en '\033['"$2"';'"$1"'H';
     return $?
 }
 
