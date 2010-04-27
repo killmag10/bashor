@@ -37,36 +37,37 @@ function toPrint() {
 
     chars='abcdefgh';
     for i in {0..7}; do
-        class Terminal_Graphic printRectangleFilled -- $(( $i + 5 )) 5 1 16 "${chars:$i:1}" $i
+        class Terminal_Graphic printRectangleFilled -- $(( $i + 4 )) 5 1 16 "${chars:$i:1}" $i
     done;
     chars='jklmnopq';
     for i in {0..7}; do
-        class Terminal_Graphic printRectangleFilled -X -- $(( $i + 5 )) 21 1 8 "${chars:$i:1}" $i
+        class Terminal_Graphic printRectangleFilled -X -- $(( $i + 4 )) 21 1 8 "${chars:$i:1}" $i
     done;
 
     for i in {0..7}; do
-        class Terminal_Graphic printRectangleFilled -- 25 $(( $i + 5 )) 10 1 ' ' $i
+        class Terminal_Graphic printRectangleFilled -X -- 20 $(( $i + 5 )) 4 1 'a' $i 0
+        class Terminal_Graphic printRectangleFilled -- 24 $(( $i + 5 )) 9 1 ' ' $i
+        class Terminal_Graphic printRectangleFilled -X -- 33 $(( $i + 5 )) 4 1 'a' $i 7
     done;
 
     for i in {0..7}; do
-        class Terminal_Graphic printText -- 15 $(( $i + 5 )) 'a text' $i
+        class Terminal_Graphic printText -- 13 $(( $i + 5 )) 'a text' $i
     done;
     for i in {0..7}; do
-        class Terminal_Graphic printText -- 15 $(( $i + 13 )) 'a text' 7 $i
+        class Terminal_Graphic printText -- 13 $(( $i + 13 )) 'a text' 7 $i
     done;
     for i in {0..7}; do
-        class Terminal_Graphic printText -B -- 15 $(( $i + 21 )) 'a text' 0 $i
+        class Terminal_Graphic printText -B -- 13 $(( $i + 21 )) 'a text' 0 $i
     done;
     
     for i in {0..7}; do
-        class Terminal_Graphic setPixel -- 25 $(( $i + 21 )) '' $i
+        class Terminal_Graphic setPixel -- 20 $(( $i + 13 )) '' $i
     done;
     for i in {0..7}; do
-        class Terminal_Graphic setPixel -X -B -- 25 $(( $i + 13 )) 'a' $i 0
         for c in {0..7}; do
-            class Terminal_Graphic setPixel -X -- $(( $c + 26 )) $(( $i + 13 )) 'a' $i $c
+            class Terminal_Graphic setPixel -X -- $(( $c * 2 + 21 )) $(( $i + 13 )) 'a' $i $c
+            class Terminal_Graphic setPixel -X -B -- $(( $c * 2 + 22 )) $(( $i + 13 )) 'a' $i $c
         done;
-        class Terminal_Graphic setPixel -X -B -- 34 $(( $i + 13 )) 'a' $i 7
     done;
     
     class Terminal_Graphic setPixel -- 30 28 '' 6
@@ -102,6 +103,19 @@ function toPrint() {
     class Terminal_Graphic setPixel -B -- 32 23 'l' '' 4
     class Terminal_Graphic setPixel -B -- 33 23 'o' '' 5
     class Terminal_Graphic setPixel -B -- 34 23 '!' '' 6
+    
+    class Terminal_Graphic printText -- 20 22 'EEEEEE' 0 7
+    class Terminal_Graphic printText -- 20 23 'E' 0 7
+    class Terminal_Graphic printText -- 20 24 'E' 0 7
+    class Terminal_Graphic printText -- 20 25 'EEEEEE' 0 7
+    class Terminal_Graphic printText -- 20 26 'E' 0 7
+    class Terminal_Graphic printText -- 20 27 'E' 0 7
+    class Terminal_Graphic printText -- 20 28 'EEEEEE' 0 7
+    
+    class Terminal_Graphic printText -X -- 21 23 'aaaaa' 0 7
+    class Terminal_Graphic printText -X -- 21 24 'aaaaa' 0 7
+    class Terminal_Graphic printText -X -- 21 26 'aaaaa' 0 7
+    class Terminal_Graphic printText -X -- 21 27 'aaaaa' 0 7
 }
 
 clear;
