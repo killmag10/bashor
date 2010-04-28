@@ -30,25 +30,29 @@ function CLASS_Terminal_Graphic_setPixel()
 {
     optSetOpts "BUX";
     optSetArgs "$@";
+    
+    loadClassOnce 'Terminal';
 
     argIsNotEmpty 1 || error "Param 1 not set";
     argIsNotEmpty 2 || error "Param 2 not set";
 
-    loadClass 'Terminal';
-
     class Terminal saveCurser;
     class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
-    [ -n "`argValue 4`" ] && class Terminal setBackgroundColorAnsi "`argValue 4`";
-    [ -n "`argValue 5`" ] && class Terminal setFordergroundColorAnsi "`argValue 5`";
+    argIsNotEmpty 4 && class Terminal setBackgroundColorAnsi "`argValue 4`";
+    argIsNotEmpty 5 && class Terminal setFordergroundColorAnsi "`argValue 5`";
     
-    optIsset 'B' && class Terminal setStyleBold 1;
-    optIsset 'U' && class Terminal setStyleUnderline 1;
-    optIsset 'X' && class Terminal setExtendedCharacters 1;
+    if [ "$1" != '--' ]; then
+        optIsset 'B' && class Terminal setStyleBold 1;
+        optIsset 'U' && class Terminal setStyleUnderline 1;
+        optIsset 'X' && class Terminal setExtendedCharacters 1;
+    fi
     
     local char="`argValue 3`";
     local char="${char:- }";
     echo -n "${char:0:1}";
-    optIsset 'X' && class Terminal setExtendedCharacters 0;
+    if [ "$1" != '--' ]; then
+        optIsset 'X' && class Terminal setExtendedCharacters 0;
+    fi
     class Terminal resetStyle;
     class Terminal restoreCurser;
     return "$?";
@@ -74,19 +78,23 @@ function CLASS_Terminal_Graphic_printText()
     argIsNotEmpty 2 || error "Param 2 not set";
     argIsNotEmpty 3 || error "Param 3 not set";
 
-    loadClass 'Terminal';
+    loadClassOnce 'Terminal';
 
     class Terminal saveCurser;
     class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
-    [ -n "`argValue 4`" ] && class Terminal setBackgroundColorAnsi "`argValue 4`";
-    [ -n "`argValue 5`" ] && class Terminal setFordergroundColorAnsi "`argValue 5`";    
+    argIsNotEmpty 4 && class Terminal setBackgroundColorAnsi "`argValue 4`";
+    argIsNotEmpty 5 && class Terminal setFordergroundColorAnsi "`argValue 5`";    
     
-    optIsset 'B' && class Terminal setStyleBold 1;
-    optIsset 'U' && class Terminal setStyleUnderline 1;
-    optIsset 'X' && class Terminal setExtendedCharacters 1;
+    if [ "$1" != '--' ]; then
+        optIsset 'B' && class Terminal setStyleBold 1;
+        optIsset 'U' && class Terminal setStyleUnderline 1;
+        optIsset 'X' && class Terminal setExtendedCharacters 1;
+    fi
     
     echo -n "`argValue 3`";
-    optIsset 'X' && class Terminal setExtendedCharacters 0;
+    if [ "$1" != '--' ]; then
+        optIsset 'X' && class Terminal setExtendedCharacters 0;
+    fi
     class Terminal resetStyle;
     class Terminal restoreCurser;
     
@@ -115,7 +123,7 @@ function CLASS_Terminal_Graphic_printRectangleFilled()
     argIsNotEmpty 4 || error "Param 4 not set";
     argIsset 5 || error "Param 5 not set";
 
-    loadClass 'Terminal';
+    loadClassOnce 'Terminal';
 
     (
         local char="`argValue 5`";
@@ -126,9 +134,11 @@ function CLASS_Terminal_Graphic_printRectangleFilled()
         
         argIsNotEmpty 6 && class Terminal setBackgroundColorAnsi "`argValue 6`";
         argIsNotEmpty 7 && class Terminal setFordergroundColorAnsi "`argValue 7`";
-        optIsset 'B' && class Terminal setStyleBold 1;
-        optIsset 'U' && class Terminal setStyleUnderline 1;
-        optIsset 'X' && class Terminal setExtendedCharacters 1;
+        if [ "$1" != '--' ]; then
+            optIsset 'B' && class Terminal setStyleBold 1;
+            optIsset 'U' && class Terminal setStyleUnderline 1;
+            optIsset 'X' && class Terminal setExtendedCharacters 1;
+        fi
         
         class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
         local v3="`argValue 3`";
@@ -139,7 +149,9 @@ function CLASS_Terminal_Graphic_printRectangleFilled()
         local out='';
         for i in `seq "$h"`; do local out="${out}${tmp}"; done;
         echo -n "$out";
-        optIsset 'X' && class Terminal setExtendedCharacters 0;
+        if [ "$1" != '--' ]; then
+            optIsset 'X' && class Terminal setExtendedCharacters 0;
+        fi
         class Terminal resetStyle;    
         class Terminal restoreCurser;
     )

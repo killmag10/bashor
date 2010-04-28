@@ -16,7 +16,7 @@
 ################################################################################
 
 ##
-# Load function files.
+# Load class.
 #
 # $1    string  namespace
 # $@?   mixed  params
@@ -41,6 +41,23 @@ function loadClass()
     fi
     
     return 1;
+}
+
+##
+# Load class once.
+#
+# $1    string  namespace
+# $@?   mixed  params
+# $?    0:OK    1:ERROR
+function loadClassOnce()
+{
+    : ${1:?};
+    
+    eval '[ -n "$_CLASS_'"$1"'_LOADED" ] && return 0';
+    loadClass "$@";
+    local res="$?";
+    [ "$res" = 0 ] && eval '_CLASS_'"$1"'_LOADED=1';
+    return "$res";
 }
 
 ##

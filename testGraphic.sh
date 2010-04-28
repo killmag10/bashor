@@ -95,10 +95,10 @@ function toPrint() {
     colorStrip 50 21 7;
     colorStrip 60 21 '';
     
-    class Terminal_Graphic setPixel -- 30 28 '' 6
-    class Terminal_Graphic setPixel -- 31 28 '' 6
-    class Terminal_Graphic setPixel -- 32 28 '' 6
-    class Terminal_Graphic setPixel -- 33 28 '' 6
+    class Terminal_Graphic setPixel -U -- 30 28 '' 6
+    class Terminal_Graphic setPixel -U -- 31 28 '' 6
+    class Terminal_Graphic setPixel -U -- 32 28 '' 6
+    class Terminal_Graphic setPixel -U -- 33 28 '' 6
     
     class Terminal_Graphic setPixel -- 29 27 '' 6
     class Terminal_Graphic setPixel -B -- 30 27 '\\' 6

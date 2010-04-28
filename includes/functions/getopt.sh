@@ -60,7 +60,7 @@ function optIsset()
 function optIsNotEmpty()
 {
     : ${1:?};
-    
+    optIsset "$1" || return 1;
     local tmp=`optValue "$@"`;
     [ "$tmp" != '' ];
     return "$?";
@@ -89,7 +89,7 @@ function argIsset()
 function argIsNotEmpty()
 {
     : ${1:?};    
-    argIsset "$1" && return 0;
+    argIsset "$1" || return 1;
     local tmp=`argValue "$1"`;
     [ "$tmp" != '' ];
     return "$?";

@@ -114,7 +114,7 @@ function CLASS_Terminal_setFordergroundColorAnsi()
 function CLASS_Terminal_setStyleBold()
 {
     : ${1:?};    
-    [ "$1" == 1 ] && tput bold || tput dim;
+    [ "$1" == 1 ] && echo -en '\033[1m' || tput dim;
     return $?
 }
 
