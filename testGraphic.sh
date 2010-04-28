@@ -31,9 +31,9 @@ loadClass 'Terminal_Graphic';
 
 
 function toPrint() {
-    class Terminal_Graphic printRectangleFilled -- 1 3 38 28 ' ' 7
-    class Terminal_Graphic printRectangleFilled -- 2 4 36 26 ' ' 0
-    class Terminal_Graphic printRectangleFilled -- 1 13 38 8 ' ' 7
+    class Terminal_Graphic printRectangleFilled -- 1 3 74 28 ' ' 7
+    class Terminal_Graphic printRectangleFilled -- 2 4 72 26 ' ' 0
+    class Terminal_Graphic printRectangleFilled -- 1 13 74 8 ' ' 7
 
     chars='abcdefgh';
     for i in {0..7}; do
@@ -69,6 +69,31 @@ function toPrint() {
             class Terminal_Graphic setPixel -X -B -- $(( $c * 2 + 22 )) $(( $i + 13 )) 'a' $i $c
         done;
     done;
+    
+    function colorStrip () {
+        for c in {0..7}; do
+            class Terminal_Graphic setPixel -- $(( $1 + 0 )) $(( $c + $2 )) '█' $c $3
+            class Terminal_Graphic setPixel -- $(( $1 + 1 )) $(( $c + $2 )) '▓' $c $3
+            class Terminal_Graphic setPixel -- $(( $1 + 2 )) $(( $c + $2 )) '▒' $c $3
+            class Terminal_Graphic setPixel -- $(( $1 + 3 )) $(( $c + $2 )) '░' $c $3
+            class Terminal_Graphic setPixel -- $(( $1 + 4 )) $(( $c + $2 )) ' ' $c $3
+            class Terminal_Graphic setPixel -B -- $(( $1 + 5 )) $(( $c + $2 )) ' ' $c $3
+            class Terminal_Graphic setPixel -B -- $(( $1 + 6 )) $(( $c + $2 )) '░' $c $3
+            class Terminal_Graphic setPixel -B -- $(( $1 + 7 )) $(( $c + $2 )) '▒' $c $3
+            class Terminal_Graphic setPixel -B -- $(( $1 + 8 )) $(( $c + $2 )) '▓' $c $3
+            class Terminal_Graphic setPixel -B -- $(( $1 + 9 )) $(( $c + $2 )) '█' $c $3
+        done;
+    }
+    
+    colorStrip 40 5 0;
+    colorStrip 50 5 1;
+    colorStrip 60 5 2;
+    colorStrip 40 13 3;
+    colorStrip 50 13 4;
+    colorStrip 60 13 5;
+    colorStrip 40 21 6;
+    colorStrip 50 21 7;
+    colorStrip 60 21 '';
     
     class Terminal_Graphic setPixel -- 30 28 '' 6
     class Terminal_Graphic setPixel -- 31 28 '' 6
