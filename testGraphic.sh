@@ -31,9 +31,9 @@ loadClass 'Terminal_Graphic';
 
 
 function toPrint() {
-    class Terminal_Graphic printRectangleFilled -- 1 3 74 28 ' ' 7
-    class Terminal_Graphic printRectangleFilled -- 2 4 72 26 ' ' 0
-    class Terminal_Graphic printRectangleFilled -- 1 13 74 8 ' ' 7
+    class Terminal_Graphic printRectangleFilled -- 1 3 72 28 ' ' 7
+    class Terminal_Graphic printRectangleFilled -- 2 4 70 26 ' ' 0
+    class Terminal_Graphic printRectangleFilled -- 1 13 72 8 ' ' 7
 
     chars='abcdefgh';
     for i in {0..7}; do
@@ -72,16 +72,18 @@ function toPrint() {
     
     function colorStrip () {
         for c in {0..7}; do
-            class Terminal_Graphic setPixel -- $(( $1 + 0 )) $(( $c + $2 )) '█' $c $3
-            class Terminal_Graphic setPixel -- $(( $1 + 1 )) $(( $c + $2 )) '▓' $c $3
-            class Terminal_Graphic setPixel -- $(( $1 + 2 )) $(( $c + $2 )) '▒' $c $3
-            class Terminal_Graphic setPixel -- $(( $1 + 3 )) $(( $c + $2 )) '░' $c $3
-            class Terminal_Graphic setPixel -- $(( $1 + 4 )) $(( $c + $2 )) ' ' $c $3
-            class Terminal_Graphic setPixel -B -- $(( $1 + 5 )) $(( $c + $2 )) ' ' $c $3
-            class Terminal_Graphic setPixel -B -- $(( $1 + 6 )) $(( $c + $2 )) '░' $c $3
-            class Terminal_Graphic setPixel -B -- $(( $1 + 7 )) $(( $c + $2 )) '▒' $c $3
-            class Terminal_Graphic setPixel -B -- $(( $1 + 8 )) $(( $c + $2 )) '▓' $c $3
-            class Terminal_Graphic setPixel -B -- $(( $1 + 9 )) $(( $c + $2 )) '█' $c $3
+            #class Terminal_Graphic setPixel -- $(( $1 + 0 )) $(( $c + $2 )) '█' $c $3
+            #class Terminal_Graphic setPixel -- $(( $1 + 1 )) $(( $c + $2 )) '▓' $c $3
+            #class Terminal_Graphic setPixel -- $(( $1 + 2 )) $(( $c + $2 )) '▒' $c $3
+            #class Terminal_Graphic setPixel -- $(( $1 + 3 )) $(( $c + $2 )) '░' $c $3
+            #class Terminal_Graphic setPixel -- $(( $1 + 4 )) $(( $c + $2 )) ' ' $c $3
+            class Terminal_Graphic printText -- $(( $1 + 0 )) $(( $c + $2 )) '█▓▒░ ' $c $3
+            #class Terminal_Graphic setPixel -B -- $(( $1 + 5 )) $(( $c + $2 )) ' ' $c $3
+            #class Terminal_Graphic setPixel -B -- $(( $1 + 6 )) $(( $c + $2 )) '░' $c $3
+            #class Terminal_Graphic setPixel -B -- $(( $1 + 7 )) $(( $c + $2 )) '▒' $c $3
+            #class Terminal_Graphic setPixel -B -- $(( $1 + 8 )) $(( $c + $2 )) '▓' $c $3
+            #class Terminal_Graphic setPixel -B -- $(( $1 + 9 )) $(( $c + $2 )) '█' $c $3
+            class Terminal_Graphic printText -B -- $(( $1 + 5 )) $(( $c + $2 )) ' ░▒▓█' $c $3           
         done;
     }
     
