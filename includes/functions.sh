@@ -92,14 +92,17 @@ function prepareOutput()
 #
 function getBacktrace()
 {    
-    local res=1;
-    local pos=0;
-    while caller "$pos"; do        
-        ((pos++));
-        local res=0;
-        echo -n "- $pos: ";
-    done
-    return "$res";
+    (
+        local res='1';
+        local pos=0;
+        while [ -n "$res" ]; do
+            local res=`caller "$pos"`;
+            [ -n "$res" ] && echo "$pos: $res";
+            ((pos++));
+        done
+        [ -n "$res" ];
+        return "$?";
+    )
 }
 
 ##
