@@ -116,8 +116,12 @@ function _createExtendedClassFunctions()
 # $?    0:OK    1:ERROR
 function class()
 {
+    local OLD_CLASS_PARENT="$CLASS_PARENT";
+    export CLASS_PARENT='';
     _staticCall "$@";
-    return "$?";
+    local res="$?";
+    export CLASS_PARENT="$OLD_CLASS_PARENT";
+    return "$res";
 }
 
 ##
@@ -166,8 +170,12 @@ function _staticCall()
 # $?    0:OK    1:ERROR
 function object()
 {
+    local OLD_CLASS_PARENT="$CLASS_PARENT";
+    export CLASS_PARENT='';
     _objectCall "$@";
-    return "$?";
+    local res="$?";
+    export CLASS_PARENT="$OLD_CLASS_PARENT";
+    return "$res";
 }
 
 ##
@@ -445,6 +453,9 @@ function this()
             _objectLoadData "$dataVarName" "$2";
             return "$?";
             ;;
+        *)
+            error "\"$1\" is not a option of this!";
+            ;;
     esac
 }
 
@@ -483,7 +494,7 @@ function parent()
             fi
             ;;
         *)
-            this "$@";
+            error "\"$1\" is not a option of parent!";
             ;;
     esac
     
