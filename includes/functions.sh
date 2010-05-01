@@ -170,7 +170,7 @@ function error()
         msgLog="$msg";
         [ $BASHOR_ERROR_BACKTRACE == 1 ] \
             && local msgLog="$msgOut""$nl""$trace";
-        echo "$msgLog" | class log error;
+        echo "$msgLog" | class Log error;
     fi
     exit ${2:-1};
 }
@@ -200,7 +200,7 @@ function warning()
         msgLog="$msg";
         [ $BASHOR_WARNING_BACKTRACE == 1 ] \
             && local msgLog="$msgOut""$nl""$trace";
-        echo "$msgLog" | class log warning;
+        echo "$msgLog" | class Log warning;
     fi
 }
 
@@ -228,7 +228,7 @@ function debug()
         msgLog="$msg";
         [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
             && local msgLog="$msgOut""$nl""$trace";
-        echo "$msgLog" | class log debug;
+        echo "$msgLog" | class Log debug;
     fi
 }
 

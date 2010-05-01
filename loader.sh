@@ -30,7 +30,7 @@ export BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
 export BASHOR_PATHS_FUNCTIONS="${BASHOR_PATH}/functions";
 
 # Defaults
-export BASHOR_LOG_FILE="./error.log";
+[ -z "BASHOR_LOG_FILE" ] && export BASHOR_LOG_FILE="./error.log";
 export BASHOR_MODE_COMPATIBLE="0";
 
 [ -z "$BASHOR_PATH_CONFIG" ] && export BASHOR_PATH_CONFIG="${BASHOR_PATH}/config.sh";
