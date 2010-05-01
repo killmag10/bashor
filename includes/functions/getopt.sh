@@ -31,11 +31,11 @@ function optIsset()
     while shift "$first"; do
         local first=1;
         [ "$1" == "--" ] && break;
-        echo "$1" | grep -q '^-' || continue;
+        
+        [ "${1:0:1}" = '-' ] || continue;
         
         local res=`echo "$1" | sed 's#^-##'`;
-        echo "$res" | grep -q '^-';
-        if [ "$?" == 0 ]; then
+        if [ "${res:0:1}" = '-' ]; then
             local res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
@@ -110,11 +110,10 @@ function optValue()
     while shift "$first"; do
         local first=1;
         [ "$1" == "--" ] && break;
-        echo "$1" | grep -q '^-' || continue;
+        [ "${1:0:1}" = '-' ] || continue;
         
         local res=`echo "$1" | sed 's#^-##'`;
-        echo "$res" | grep -q '^-';
-        if [ "$?" == 0 ]; then
+        if [ "${res:0:1}" = '-' ]; then
             local res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
@@ -166,11 +165,10 @@ function optKeys()
     while shift "$first"; do
         local first=1;
         [ "$1" == "--" ] && break;
-        echo "$1" | grep -q '^-' || continue;
+        [ "${1:0:1}" = '-' ] || continue;
         
         local res=`echo "$1" | sed 's#^-##'`;
-        echo "$res" | grep -q '^-';
-        if [ "$?" == 0 ]; then
+        if [ "${res:0:1}" = '-' ]; then
                 local res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
@@ -199,11 +197,10 @@ function optList()
     while shift "$first"; do
         local first=1;
         [ "$1" == "--" ] && break;
-        echo "$1" | grep -q '^-' || continue;
+        [ "${1:0:1}" = '-' ] || continue;
         
         local res=`echo "$1" | sed 's#^-##'`;
-        echo "$res" | grep -q '^-';
-        if [ "$?" == 0 ]; then
+        if [ "${res:0:1}" = '-' ]; then
             local res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
