@@ -124,12 +124,15 @@ function CLASS_Terminal_Graphic_printRectangleFilled()
     argIsset 5 || error "Param 5 not set";
 
     loadClassOnce 'Terminal';
+    loadClassOnce 'Escape';
 
     (
         local char="`argValue 5`";
         local char="${char:- }";
         local char="${char:0:1}";
-        local h="`argValue 4`";        
+        local char=`class Escape regExReplacement "$char" '/'`;
+        
+        local h="`argValue 4`";
         class Terminal saveCurser;
         
         argIsNotEmpty 6 && class Terminal setBackgroundColorAnsi "`argValue 6`";
@@ -143,7 +146,7 @@ function CLASS_Terminal_Graphic_printRectangleFilled()
         class Terminal moveCurserBy "`argValue 1`" "`argValue 2`";
         local v3="`argValue 3`";
         local tmp=`
-            dd if=/dev/zero 2>/dev/null bs="$v3" count="1" | tr '\0' "$char";
+            dd if=/dev/zero 2>/dev/null bs="$v3" count="1" | tr '\0' "0" | sed 's/0/'"$char"'/g';
             class Terminal moveCurserBy -"$v3" 1;
         `;
         local out='';
