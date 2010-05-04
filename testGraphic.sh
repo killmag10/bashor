@@ -31,59 +31,49 @@ loadClass 'Terminal_Graphic';
 
 
 function toPrint() {
-    class Terminal_Graphic printRectangleFilled -- 1 3 72 28 ' ' 7
-    class Terminal_Graphic printRectangleFilled -- 2 4 70 26 ' ' 0
-    class Terminal_Graphic printRectangleFilled -- 1 13 72 8 ' ' 7
-
+    class Terminal_Graphic printRectangleFilled "1" "3" "72" "28" ' ' "7"
+    class Terminal_Graphic printRectangleFilled "2" "4" "70" "26" ' ' "0"
+    class Terminal_Graphic printRectangleFilled "1" "13" "72" "8" ' ' "7"
+    
     chars='abcdefgh';
     for i in {0..7}; do
-        class Terminal_Graphic printRectangleFilled -- $(( $i + 4 )) 5 1 16 "${chars:$i:1}" $i
+        class Terminal_Graphic printRectangleFilled $(( $i + 4 )) 5 1 16 "${chars:$i:1}" $i
     done;
     chars='jklmnopq';
     for i in {0..7}; do
-        class Terminal_Graphic printRectangleFilled -X -- $(( $i + 4 )) 21 1 8 "${chars:$i:1}" $i
+        class Terminal_Graphic printRectangleFilled $(( $i + 4 )) 21 1 8 "${chars:$i:1}" $i '' 'X'
     done;
 
     for i in {0..7}; do
-        class Terminal_Graphic printRectangleFilled -X -- 20 $(( $i + 5 )) 4 1 'a' $i 0
-        class Terminal_Graphic printRectangleFilled -- 24 $(( $i + 5 )) 9 1 ' ' $i
-        class Terminal_Graphic printRectangleFilled -X -- 33 $(( $i + 5 )) 4 1 'a' $i 7
-    done;
-
-    for i in {0..7}; do
-        class Terminal_Graphic printText -- 13 $(( $i + 5 )) 'a text' $i
-    done;
-    for i in {0..7}; do
-        class Terminal_Graphic printText -- 13 $(( $i + 13 )) 'a text' 7 $i
-    done;
-    for i in {0..7}; do
-        class Terminal_Graphic printText -B -- 13 $(( $i + 21 )) 'a text' 0 $i
+        class Terminal_Graphic printRectangleFilled 20 $(( $i + 5 )) 4 1 'a' $i 0 'X'
+        class Terminal_Graphic printRectangleFilled 24 $(( $i + 5 )) 9 1 ' ' $i
+        class Terminal_Graphic printRectangleFilled 33 $(( $i + 5 )) 4 1 'a' $i 7 'X'
     done;
     
     for i in {0..7}; do
-        class Terminal_Graphic setPixel -- 20 $(( $i + 13 )) '' $i
+        class Terminal_Graphic printText 13 $(( $i + 5 )) 'a text' $i
+    done;
+    for i in {0..7}; do
+        class Terminal_Graphic printText 13 $(( $i + 13 )) 'a text' 7 $i
+    done;
+    for i in {0..7}; do
+        class Terminal_Graphic printText 13 $(( $i + 21 )) 'a text' 0 $i 'B'
+    done;
+    
+    for i in {0..7}; do
+        class Terminal_Graphic setPixel 20 $(( $i + 13 )) '' $i
     done;
     for i in {0..7}; do
         for c in {0..7}; do
-            class Terminal_Graphic setPixel -X -- $(( $c * 2 + 21 )) $(( $i + 13 )) 'a' $i $c
-            class Terminal_Graphic setPixel -X -B -- $(( $c * 2 + 22 )) $(( $i + 13 )) 'a' $i $c
+            class Terminal_Graphic setPixel $(( $c * 2 + 21 )) $(( $i + 13 )) 'a' $i $c 'X'
+            class Terminal_Graphic setPixel $(( $c * 2 + 22 )) $(( $i + 13 )) 'a' $i $c 'XB'
         done;
     done;
     
     function colorStrip () {
         for c in {0..7}; do
-            #class Terminal_Graphic setPixel -- $(( $1 + 0 )) $(( $c + $2 )) '█' $c $3
-            #class Terminal_Graphic setPixel -- $(( $1 + 1 )) $(( $c + $2 )) '▓' $c $3
-            #class Terminal_Graphic setPixel -- $(( $1 + 2 )) $(( $c + $2 )) '▒' $c $3
-            #class Terminal_Graphic setPixel -- $(( $1 + 3 )) $(( $c + $2 )) '░' $c $3
-            #class Terminal_Graphic setPixel -- $(( $1 + 4 )) $(( $c + $2 )) ' ' $c $3
-            class Terminal_Graphic printText -- $(( $1 + 0 )) $(( $c + $2 )) '█▓▒░ ' $c $3
-            #class Terminal_Graphic setPixel -B -- $(( $1 + 5 )) $(( $c + $2 )) ' ' $c $3
-            #class Terminal_Graphic setPixel -B -- $(( $1 + 6 )) $(( $c + $2 )) '░' $c $3
-            #class Terminal_Graphic setPixel -B -- $(( $1 + 7 )) $(( $c + $2 )) '▒' $c $3
-            #class Terminal_Graphic setPixel -B -- $(( $1 + 8 )) $(( $c + $2 )) '▓' $c $3
-            #class Terminal_Graphic setPixel -B -- $(( $1 + 9 )) $(( $c + $2 )) '█' $c $3
-            class Terminal_Graphic printText -B -- $(( $1 + 5 )) $(( $c + $2 )) ' ░▒▓█' $c $3           
+            class Terminal_Graphic printText $(( $1 + 0 )) $(( $c + $2 )) '█▓▒░ ' $c "$3"
+            class Terminal_Graphic printText $(( $1 + 5 )) $(( $c + $2 )) ' ░▒▓█' $c "$3" 'B'         
         done;
     }
     
@@ -97,52 +87,52 @@ function toPrint() {
     colorStrip 50 21 7;
     colorStrip 60 21 '';
     
-    class Terminal_Graphic setPixel -U -- 30 28 '' 6
-    class Terminal_Graphic setPixel -U -- 31 28 '' 6
-    class Terminal_Graphic setPixel -U -- 32 28 '' 6
-    class Terminal_Graphic setPixel -U -- 33 28 '' 6
+    class Terminal_Graphic setPixel 30 28 '' 6 '' 'U'
+    class Terminal_Graphic setPixel 31 28 '' 6 '' 'U'
+    class Terminal_Graphic setPixel 32 28 '' 6 '' 'U'
+    class Terminal_Graphic setPixel 33 28 '' 6 '' 'U'
     
-    class Terminal_Graphic setPixel -- 29 27 '' 6
-    class Terminal_Graphic setPixel -B -- 30 27 '\\' 6
-    class Terminal_Graphic setPixel -B -- 31 27 '_' 6
-    class Terminal_Graphic setPixel -B -- 32 27 '_' 6
-    class Terminal_Graphic setPixel -B -- 33 27 '/' 6
-    class Terminal_Graphic setPixel -- 34 27 '' 6
+    class Terminal_Graphic setPixel 29 27 '' 6
+    class Terminal_Graphic setPixel 30 27 '\\' 6 '' 'B'
+    class Terminal_Graphic setPixel 31 27 '_' 6 '' 'B'
+    class Terminal_Graphic setPixel 32 27 '_' 6 '' 'B'
+    class Terminal_Graphic setPixel 33 27 '/' 6 '' 'B'
+    class Terminal_Graphic setPixel 34 27 '' 6
     
-    class Terminal_Graphic setPixel -- 29 26 '' 6
-    class Terminal_Graphic setPixel -- 30 26 '' 6
-    class Terminal_Graphic setPixel -- 33 26 '' 6
-    class Terminal_Graphic setPixel -- 34 26 '' 6
+    class Terminal_Graphic setPixel 29 26 '' 6
+    class Terminal_Graphic setPixel 30 26 '' 6
+    class Terminal_Graphic setPixel 33 26 '' 6
+    class Terminal_Graphic setPixel 34 26 '' 6
 
-    class Terminal_Graphic setPixel -B -- 30 25 '"' 6 0
-    class Terminal_Graphic setPixel -B -- 31 25 '"' 6 0
-    class Terminal_Graphic setPixel -B -- 32 25 '"' 6 0
-    class Terminal_Graphic setPixel -B -- 33 25 '"' 6 0
+    class Terminal_Graphic setPixel 30 25 '"' 6 0 'B'
+    class Terminal_Graphic setPixel 31 25 '"' 6 0 'B'
+    class Terminal_Graphic setPixel 32 25 '"' 6 0 'B'
+    class Terminal_Graphic setPixel 33 25 '"' 6 0 'B'
 
-    class Terminal_Graphic setPixel -B -- 31 26 'o' 6 3
-    class Terminal_Graphic setPixel -B -- 32 26 'o' 6 3    
-    class Terminal_Graphic setPixel -B -- 28 26 'q' 0 6
-    class Terminal_Graphic setPixel -B -- 35 26 'p' 0 6
+    class Terminal_Graphic setPixel 31 26 'o' 6 3 'B'
+    class Terminal_Graphic setPixel 32 26 'o' 6 3 'B'
+    class Terminal_Graphic setPixel 28 26 'q' 0 6 'B'
+    class Terminal_Graphic setPixel 35 26 'p' 0 6 'B'
     
-    class Terminal_Graphic setPixel -B -- 29 23 'H' '' 1
-    class Terminal_Graphic setPixel -B -- 30 23 'e' '' 2
-    class Terminal_Graphic setPixel -B -- 31 23 'l' '' 3
-    class Terminal_Graphic setPixel -B -- 32 23 'l' '' 4
-    class Terminal_Graphic setPixel -B -- 33 23 'o' '' 5
-    class Terminal_Graphic setPixel -B -- 34 23 '!' '' 6
+    class Terminal_Graphic setPixel 29 23 'H' '' 1 'B'
+    class Terminal_Graphic setPixel 30 23 'e' '' 2 'B'
+    class Terminal_Graphic setPixel 31 23 'l' '' 3 'B'
+    class Terminal_Graphic setPixel 32 23 'l' '' 4 'B'
+    class Terminal_Graphic setPixel 33 23 'o' '' 5 'B'
+    class Terminal_Graphic setPixel 34 23 '!' '' 6 'B'
     
-    class Terminal_Graphic printText -- 20 22 'EEEEEE' 0 7
-    class Terminal_Graphic printText -- 20 23 'E' 0 7
-    class Terminal_Graphic printText -- 20 24 'E' 0 7
-    class Terminal_Graphic printText -- 20 25 'EEEEEE' 0 7
-    class Terminal_Graphic printText -- 20 26 'E' 0 7
-    class Terminal_Graphic printText -- 20 27 'E' 0 7
-    class Terminal_Graphic printText -- 20 28 'EEEEEE' 0 7
+    class Terminal_Graphic printText 20 22 'EEEEEE' 0 7
+    class Terminal_Graphic printText 20 23 'E' 0 7
+    class Terminal_Graphic printText 20 24 'E' 0 7
+    class Terminal_Graphic printText 20 25 'EEEEEE' 0 7
+    class Terminal_Graphic printText 20 26 'E' 0 7
+    class Terminal_Graphic printText 20 27 'E' 0 7
+    class Terminal_Graphic printText 20 28 'EEEEEE' 0 7
     
-    class Terminal_Graphic printText -X -- 21 23 'aaaaa' 0 7
-    class Terminal_Graphic printText -X -- 21 24 'aaaaa' 0 7
-    class Terminal_Graphic printText -X -- 21 26 'aaaaa' 0 7
-    class Terminal_Graphic printText -X -- 21 27 'aaaaa' 0 7
+    class Terminal_Graphic printText 21 23 'aaaaa' 0 7 'X'
+    class Terminal_Graphic printText 21 24 'aaaaa' 0 7 'X'
+    class Terminal_Graphic printText 21 26 'aaaaa' 0 7 'X'
+    class Terminal_Graphic printText 21 27 'aaaaa' 0 7 'X'
 }
 
 clear;
