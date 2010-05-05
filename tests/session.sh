@@ -17,7 +17,7 @@
 
 loadClass 'Registry';
 loadClass 'Session';
-new 'Session' 'Session' "$TEST_TEMP_DIR/registry" -c
+new 'Session' 'Session' "$TEST_TEMP_DIR/" -c
 nl=`echo -e '\n\r'`;
 
 object Session set "test" "blub 123blub";
@@ -49,4 +49,4 @@ checkSimple "isset isset 2" "$?" "0";
 
 res=`object Session getFilename`;
 checkSimple "getFilename" "$?" "0";
-checkRegex "getFilename data" "$res" '/registry$';
+checkRegex "getFilename data" "$res" "$TEST_TEMP_DIR/$$";

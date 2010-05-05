@@ -34,5 +34,5 @@ function CLASS_Session___construct()
     local optionCompress='';
     optIsset 'c' && local optionCompress='-c';
     
-    parent call __construct $optionCompress -- "$sessionDir/$$";
+    parent call __construct $optionCompress -- "$sessionDir""$$";
 }
