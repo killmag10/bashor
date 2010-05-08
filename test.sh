@@ -31,9 +31,8 @@ export BASHOR_LOG_FILE="$TEST_TEMP_DIR/log.log";
 function doTest()
 {
     echo "##### Test: $1 #####";
-    (
-        . ${TEST_DIR}/${1}.sh;
-    )
+    . ${TEST_DIR}/${1}.sh;
+
     if [ -d "$TEST_TEMP_DIR/" ]; then
         rm -rf "$TEST_TEMP_DIR/"*
     fi
