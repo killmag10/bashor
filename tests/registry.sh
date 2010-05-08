@@ -15,8 +15,8 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Registry';
-new 'Registry' 'Registry' "$TEST_TEMP_DIR/registry" -c
+loadClass 'Bashor_Registry';
+new 'Bashor_Registry' 'Registry' "$TEST_TEMP_DIR/registry" -c
 nl=`echo -e '\n\r'`;
 
 object Registry set "test" "blub 123blub";

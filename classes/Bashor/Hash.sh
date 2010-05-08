@@ -21,7 +21,7 @@
 #
 # $1    string  Text
 # $?    0:OK    1:ERROR
-function CLASS_Hash_md5()
+function CLASS_Bashor_Hash_md5()
 {
     : ${1?};
     

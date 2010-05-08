@@ -23,7 +23,7 @@
 # $2    integer count
 # $3    lines
 # $?    0:OK    1:ERROR
-function CLASS_String_repeat()
+function CLASS_Bashor_String_repeat()
 {
     : ${1:?};
     : ${2:?};

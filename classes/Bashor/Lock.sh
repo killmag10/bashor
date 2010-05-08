@@ -20,7 +20,7 @@
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function CLASS_Lock_filename()
+function CLASS_Bashor_Lock_filename()
 {
     : ${1:?};
     
@@ -33,7 +33,7 @@ function CLASS_Lock_filename()
 #
 # $1    string  file
 # $?    0:OK    1:LOCKED    2:ERROR
-function CLASS_Lock_delete()
+function CLASS_Bashor_Lock_delete()
 {
     : ${1:?};
     
@@ -50,7 +50,7 @@ function CLASS_Lock_delete()
 #
 # $1    string  file
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
-function CLASS_Lock_checkRead()
+function CLASS_Bashor_Lock_checkRead()
 {
     : ${1:?};
     
@@ -67,7 +67,7 @@ function CLASS_Lock_checkRead()
 #
 # $1    string  file
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
-function CLASS_Lock_checkWrite()
+function CLASS_Bashor_Lock_checkWrite()
 {
     : ${1:?};
     

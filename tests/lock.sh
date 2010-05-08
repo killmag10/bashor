@@ -15,25 +15,25 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Lock';
+loadClass 'Bashor_Lock';
 
-res=`class Lock filename 'abc'`;
+res=`class Bashor_Lock filename 'abc'`;
 checkSimple "filename" "$res" "abc.lock";
 
 lockfile="$TEST_TEMP_DIR/$res";
 {
     flock 200;
     
-    class Lock checkRead "$lockfile";
+    class Bashor_Lock checkRead "$lockfile";
     checkSimple "checkRead locked" "$?" "1";
     
-    class Lock checkWrite "$lockfile";
+    class Bashor_Lock checkWrite "$lockfile";
     checkSimple "checkWrite locked" "$?" "1";
     
 } 200>"$lockfile";
 
-class Lock checkRead "$lockfile";
+class Bashor_Lock checkRead "$lockfile";
 checkSimple "checkRead unlocked" "$?" "0";
 
-class Lock checkWrite "$lockfile";
+class Bashor_Lock checkWrite "$lockfile";
 checkSimple "checkWrite unlocked" "$?" "0";

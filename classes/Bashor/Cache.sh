@@ -19,7 +19,7 @@
 # Constructor
 #
 # $1    string  cache dir
-function CLASS_Cache___construct()
+function CLASS_Bashor_Cache___construct()
 {
     : ${1?};
     : ${OBJECT:?};
@@ -33,14 +33,14 @@ function CLASS_Cache___construct()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &1    string filename 
-function CLASS_Cache_filename()
+function CLASS_Bashor_Cache_filename()
 {
     : ${1?};
     : ${OBJECT:?};
     
-    loadClass 'Hash';
+    loadClass 'Bashor_Hash';
     
-    local hashMd5=`class Hash md5 "$1"`;
+    local hashMd5=`class Bashor_Hash md5 "$1"`;
     local hashCrc32=`echo "$1" | cksum | tr ' ' '_'`;
     echo `this get dir`"/CACHE_${hashMd5}_${hashCrc32}";
     return 0;
@@ -54,7 +54,7 @@ function CLASS_Cache_filename()
 # $3    string  Data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Cache_set()
+function CLASS_Bashor_Cache_set()
 {
     : ${1:?};
     : ${2:?};
@@ -82,7 +82,7 @@ function CLASS_Cache_set()
 # $1    string  Id
 # $?    0:CACHED    1:NOT CACHED
 # &1    string Data 
-function CLASS_Cache_get()
+function CLASS_Bashor_Cache_get()
 {
     : ${1:?};
     : ${OBJECT:?};
@@ -105,7 +105,7 @@ function CLASS_Cache_get()
 #
 # $1    string  Id
 # $?    0:CACHED    1:NOT CACHED
-function CLASS_Cache_check()
+function CLASS_Bashor_Cache_check()
 {
     : ${1:?};
     : ${OBJECT:?};
@@ -120,7 +120,7 @@ function CLASS_Cache_check()
 #
 # $1    string  filename
 # $?    0:CACHED    1:NOT CACHED
-function CLASS_Cache_checkByFilename()
+function CLASS_Bashor_Cache_checkByFilename()
 {
     : ${1?};
     : ${OBJECT:?};
@@ -141,7 +141,7 @@ function CLASS_Cache_checkByFilename()
 # Remove old cache files.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Cache_removeOld()
+function CLASS_Bashor_Cache_removeOld()
 {
     : ${OBJECT:?};
     

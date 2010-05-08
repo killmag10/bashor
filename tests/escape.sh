@@ -15,27 +15,27 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Escape';
+loadClass 'Bashor_Escape';
 nl=`echo -e '\n\r'`;
 
 testString=`cat "$TEST_RESOURCE_DIR/escape.raw.dat"`
 
-#class Escape regEx "$testString" > "$TEST_RESOURCE_DIR/escape.esc.dat";
+#class Bashor_Escape regEx "$testString" > "$TEST_RESOURCE_DIR/escape.esc.dat";
 
-res=`class Escape regEx "$testString"`;
+res=`class Bashor_Escape regEx "$testString"`;
 checkSimple "regEx" "$?" "0";
 checkSimple "regEx data" "$res" "`cat \"$TEST_RESOURCE_DIR/escape.esc.dat\"`";
 
-res=`class Escape regEx "123#/#/#456" -d '#'`;
+res=`class Bashor_Escape regEx "123#/#/#456" -d '#'`;
 checkSimple "regEx -d" "$?" "0";
 checkSimple "regEx data -d" "$res" '123\#/\#/\#456';
 
-#class Escape regExReplacement "$testString" > "$TEST_RESOURCE_DIR/escape.rpl.dat";
+#class Bashor_Escape regExReplacement "$testString" > "$TEST_RESOURCE_DIR/escape.rpl.dat";
 
-res=`class Escape regExReplacement "$testString"`;
+res=`class Bashor_Escape regExReplacement "$testString"`;
 checkSimple "regExReplacement" "$?" "0";
 checkSimple "regExReplacement data" "$res" "`cat \"$TEST_RESOURCE_DIR/escape.rpl.dat\"`";
 
-res=`class Escape regExReplacement "123#/#/#456" -d '#'`;
+res=`class Bashor_Escape regExReplacement "123#/#/#456" -d '#'`;
 checkSimple "regExReplacement -d" "$?" "0";
 checkSimple "regExReplacement -d data" "$res" '123\#/\#/\#456';

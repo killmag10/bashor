@@ -22,7 +22,7 @@
 # $1?   string bar
 # $2?   string pre
 # $3?   string post
-function CLASS_Display_simpleRotateBar()
+function CLASS_Bashor_Display_simpleRotateBar()
 {
     : ${1:?};
     

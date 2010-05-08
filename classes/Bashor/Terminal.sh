@@ -29,7 +29,7 @@
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_setBackgroundColor()
+function CLASS_Bashor_Terminal_setBackgroundColor()
 {
     : ${1:?};    
     tput setb "$1";
@@ -50,7 +50,7 @@ function CLASS_Terminal_setBackgroundColor()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_setBackgroundColorAnsi()
+function CLASS_Bashor_Terminal_setBackgroundColorAnsi()
 {
     : ${1:?};
     [ "$1" -lt 0 ] && return 1;
@@ -73,7 +73,7 @@ function CLASS_Terminal_setBackgroundColorAnsi()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_setFordergroundColor()
+function CLASS_Bashor_Terminal_setFordergroundColor()
 {
     : ${1:?};    
     tput setf "$1";
@@ -94,7 +94,7 @@ function CLASS_Terminal_setFordergroundColor()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_setFordergroundColorAnsi()
+function CLASS_Bashor_Terminal_setFordergroundColorAnsi()
 {
     : ${1:?};
     [ "$1" -lt 0 ] && return 1;
@@ -111,7 +111,7 @@ function CLASS_Terminal_setFordergroundColorAnsi()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_setStyleBold()
+function CLASS_Bashor_Terminal_setStyleBold()
 {
     : ${1:?};    
     [ "$1" == 1 ] && echo -en '\033[1m' || tput dim;
@@ -126,7 +126,7 @@ function CLASS_Terminal_setStyleBold()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_setExtendedCharacters()
+function CLASS_Bashor_Terminal_setExtendedCharacters()
 {
     : ${1:?};    
     [ "$1" == 1 ] && echo -en '\033(0' || echo -en '\033(B';
@@ -141,7 +141,7 @@ function CLASS_Terminal_setExtendedCharacters()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_setStyleUnderline()
+function CLASS_Bashor_Terminal_setStyleUnderline()
 {
     : ${1:?};    
     [ "$1" == 1 ] && tput smul || tput rmul;
@@ -153,7 +153,7 @@ function CLASS_Terminal_setStyleUnderline()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_resetStyle()
+function CLASS_Bashor_Terminal_resetStyle()
 {    
     echo -en '\033[0m';
     return $?
@@ -163,7 +163,7 @@ function CLASS_Terminal_resetStyle()
 # Get the terminal columns
 #
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_getColumns()
+function CLASS_Bashor_Terminal_getColumns()
 {
     tput cols;
     return $?
@@ -173,7 +173,7 @@ function CLASS_Terminal_getColumns()
 # Get the terminal lines
 #
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_getLines()
+function CLASS_Bashor_Terminal_getLines()
 {
     tput lines;
     return $?
@@ -183,7 +183,7 @@ function CLASS_Terminal_getLines()
 # Restore curser position
 #
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_restoreCurser()
+function CLASS_Bashor_Terminal_restoreCurser()
 {
     echo -en '\033[u';
     return $?
@@ -193,7 +193,7 @@ function CLASS_Terminal_restoreCurser()
 # Save curser position
 #
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_saveCurser()
+function CLASS_Bashor_Terminal_saveCurser()
 {
     echo -en '\033[s';
     return $?
@@ -204,7 +204,7 @@ function CLASS_Terminal_saveCurser()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_moveCurserUp()
+function CLASS_Bashor_Terminal_moveCurserUp()
 {
     : ${1:?};    
     echo -en '\033['"$1"'A';
@@ -216,7 +216,7 @@ function CLASS_Terminal_moveCurserUp()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_moveCurserDown()
+function CLASS_Bashor_Terminal_moveCurserDown()
 {
     : ${1:?};    
     echo -en '\033['"$1"'B';
@@ -228,7 +228,7 @@ function CLASS_Terminal_moveCurserDown()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_moveCurserForward()
+function CLASS_Bashor_Terminal_moveCurserForward()
 {
     : ${1:?};
     echo -en '\033['"$1"'C';
@@ -240,7 +240,7 @@ function CLASS_Terminal_moveCurserForward()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_moveCurserBackward()
+function CLASS_Bashor_Terminal_moveCurserBackward()
 {
     : ${1:?};
     echo -en '\033['"$1"'D';
@@ -253,7 +253,7 @@ function CLASS_Terminal_moveCurserBackward()
 # $1    integer x
 # $2    integer y
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_moveCurserBy()
+function CLASS_Bashor_Terminal_moveCurserBy()
 {
     : ${1:?};
     : ${2:?};    
@@ -270,7 +270,7 @@ function CLASS_Terminal_moveCurserBy()
 # $1    integer x
 # $2    integer y
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_moveCurserTo()
+function CLASS_Bashor_Terminal_moveCurserTo()
 {
     : ${1:?};
     : ${2:?};    
@@ -282,7 +282,7 @@ function CLASS_Terminal_moveCurserTo()
 # Clear the terminal
 #
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_clear()
+function CLASS_Bashor_Terminal_clear()
 {
     clear;
     return $?;
@@ -292,7 +292,7 @@ function CLASS_Terminal_clear()
 # Visual flash.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Terminal_flash()
+function CLASS_Bashor_Terminal_flash()
 {
     tput flash;
     return $?

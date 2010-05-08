@@ -19,7 +19,7 @@
 # Constructor
 #
 # $1    string  temp dir
-function CLASS_Temp___construct()
+function CLASS_Bashor_Temp___construct()
 {
     : ${1?};
     : ${OBJECT:?};
@@ -34,7 +34,7 @@ function CLASS_Temp___construct()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  path
-function CLASS_Temp_dir()
+function CLASS_Bashor_Temp_dir()
 {
     : ${1:?};
     : ${OBJECT:?};
@@ -51,7 +51,7 @@ function CLASS_Temp_dir()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  path
-function CLASS_Temp_file()
+function CLASS_Bashor_Temp_file()
 {
     : ${1:?};
     : ${OBJECT:?};
@@ -66,7 +66,7 @@ function CLASS_Temp_file()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  name
-function CLASS_Temp_generateFilename()
+function CLASS_Bashor_Temp_generateFilename()
 {
     : ${1?};
 
@@ -78,7 +78,7 @@ function CLASS_Temp_generateFilename()
 # Clear the temp dir.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Temp_clear()
+function CLASS_Bashor_Temp_clear()
 {
     : ${OBJECT:?};
     

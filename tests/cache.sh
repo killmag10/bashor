@@ -17,8 +17,8 @@
 
 nl=`echo -e '\n\r'`;
 
-loadClass 'Cache';
-new 'Cache' 'Cache' "$TEST_TEMP_DIR";
+loadClass 'Bashor_Cache';
+new 'Bashor_Cache' 'Cache' "$TEST_TEMP_DIR";
 
 res=`object Cache filename 'test'`;
 checkSimple "filename" "$res" "$TEST_TEMP_DIR/CACHE_d8e8fca2dc0f896fd7cb4cb0031ba249_935282863_5";

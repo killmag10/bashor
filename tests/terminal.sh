@@ -15,9 +15,9 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Terminal';
+loadClass 'Bashor_Terminal';
 
-res=`class Terminal getColumns`;
+res=`class Bashor_Terminal getColumns`;
 checkRegex "getColumns" "$res" '[1-9][0-9]*';
-res=`class Terminal getLines`;
+res=`class Bashor_Terminal getLines`;
 checkRegex "getLines" "$res" '[1-9][0-9]*';

@@ -20,7 +20,7 @@
 #
 # -s   integer session size (Default:65536)
 # -c   compress
-function CLASS_Data___construct()
+function CLASS_Bashor_Data___construct()
 {    
     : ${OBJECT:?};
     
@@ -42,7 +42,7 @@ function CLASS_Data___construct()
 # $2    string  Data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Data_set()
+function CLASS_Bashor_Data_set()
 {
     : ${OBJECT:?};
     : ${1:?};
@@ -73,7 +73,7 @@ function CLASS_Data_set()
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function CLASS_Data_remove()
+function CLASS_Bashor_Data_remove()
 {
     : ${OBJECT:?};
     : ${1:?};
@@ -94,7 +94,7 @@ function CLASS_Data_remove()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Data_get()
+function CLASS_Bashor_Data_get()
 {
     : ${OBJECT:?};
     : ${1:?};
@@ -116,7 +116,7 @@ function CLASS_Data_get()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Data_isset()
+function CLASS_Bashor_Data_isset()
 {
     : ${OBJECT:?};
     : ${1:?};
@@ -138,7 +138,7 @@ function CLASS_Data_isset()
 # &0    string Data
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Data__compress()
+function CLASS_Bashor_Data__compress()
 {
     : ${OBJECT:?};
     : ${1:?};
@@ -157,7 +157,7 @@ function CLASS_Data__compress()
 # Check if registry is compressed.
 #
 # $?    0:YES   1:NO
-function CLASS_Data_isCompressed()
+function CLASS_Bashor_Data_isCompressed()
 {
     : ${OBJECT:?};
     
@@ -170,7 +170,7 @@ function CLASS_Data_isCompressed()
 # Get current size
 #
 # $?    0:OK    1:ERROR
-function CLASS_Data_size()
+function CLASS_Bashor_Data_size()
 {
     : ${OBJECT:?};
     

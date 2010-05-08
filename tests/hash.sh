@@ -15,7 +15,7 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Hash';
+loadClass 'Bashor_Hash';
 
-res=`class Hash md5 'abc123'`;
+res=`class Bashor_Hash md5 'abc123'`;
 checkSimple "md5" "$res" "2c6c8ab6ba8b9c98a1939450eb4089ed";

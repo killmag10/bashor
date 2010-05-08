@@ -19,7 +19,7 @@
 # Constructor
 #
 # $1    string  log file
-function CLASS_Log___load()
+function CLASS_Bashor_Log___load()
 {
     this set file "$BASHOR_LOG_FILE";
 }
@@ -28,7 +28,7 @@ function CLASS_Log___load()
 # Constructor
 #
 # $1    string  cache dir
-function CLASS_Log___construct()
+function CLASS_Bashor_Log___construct()
 {
     : ${1?};
     
@@ -40,7 +40,7 @@ function CLASS_Log___construct()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Log_log()
+function CLASS_Bashor_Log_log()
 {
     local logFile=`this get file`;
     
@@ -56,7 +56,7 @@ function CLASS_Log_log()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Log_get()
+function CLASS_Bashor_Log_get()
 {
     local logFile=`this get file`;
     
@@ -73,7 +73,7 @@ function CLASS_Log_get()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Log_remove()
+function CLASS_Bashor_Log_remove()
 {
     local logFile=`this get file`;
     
@@ -90,7 +90,7 @@ function CLASS_Log_remove()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Log_error()
+function CLASS_Bashor_Log_error()
 {
     datestring=`date +'%Y-%m-%d %H:%M:%S'`;
     if [ -p "/dev/stdin" ]; then
@@ -105,7 +105,7 @@ function CLASS_Log_error()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Log_warning()
+function CLASS_Bashor_Log_warning()
 {
     datestring=`date +'%Y-%m-%d %H:%M:%S'`;
     if [ -p "/dev/stdin" ]; then
@@ -120,7 +120,7 @@ function CLASS_Log_warning()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Log_debug()
+function CLASS_Bashor_Log_debug()
 {
     datestring=`date +'%Y-%m-%d %H:%M:%S'`;
     if [ -p "/dev/stdin" ]; then

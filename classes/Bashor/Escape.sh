@@ -21,7 +21,7 @@
 # $1    string  To escape
 # -d    string  Expression limiter
 # $?    0:OK    1:ERROR
-function CLASS_Escape_regEx()
+function CLASS_Bashor_Escape_regEx()
 {
     : ${1?};
     
@@ -49,7 +49,7 @@ function CLASS_Escape_regEx()
 # $1    string  To escape
 # -d    string  Expression limiter
 # $?    0:OK    1:ERROR
-function CLASS_Escape_regExReplacement()
+function CLASS_Bashor_Escape_regExReplacement()
 {
     : ${1?};
     

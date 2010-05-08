@@ -15,8 +15,8 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Temp';
-new Temp Temp "$TEST_TEMP_DIR";
+loadClass 'Bashor_Temp';
+new Bashor_Temp Temp "$TEST_TEMP_DIR";
 nl=`echo -e '\n\r'`;
 
 dir1=`object Temp dir "test"`;

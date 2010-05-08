@@ -15,9 +15,9 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Registry';
-loadClass 'Session';
-new 'Session' 'Session' "$TEST_TEMP_DIR/" -c
+loadClass 'Bashor_Registry';
+loadClass 'Bashor_Session';
+new 'Bashor_Session' 'Session' "$TEST_TEMP_DIR/" -c
 nl=`echo -e '\n\r'`;
 
 object Session set "test" "blub 123blub";

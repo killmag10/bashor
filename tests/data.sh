@@ -15,8 +15,8 @@
 # @version      $Id$
 ################################################################################
 
-loadClass 'Data';
-new Data Data -c;
+loadClass 'Bashor_Data';
+new Bashor_Data Data -c;
 
 nl=`echo -e '\n\r'`;
 

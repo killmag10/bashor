@@ -19,7 +19,7 @@
 # Constructor
 #
 # $1    string  registry file
-function CLASS_Registry___construct()
+function CLASS_Bashor_Registry___construct()
 {
     : ${1?};
     : ${OBJECT:?};
@@ -43,7 +43,7 @@ function CLASS_Registry___construct()
 # $2    string  Data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Registry_set()
+function CLASS_Bashor_Registry_set()
 {
     : ${1:?};
     : ${OBJECT:?};
@@ -54,9 +54,9 @@ function CLASS_Registry_set()
         local value="$2";
     fi
     
-    loadClass 'Lock';
+    loadClass 'Bashor_Lock';
     local file=`this get file`;
-    local lockFile=`class Lock filename "$file"`;
+    local lockFile=`class Bashor_Lock filename "$file"`;
     
     {
         flock 200;
@@ -70,7 +70,7 @@ function CLASS_Registry_set()
         local data=`echo "$key $value"; echo -n "$data";`;
         echo "$data" | sort -u | this call _compress 'c' > "$file";
     } 200>"$lockFile";
-    class Lock delete "$lockFile";
+    class Bashor_Lock delete "$lockFile";
     
     return "$?"
 }
@@ -80,14 +80,14 @@ function CLASS_Registry_set()
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function CLASS_Registry_remove()
+function CLASS_Bashor_Registry_remove()
 {
     : ${1:?};
     : ${OBJECT:?};
     
-    loadClass 'Lock';
+    loadClass 'Bashor_Lock';
     local file=`this get file`;
-    local lockFile=`class Lock filename "$file"`;
+    local lockFile=`class Bashor_Lock filename "$file"`;
     local key=`echo "$1" | base64 -w 0`;
     
     if [ -f "$file" ]; then
@@ -99,7 +99,7 @@ function CLASS_Registry_remove()
                 | sort -u \
                 | this call _compress 'c' > "$file";
         } 200>"$lockFile";
-        class Lock delete "$lockFile";
+        class Bashor_Lock delete "$lockFile";
         
         return "$?"
     fi
@@ -111,7 +111,7 @@ function CLASS_Registry_remove()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Registry_get()
+function CLASS_Bashor_Registry_get()
 {
     : ${1:?};
     : ${OBJECT:?};
@@ -137,7 +137,7 @@ function CLASS_Registry_get()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Registry_isset()
+function CLASS_Bashor_Registry_isset()
 {
     : ${1:?};
     : ${OBJECT:?};
@@ -163,7 +163,7 @@ function CLASS_Registry_isset()
 # &0    string Data
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Registry__compress()
+function CLASS_Bashor_Registry__compress()
 {
     : ${1:?};
     : ${OBJECT:?};
@@ -182,7 +182,7 @@ function CLASS_Registry__compress()
 # Check if registry is compressed.
 #
 # $?    0:YES   1:NO
-function CLASS_Registry_isCompressed()
+function CLASS_Bashor_Registry_isCompressed()
 {
     : ${OBJECT:?};
     
@@ -196,7 +196,7 @@ function CLASS_Registry_isCompressed()
 #
 # &1    string  filename
 # $?    0:YES   1:NO
-function CLASS_Registry_getFilename()
+function CLASS_Bashor_Registry_getFilename()
 {
     : ${OBJECT:?};
     
