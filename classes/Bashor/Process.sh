@@ -8,32 +8,32 @@
 # http://www.gnu.de/documents/lgpl.de.html
 #
 # @package      Bashor
-# @subpackage   Functions
+# @subpackage   Class
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: registry.sh 16 2010-03-12 23:35:45Z lars $
+# @version      $Id: escape.sh 16 2010-03-12 23:35:45Z lars $
 ################################################################################
 
-loadClassOnce 'Bashor_Registry';
-extends Bashor_Session Bashor_Registry;
+##
+# Get the process id.
+#
+# &1 pid
+# $?    0:OK    1:ERROR
+function CLASS_Bashor_Process_pid()
+{
+    echo "$$";
+    return 0;
+}
 
 ##
-# Constructor
+# Get the parent process id.
 #
-# $1    string  session dir
-function CLASS_Bashor_Session___construct()
+# &1 pid
+# $?    0:OK    1:ERROR
+function CLASS_Bashor_Process_ppid()
 {
-    : ${OBJECT:?};
-    
-    optSetOpts 'c';
-    optSetArgs "$@";
-    
-    argIsNotEmpty "1" || error "session dir not set";
-    local sessionDir=`argValue "1"`;
-
-    local optionCompress='';
-    optIsset 'c' && local optionCompress='-c';
-    
-    parent call __construct $optionCompress -- "$sessionDir""$$";
+    echo "$PPID";
+    return 0;
 }
+

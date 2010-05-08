@@ -30,10 +30,21 @@ function CLASS_Bashor_Registry___construct()
     this set compress "0";
     optIsset 'c' && this set compress "1";
   
-    argIsset "1" || error "registry file not set";
-    local registryDir=`argValue "1"`;
+    argIsNotEmpty "1" || error "registry file not set";
+    local registryFile=`argValue "1"`;
     
-    this set file "$registryDir";
+    this set file "$registryFile";
+    this set lockFile "$registryFile"'.lock';
+    local lockFile=`this get lockFile`;
+    
+    if [ ! -f "$file" ]; then
+        loadClassOnce 'Bashor_Lock';
+        {
+            flock 200;
+            echo '' | this call _compress 'c' > "`this get file`"    
+        } 200>"$lockFile";
+        class Bashor_Lock delete "$lockFile";
+    fi
 }
 
 ##
@@ -54,10 +65,10 @@ function CLASS_Bashor_Registry_set()
         local value="$2";
     fi
     
-    loadClass 'Bashor_Lock';
+    loadClassOnce 'Bashor_Lock';
     local file=`this get file`;
-    local lockFile=`class Bashor_Lock filename "$file"`;
-    
+    local lockFile=`this get lockFile`;
+       
     {
         flock 200;
         
@@ -85,9 +96,9 @@ function CLASS_Bashor_Registry_remove()
     : ${1:?};
     : ${OBJECT:?};
     
-    loadClass 'Bashor_Lock';
+    loadClassOnce 'Bashor_Lock';
     local file=`this get file`;
-    local lockFile=`class Bashor_Lock filename "$file"`;
+    local lockFile=`this get lockFile`;
     local key=`echo "$1" | base64 -w 0`;
     
     if [ -f "$file" ]; then
@@ -116,16 +127,22 @@ function CLASS_Bashor_Registry_get()
     : ${1:?};
     : ${OBJECT:?};
     
+    loadClassOnce 'Bashor_Lock';
     local file=`this get file`;
+    local lockFile=`this get lockFile`;
     
     if [ -f "$file" ]; then
-        local key=`echo "$1" | base64`;
-        local res=`cat "$file" \
-            | this call _compress 'd' | grep "^$key "`;
-        if [ -n "$res" ]; then
-            echo "$res" | sed 's#\S\+\s\+##' | base64 -d;
-            return 0;
-        fi
+        {
+            flock -s 200;
+            
+            local key=`echo "$1" | base64`;
+            local res=`cat "$file" \
+                | this call _compress 'd' | grep "^$key "`;
+            if [ -n "$res" ]; then
+                echo "$res" | sed 's#\S\+\s\+##' | base64 -d;
+                return 0;
+            fi
+        } 200>"$lockFile";
     fi
     
     return 1;
@@ -142,15 +159,21 @@ function CLASS_Bashor_Registry_isset()
     : ${1:?};
     : ${OBJECT:?};
     
+    loadClassOnce 'Bashor_Lock';
     local file=`this get file`;
+    local lockFile=`this get lockFile`;
     
     if [ -f "$file" ]; then
-        local key=`echo "$1" | base64`;
-        local res=`cat "$file" \
-            | this call _compress 'd' | grep "^$key "`;
-        if [ -n "$res" ]; then
-            return 0;
-        fi
+        {
+            flock -s 200;
+    
+            local key=`echo "$1" | base64`;
+            local res=`cat "$file" \
+                | this call _compress 'd' | grep "^$key "`;
+            if [ -n "$res" ]; then
+                return 0;
+            fi
+        } 200>"$lockFile";
     fi
     
     return 1;
@@ -202,4 +225,74 @@ function CLASS_Bashor_Registry_getFilename()
     
     echo "`this get file`";
     return "$?";
+}
+
+##
+# Get all keys from registry.
+#
+# $?    0:EXISTS    1:NOT FOUND
+# &1    string Data 
+function CLASS_Bashor_Registry_getKeys()
+{
+    : ${OBJECT:?};
+    
+    loadClassOnce 'Bashor_Lock';
+    local file=`this get file`;
+    local lockFile=`this get lockFile`;
+    
+    if [ -f "$file" ]; then
+        {
+            flock -s 200;
+            
+            local res=`cat "$file" \
+                | this call _compress 'd'`;
+            if [ -n "$res" ]; then
+                (
+                    local IFS=`echo -e '\n\r'`;
+                    for line in $res; do
+                        echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d;
+                    done;
+                )
+                return 0;
+            fi
+        } 200>"$lockFile";
+    fi
+    
+    return 1;
+}
+
+##
+# Get all keys and values from registry.
+#
+# $?    0:EXISTS    1:NOT FOUND
+# &1    string Data 
+function CLASS_Bashor_Registry_getValues()
+{
+    : ${OBJECT:?};
+    
+    loadClassOnce 'Bashor_Lock';
+    local file=`this get file`;
+    local lockFile=`this get lockFile`;
+    
+    if [ -f "$file" ]; then
+        {
+            flock -s 200;
+            
+            local res=`cat "$file" \
+                | this call _compress 'd'`;
+            if [ -n "$res" ]; then
+                (
+                    local IFS=`echo -e '\n\r'`;
+                    for line in $res; do
+                        local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`;
+                        local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d`;
+                        echo "$key : $value";
+                    done;
+                )
+                return 0;
+            fi
+        } 200>"$lockFile";
+    fi
+    
+    return 1;
 }

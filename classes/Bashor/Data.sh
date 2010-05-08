@@ -177,3 +177,52 @@ function CLASS_Bashor_Data_size()
     this get data | wc -c;
     return "$?";
 }
+
+##
+# Get all keys from registry.
+#
+# $?    0:EXISTS    1:NOT FOUND
+# &1    string Data 
+function CLASS_Bashor_Data_getKeys()
+{
+    : ${OBJECT:?};
+    
+    local data=`this get data`;
+    if [ -n "$data" ]; then
+        (
+            local IFS=`echo -e '\n\r'`;
+            for line in $data; do
+                echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d;
+            done;
+        )
+        return 0;
+    fi
+    
+    return 1;
+}
+
+##
+# Get all keys and values from registry.
+#
+# $?    0:EXISTS    1:NOT FOUND
+# &1    string Data 
+function CLASS_Bashor_Data_getValues()
+{
+    : ${OBJECT:?};
+    
+    local data=`this get data`;
+    if [ -n "$data" ]; then
+        (
+            local IFS=`echo -e '\n\r'`;
+            for line in $data; do
+                local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`;
+                local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d | this call _compress 'd'`;
+                echo "$key : $value";
+            done;
+        )
+        return 0;
+    fi
+    
+    return 1;
+}
+
