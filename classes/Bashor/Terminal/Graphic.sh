@@ -37,16 +37,13 @@ function CLASS_Bashor_Terminal_Graphic_setPixel()
     [ -n "$4" ] && class Bashor_Terminal setBackgroundColorAnsi "$4";
     [ -n "$5" ] && class Bashor_Terminal setFordergroundColorAnsi "$5";
     if [ -n "$6" ]; then
-        echo "$6" | grep 'B' -q && class Bashor_Terminal setStyleBold 1;
-        echo "$6" | grep 'U' -q && class Bashor_Terminal setStyleUnderline 1;
-        echo "$6" | grep 'X' -q && class Bashor_Terminal setExtendedCharacters 1;
-    fi
-    
+        [ "$6" != "${6/B/}" ] && class Bashor_Terminal setStyleBold 1;
+        [ "$6" != "${6/U/}" ] && class Bashor_Terminal setStyleUnderline 1;
+        [ "$6" != "${6/X/}" ] && class Bashor_Terminal setExtendedCharacters 1;
+    fi    
     local char="${3:- }";
     echo -n "${char:0:1}";
-    if [ -n "$6" ]; then
-        echo "$6" | grep 'X' -q && class Bashor_Terminal setExtendedCharacters 0;
-    fi
+    [ "$6" != "${6/X/}" ] && class Bashor_Terminal setExtendedCharacters 0;
     class Bashor_Terminal resetStyle;
     class Bashor_Terminal restoreCurser;
     return "$?";
@@ -75,18 +72,14 @@ function CLASS_Bashor_Terminal_Graphic_printText()
     [ -n "$4" ] && class Bashor_Terminal setBackgroundColorAnsi "$4";
     [ -n "$5" ] && class Bashor_Terminal setFordergroundColorAnsi "$5";
     if [ -n "$6" ]; then
-        echo "$6" | grep 'B' -q && class Bashor_Terminal setStyleBold 1;
-        echo "$6" | grep 'U' -q && class Bashor_Terminal setStyleUnderline 1;
-        echo "$6" | grep 'X' -q && class Bashor_Terminal setExtendedCharacters 1;
-    fi
-    
+        [ "$6" != "${6/B/}" ] && class Bashor_Terminal setStyleBold 1;
+        [ "$6" != "${6/U/}" ] && class Bashor_Terminal setStyleUnderline 1;
+        [ "$6" != "${6/X/}" ] && class Bashor_Terminal setExtendedCharacters 1;
+    fi    
     echo -n "$3";
-    if [ -n "$6" ]; then
-        echo "$6" | grep 'X' -q && class Bashor_Terminal setExtendedCharacters 0;
-    fi
+    [ "$6" != "${6/X/}" ] && class Bashor_Terminal setExtendedCharacters 0;
     class Bashor_Terminal resetStyle;
-    class Bashor_Terminal restoreCurser;
-    
+    class Bashor_Terminal restoreCurser;    
     return "$?";
 }
 
@@ -109,24 +102,19 @@ function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
     : ${4:?};
     loadClassOnce 'Bashor_Terminal';
     loadClassOnce 'Bashor_Escape';
-
+    
     (
-        local char="$5";
-        local char="${char:- }";
+        local char="${5:- }";
         local char="${char:0:1}";
         local char=`class Bashor_Escape regExReplacement "$char" '/'`;
-        
-        local h="$4";
-        class Bashor_Terminal saveCurser;
-        
+        class Bashor_Terminal saveCurser;        
         [ -n "$6" ] && class Bashor_Terminal setBackgroundColorAnsi "$6";
         [ -n "$7" ] && class Bashor_Terminal setFordergroundColorAnsi "$7";
         if [ -n "$8" ]; then
-            echo "$8" | grep 'B' -q && class Bashor_Terminal setStyleBold 1;
-            echo "$8" | grep 'U' -q && class Bashor_Terminal setStyleUnderline 1;
-            echo "$8" | grep 'X' -q && class Bashor_Terminal setExtendedCharacters 1;
-        fi
-        
+            [ "$8" != "${8/B/}" ] && class Bashor_Terminal setStyleBold 1;
+            [ "$8" != "${8/U/}" ] && class Bashor_Terminal setStyleUnderline 1;
+            [ "$8" != "${8/X/}" ] && class Bashor_Terminal setExtendedCharacters 1;
+        fi        
         class Bashor_Terminal moveCurserBy "$1" "$2";
         local v3="$3";
         local tmp=`
@@ -134,15 +122,11 @@ function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
             class Bashor_Terminal moveCurserBy -"$v3" 1;
         `;
         local out='';
-        for i in `seq "$h"`; do local out="${out}${tmp}"; done;
+        for i in `seq "$4"`; do local out="${out}${tmp}"; done;
         echo -n "$out";
-        if [ -n "$8" ]; then
-            echo "$8" | grep 'X' -q && class Bashor_Terminal setExtendedCharacters 0;
-        fi
-        
+        [ "$8" != "${8/X/}" ] && class Bashor_Terminal setExtendedCharacters 0;
         class Bashor_Terminal resetStyle;    
         class Bashor_Terminal restoreCurser;
-    )
-    
+    )    
     return "$?";
 }
