@@ -36,7 +36,7 @@ function CLASS_Bashor_Escape_regEx()
     fi
 
     echo "$1" \
-        | sed 's#\([.^$\\]\)#\\\1#g' \
+        | sed 's#\([.^$*\\]\)#\\\1#g' \
         | sed 's#\([]]\|[[]\)#[\1]#g' \
         | sed 's/'"$replacement"'/\\'"$replacement"'/g';
         
