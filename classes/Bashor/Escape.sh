@@ -24,16 +24,7 @@
 function CLASS_Bashor_Escape_regEx()
 {
     : ${1?};
-    
-    optSetOpts 'd:';
-    optSetArgs "$@";
-    
-    if optIsset 'd'; then
-        local replacement=`optValue 'd'`;
-        local replacement=`echo "$replacement" | sed 's#/#\\/#g'`;
-    else
-        local replacement='\/';
-    fi
+    local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`;
 
     echo "$1" \
         | sed 's#\([.^$*\\]\)#\\\1#g' \
@@ -52,16 +43,7 @@ function CLASS_Bashor_Escape_regEx()
 function CLASS_Bashor_Escape_regExReplacement()
 {
     : ${1?};
-    
-    optSetOpts 'd:';
-    optSetArgs "$@";
-    
-    if optIsset 'd'; then
-        local replacement=`optValue 'd'`;
-        local replacement=`echo "$replacement" | sed 's#/#\\/#g'`;
-    else
-        local replacement='\/';
-    fi
+    local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`;
 
     echo "$1" \
         | sed 's#\([\\]\)#\\\1#g' \
