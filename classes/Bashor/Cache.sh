@@ -17,32 +17,9 @@
 
 ##
 # Constructor
-#
-# $1    string  cache dir
 function CLASS_Bashor_Cache___construct()
 {
-    : ${1?};
     : ${OBJECT:?};
-    
-    this set dir "$1";
-}
-
-##
-# Generate the cache filename.
-#
-# $1    string  Id
-# $?    0:OK    1:ERROR
-# &1    string filename 
-function CLASS_Bashor_Cache_filename()
-{
-    : ${1?};
-    : ${OBJECT:?};
-    
-    loadClass 'Bashor_Hash';
-    
-    local hashMd5=`class Bashor_Hash md5 "$1"`;
-    local hashCrc32=`echo "$1" | cksum | tr ' ' '_'`;
-    echo `this get dir`"/CACHE_${hashMd5}_${hashCrc32}";
     return 0;
 }
 
@@ -60,20 +37,7 @@ function CLASS_Bashor_Cache_set()
     : ${2:?};
     : ${OBJECT:?};
     
-    local filename=`this call filename "$1"`;
-    local time=`date +%s`;
-    ((time="$time"+"$2"));
-    {
-        echo "$time";
-        echo "`echo '$1' | tr '\n\r' ' '`";
-        if [ -p /dev/stdin ]; then
-            cat /dev/stdin;
-        else
-            echo -n "$3";
-        fi
-    } > "$filename";
-    
-    return "$?"
+    return 0;
 }
 
 ##
@@ -87,17 +51,7 @@ function CLASS_Bashor_Cache_get()
     : ${1:?};
     : ${OBJECT:?};
     
-    local filename=`this call filename "$1"`;
-    local curTime=`date +%s`;
-    if [ -f "$filename" ]; then
-        local time=`cat "$filename" | head -n 1`;
-        if [ -n "$time" ] && [ "$time" -gt "$curTime" ]; then
-            cat "$filename" | tail -n +3;
-            return 0;
-        fi
-    fi
-    
-    return 1;
+    return 0;
 }
 
 ##
@@ -110,49 +64,17 @@ function CLASS_Bashor_Cache_check()
     : ${1:?};
     : ${OBJECT:?};
     
-    local filename=`this call filename "$1"`;
-    cacheCheckByFilename "$filename";	
-    return "$?";
-}
-
-##
-# Check if data cached.
-#
-# $1    string  filename
-# $?    0:CACHED    1:NOT CACHED
-function CLASS_Bashor_Cache_checkByFilename()
-{
-    : ${1?};
-    : ${OBJECT:?};
-    
-    local filename="$1";
-    local curTime=`date +%s`;
-    if [ -f "$filename" ]; then
-        local head=`cat "$filename" | head -n 1`;
-        if [ -n "$head" ] && [ "$head" -gt "$curTime" ]; then
-            return 0;
-        fi
-    fi
-
-    return 1;
+    return 0;
 }
 
 ##
 # Remove old cache files.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Cache_removeOld()
+function CLASS_Bashor_Cache_removeOutdated()
 {
     : ${OBJECT:?};
     
-    local files=`ls -1 "$BASHOR_DIR_CACHE/file/"`;
-    local IFS=`echo -e "\n\r"`;
-    for file in $files; do
-        cacheCheckByFilename "$BASHOR_FUNCTION_CACHE_DIR/$file";
-        if [ "$?" != 0 ]; then
-            rm "$BASHOR_FUNCTION_CACHE_DIR/$file";
-        fi
-    done;
     return 0;
 }
 

@@ -83,18 +83,18 @@ function checkRegexLines()
     printResult "$1" "$?";
 }
 
-doTest 'getopt';
-doTest 'getopts';
-doTest 'cache';
-doTest 'color';
-doTest 'lock';
-doTest 'hash';
-doTest 'registry';
-doTest 'data';
-doTest 'session';
-doTest 'log';
-doTest 'escape';
-doTest 'temp';
-doTest 'terminal';
+doTest 'Getopt';
+doTest 'Getopts';
+doTest 'Cache/File';
+doTest 'Color';
+doTest 'Lock';
+doTest 'Hash';
+doTest 'Registry';
+doTest 'Data';
+doTest 'Session';
+doTest 'Log';
+doTest 'Escape';
+doTest 'Temp';
+doTest 'Terminal';
 
 printFinalResult;
