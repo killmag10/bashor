@@ -59,7 +59,7 @@ function CLASS_Bashor_Lock_checkRead()
         return "$?";
     fi
     
-    return 2;
+    return 0;
 }
 
 ##
@@ -76,5 +76,5 @@ function CLASS_Bashor_Lock_checkWrite()
         return "$?";
     fi
     
-    return 2;
+    return 0;
 }
