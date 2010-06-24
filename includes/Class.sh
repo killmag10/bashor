@@ -88,6 +88,18 @@ function CLASS_Class_hasParentClass()
 function CLASS_Class_isA()
 {
     : ${CLASS_NAME:?};
-    # @todo not implemented
-    return 0;
+    : ${1:?};
+    [ "$CLASS_NAME" == "$1" ] && return 0;
+    parent exists || return 1;
+    parent call isA "$1";
+    return "$?";
+}
+
+##
+# Check if class is a instance of.
+#
+# $?    0:TRUE    1:FALSE
+function CLASS_Class_debug()
+{
+    
 }
