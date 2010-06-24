@@ -73,7 +73,7 @@ function addClass()
     local ns="$1";
     shift;
     
-    eval '[ -z "_OBJECT_CLASS_'"$ns"'_EXTENDS" ] && export _OBJECT_CLASS_'"$ns"'_EXTENDS'"='';";
+    eval '[ -z "$_OBJECT_CLASS_'"$ns"'_EXTENDS" ] && _addStdClass '"$ns"';';
     declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null;
     if [ "$?" == 0 ]; then
         _staticCall "$ns" '__load';
@@ -84,10 +84,24 @@ function addClass()
 }
 
 ##
+# Add standart class.
+#
+# $1    string  namespace
+# $?    0:OK    1:ERROR
+function _addStdClass()
+{
+    : ${1:?};
+    
+    _createExtendedClassFunctions "$1" 'Class' '1';
+    eval 'export _OBJECT_CLASS_'"$1"'_EXTENDS=Class;';
+    return 0;
+}
+
+##
 # Create class functions for extended class.
 #
 # $1    string  new class
-# $1    string  parent class
+# $2    string  parent class
 # $?    0:OK    1:ERROR
 function _createExtendedClassFunctions()
 {
@@ -96,6 +110,7 @@ function _createExtendedClassFunctions()
     
     local nsParent="$2";
     local nsNew="$1";
+    local noOverwrite="$3";
     
     local fList=`declare -F \
         | sed -n 's#^declare -f CLASS_'"$nsParent"'_\(.*\)$#\1#p'`;
@@ -103,7 +118,9 @@ function _createExtendedClassFunctions()
     for f in $fList; do
         local fNameParent='CLASS_'"$nsParent"'_'"$f";
         local fNameNew='CLASS_'"$nsNew"'_'"$f";
-        eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return "$?"; }';
+        if [ -z "$noOverwrite" ] || ! functionExists "$fNameNew"; then
+            eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return "$?"; }';
+        fi
     done;
 }
 
@@ -474,24 +491,31 @@ function parent()
     
     local OLD_CLASS_PARENT="$CLASS_PARENT";
     if [ -n "$CLASS_PARENT" ]; then
-        eval 'export CLASS_PARENT="$_OBJECT_CLASS_'"$CLASS_PARENT"'_EXTENDS";';
+        eval 'local CLASS_PARENT="$_OBJECT_CLASS_'"$CLASS_PARENT"'_EXTENDS";';
     else
-        eval 'export CLASS_PARENT="$_OBJECT_CLASS_'"$CLASS_NAME"'_EXTENDS";';
+        eval 'local CLASS_PARENT="$_OBJECT_CLASS_'"$CLASS_NAME"'_EXTENDS";';
     fi
-    
+        
+    local return=1;
     case "$1" in
         call)
+            : ${CLASS_PARENT:?};
+            export CLASS_PARENT;
             : ${2:?};
             local fName="$2"
             shift 2;
             if [ -z "$OBJECT_NAME" ]; then
                 _staticCall "$CLASS_NAME" "$fName" "$@";
-                return "$?";
+                local return="$?";
             fi
             if [ -n "$OBJECT_NAME" ]; then
                 _objectCall "$OBJECT_NAME" "$fName" "$@";
-                return "$?";
+                local return="$?";
             fi
+            ;;
+        exists)
+            [ -n "$CLASS_PARENT" ];
+            local return="$?"
             ;;
         *)
             error "\"$1\" is not a option of parent!";
@@ -499,6 +523,7 @@ function parent()
     esac
     
     export CLASS_PARENT="$OLD_CLASS_PARENT";
+    return "$return";
 }
 
 ##
@@ -611,3 +636,5 @@ function _objectIsset()
     
     return 1;
 }
+
+. "$BASHOR_PATH_INCLUDES/Class.sh";

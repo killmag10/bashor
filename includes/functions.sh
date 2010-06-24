@@ -74,6 +74,17 @@ function renameFunction()
 }
 
 ##
+# Check if function exists.
+#
+# $1    string  function name
+# $?    0:TRUE  1:FALSE
+function functionExists()
+{
+    declare -f "$1" > /dev/null;
+    return "$?";
+}
+
+##
 # Add a prefix for each line.
 #
 # $1    string  prefix
