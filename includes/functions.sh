@@ -119,24 +119,24 @@ function getBacktrace()
 ##
 # Handle Errors
 #
-# exec 3>&1; (
+# exec 102>&1; (
 #       COMANDS
-# ) 2>&1 >&3 | handleError;
+# ) 2>&1 >&102 | handleError;
 #
 # &0    string  error stream
 function handleError()
 {    
-    [ $BASHOR_ERROR_OUTPUT == 1 ] && loadClassOnce "Bashor_Color";
-    [ $BASHOR_ERROR_LOG == 1 ] && loadClassOnce "Bashor_Log";
+    [ $BASHOR_ERROR_OUTPUT == 1 ] && loadClass "Bashor_Color";
+    [ $BASHOR_ERROR_LOG == 1 ] && loadClass "Bashor_Log";    
     local pre='ERROR: ';
-    while read msg; do 
+    while read msg; do
         [ $BASHOR_ERROR_BACKTRACE == 1 ] \
             && local trace=`getBacktrace | tail -n +2  | sed 's#^#    #'`;
         if [ $BASHOR_ERROR_OUTPUT == 1 ]; then
             msgOut=`echo "$msg" | sed "s/^/$pre/g"`;
             [ $BASHOR_ERROR_BACKTRACE == 1 ] \
                 && local msgOut="$msgOut""$nl""$trace";
-            echo "$msgOut" | Class Bashor_Color fg '' 'red' 'bold';
+            echo "$msgOut" | class Bashor_Color fg '' 'red' 'bold';
         fi
         if [ $BASHOR_ERROR_LOG == 1 ]; then
             msgLog="$msg";

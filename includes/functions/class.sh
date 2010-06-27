@@ -554,7 +554,7 @@ function _objectSet()
     : ${2:?};
     : ${3?};
 
-    if [ -p /dev/stdin ]; then
+    if [ -p /dev/stdin ] && [ -z "$3" ] && [ "$3" !=  "${3-null}"]; then
         local value=`cat -`;
     else
         local value="$3";
@@ -568,7 +568,7 @@ function _objectSet()
     local data=`echo "$key $value"; echo -n "$data";`;
     local data=`echo "$data" | sort -u;`;
     eval 'export '"$1"'="$data";';
-
+    
     return "$?"
 }
 
@@ -608,6 +608,7 @@ function _objectGet()
     eval 'local data="$'"$1"'";' 
     local key=`echo "$2" | base64`;
     local res=`echo "$data" | grep "^$key "`;
+    
     if [ -n "$res" ]; then
         echo "$res" | sed 's#\S\+\s\+##' | base64 -d;
         return 0;

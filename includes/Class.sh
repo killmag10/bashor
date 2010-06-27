@@ -101,5 +101,6 @@ function CLASS_Class_isA()
 # $?    0:TRUE    1:FALSE
 function CLASS_Class_debug()
 {
-    
+    # @todo
+    return 0;
 }

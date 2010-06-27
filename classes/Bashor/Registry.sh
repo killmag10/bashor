@@ -59,7 +59,7 @@ function CLASS_Bashor_Registry_set()
     : ${1:?};
     : ${OBJECT:?};
     
-    if [ -p /dev/stdin ]; then
+    if [ -p /dev/stdin ] && [ -z "$2" ] && [ "$2" !=  "${2-null}"]; then
         local value=`cat -`;
     else
         local value="$2";
