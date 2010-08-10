@@ -143,6 +143,7 @@ function CLASS_Bashor_Registry_get()
                 return 0;
             fi
         } 200>"$lockFile";
+        class Bashor_Lock delete "$lockFile";
     fi
     
     return 1;
@@ -295,4 +296,39 @@ function CLASS_Bashor_Registry_getValues()
     fi
     
     return 1;
+}
+
+##
+# Clear the registry.
+#
+function CLASS_Bashor_Registry_clear()
+{
+    : ${OBJECT:?};
+    
+    local lockFile=`this get lockFile`;    
+    loadClassOnce 'Bashor_Lock';
+    {
+        flock 200;
+        echo '' | this call _compress 'c' > "`this get file`"    
+    } 200>"$lockFile";
+    class Bashor_Lock delete "$lockFile";
+}
+
+##
+# Clear the registry.
+#
+function CLASS_Bashor_Registry_removeFile()
+{
+    : ${OBJECT:?};
+    
+    local lockFile=`this get lockFile`;
+    local file=`this get file`;
+    [ -f "$file" ] || return 1;
+    
+    loadClassOnce 'Bashor_Lock';
+    {
+        flock 200;
+        rm "$file"    
+    } 200>"$lockFile";
+    class Bashor_Lock delete "$lockFile";
 }
