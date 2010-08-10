@@ -21,13 +21,18 @@
 #
 # $1    char    one char
 # $2    integer count
-# $3    lines
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_String_repeat()
 {
     : ${1:?};
     : ${2:?};
     
-    dd if=/dev/zero bs=1 count="$2" 2>/dev/null | tr '\0' "$1";
+    local replacement=`echo "'" | sed 's#/#\\\\/#g'`;
+
+    local char=`echo "$1" \
+        | sed 's#\([\\]\)#\\\1#g' \
+        | sed 's/'"$replacement"'/\\'"$replacement"'/g'`;
+    
+    dd if=/dev/zero bs=1 count="$2" 2>/dev/null | tr '\0' "0" | sed "s#.#$char#g";
     return $?
 }

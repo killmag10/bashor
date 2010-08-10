@@ -168,8 +168,13 @@ function _staticCall()
     export OBJECT='';
     local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
     shift 2;
-    "$fName" "$@";    
-    local res="$?";
+    if declare -f "$fName" > /dev/null; then
+        "$fName" "$@";
+        local res="$?"
+    else
+        error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!";
+        local res="1"
+    fi
     export CLASS_NAME="$OLD_CLASS_NAME";
     export OBJECT_NAME="$OLD_OBJECT_NAME";
     export FUNCTION_NAME="$OLD_FUNCTION_NAME"
@@ -258,8 +263,13 @@ function _objectCall()
     export OBJECT='1';
     local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
     shift 2;
-    "$fName" "$@";
-    local res="$?"
+    if declare -f "$fName" > /dev/null; then
+        "$fName" "$@";
+        local res="$?"
+    else
+        error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!";
+        local res="1"
+    fi
     export CLASS_NAME="$OLD_CLASS_NAME";
     export OBJECT_NAME="$OLD_OBJECT_NAME";
     export FUNCTION_NAME="$OLD_FUNCTION_NAME";
