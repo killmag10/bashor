@@ -37,7 +37,7 @@ function CLASS_Bashor_Registry___construct()
     this set lockFile "$registryFile"'.lock';
     local lockFile=`this get lockFile`;
     
-    if [ ! -f "$file" ]; then
+    if [ ! -f "`this get file`" ]; then
         loadClassOnce 'Bashor_Lock';
         {
             flock 200;
