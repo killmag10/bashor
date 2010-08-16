@@ -192,11 +192,24 @@ function _staticCall()
 # $?    0:OK    1:ERROR
 function object()
 {
+    : ${1:?};
+    : ${2:?};
+    
+    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY";
+    if [ "$1" == 'local' ]; then
+        : ${3:?};
+        export OBJECT_VISIBILITY='local';
+        shift 1;
+    else
+        export OBJECT_VISIBILITY='global';
+    fi
+ 
     local OLD_CLASS_PARENT="$CLASS_PARENT";
     export CLASS_PARENT='';
     _objectCall "$@";
     local res="$?";
     export CLASS_PARENT="$OLD_CLASS_PARENT";
+    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY";
     return "$res";
 }
 
@@ -290,8 +303,18 @@ function new()
     : ${1:?};
     : ${2:?};
     
+    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY";
+    if [ "$1" == 'local' ]; then
+        : ${3:?};
+        export OBJECT_VISIBILITY='local';
+        shift 1;
+    else
+        export OBJECT_VISIBILITY='global';
+    fi
+    
     local ns="$1";
     local nsObj="$2";    
+    local res="0";
     shift 2;
     
     eval 'export _OBJECT_CLASS_'"$nsObj""='$ns';";
@@ -300,11 +323,10 @@ function new()
     if [ "$?" == 0 ]; then
         _objectCall "$nsObj" '__construct' "$@";
         local res="$?";
-        [ "$res" != 0 ] && 
-        return "$res";
     fi
-    
-    return 0;
+        
+    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY";    
+    return "$res";
 }
 
 ##
@@ -368,9 +390,20 @@ function clone()
 function remove()
 {
     : ${1:?};
+    
+    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY";
+    if [ "$1" == 'local' ]; then
+        : ${2:?};
+        export OBJECT_VISIBILITY="$1";
+        shift 1;
+    else
+        export OBJECT_VISIBILITY='global';
+    fi
 
-    _objectRemove "$1" "1";    
-    return "$?";
+    _objectRemove "$1" "1";
+    local res="$?";
+    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY";   
+    return "$res";
 }
 
 ##
@@ -388,8 +421,7 @@ function _objectRemove()
     local res="0";
     local nsObj="$1";
     local doCall="$2";
-    local nsObjVarOld='_OBJECT_DATA_'"$1";
-    local nsObjClassOld='_OBJECT_CLASS_'"$1";
+    local nsObjVarOld=`_objectVarName '' "$1"`;
     eval 'local ns="$'"$nsObjClassOld"'";';
         
     if [ "$2" == 1 ]; then
@@ -397,10 +429,8 @@ function _objectRemove()
         [ "$?" == 0 ] && _objectCall "$ns" "$nsObj" '__destruct';
         local res="$?";
     fi
-        
-    #_removeObjectAliases "$ns" "$nsObj";
+    
     eval 'unset -v '"$nsObjVarOld";
-    eval 'unset -v '"$nsObjClassOld";
     return "$res";
 }
 
@@ -416,8 +446,15 @@ function _objectVarName()
     : ${1?};
     : ${2?};
     
-    local dataVarName='_CLASS_DATA_'"$1";    
-    [ -n "$2" ] && local dataVarName='_OBJECT_DATA_'"$2";
+    if [ -n "$2" ]; then
+        if [ "$OBJECT_VISIBILITY" == 'global' ]; then
+            local dataVarName='_OBJECT_DATA_GLOBAL_'"$2";
+        else
+            local dataVarName='_OBJECT_DATA_LOCAL_'"$CLASS_NAME"'_'"$2";
+        fi
+    else
+        local dataVarName='_CLASS_DATA_'"$1"; 
+    fi
     echo "$dataVarName";
     return 0;
 }
