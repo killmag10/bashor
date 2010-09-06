@@ -280,11 +280,12 @@ function _objectCall()
     export OBJECT='1';
 
     local namespace=`_objectNamespace "" "$2" "$1"`;
+    eval 'export CLASS_NAME="$'"$namespace"'_CLASS";';
+    eval 'export OBJECT_ID="$'"$namespace"'_ID";';
     if [ -z "$1" ]; then
         export _OBJECT_PATH_OLD="$_OBJECT_PATH";
-        export _OBJECT_PATH="$_OBJECT_PATH"'__'"$OBJECT_NAME";
+        export _OBJECT_PATH="$_OBJECT_PATH"'__'"$OBJECT_NAME""$OBJECT_ID";
     fi
-    eval 'export CLASS_NAME="$'"$namespace"'_CLASS";';
     [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
     export CLASS_PARENT="";
     local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
@@ -334,6 +335,9 @@ function new()
     
     local namespace=`_objectNamespace "$ns" "$nsObj" ''`; 
     local dataVarName=`_objectVarNameData "$ns" "$nsObj" ''`;    
+    
+    callLine="`caller | sed -n 's#^\([0-9]\+\).*$#\1#p';`";
+    eval 'export '"$namespace"'_ID='"$callLine"';';
     eval 'export '"$namespace"'_CLASS='"$ns"';';
     eval 'export '"$dataVarName"'="";';
     declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null;
