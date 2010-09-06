@@ -33,6 +33,8 @@ function CLASS_Bashor_Data___construct()
     
     this set compress "0";
     optIsset 'c' && this set compress "1";
+    
+    return 0;
 }
 
 ##

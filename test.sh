@@ -83,6 +83,7 @@ function checkRegexLines()
     printResult "$1" "$?";
 }
 
+doTest 'Object';
 doTest 'Getopt';
 doTest 'Getopts';
 doTest 'Cache/File';

@@ -46,3 +46,6 @@ checkSimple "isCompressed" "$?" "0";
 
 res=`object Data size`;
 checkSimple "size" "$res" "28795";
+
+remove local Data;
+checkSimple "remove object" "$?" "0";
