@@ -228,3 +228,17 @@ function CLASS_Bashor_Data_getValues()
     return 1;
 }
 
+
+##
+# Clear data.
+#
+# $?    0:OK    1:ERROR
+function CLASS_Bashor_Data_clear()
+{
+    : ${OBJECT:?};
+
+    this set data '';
+    
+    return "$?"
+}
+
