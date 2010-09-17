@@ -167,7 +167,8 @@ function _staticCall()
     export FUNCTION_NAME="$2";
     export STATIC='1';
     export OBJECT='';
-    export _OBJECT_PATH="$_OBJECT_PATH"'___'"$CLASS_NAME";
+    export _OBJECT_PATH_OLD='';
+    export _OBJECT_PATH='___'"$CLASS_NAME";
     local fName='CLASS_'"$CLASS_NAME"'_'"$FUNCTION_NAME";
     shift 2;
     if declare -f "$fName" > /dev/null; then
@@ -278,13 +279,18 @@ function _objectCall()
     export FUNCTION_NAME="$3";
     export STATIC='';
     export OBJECT='1';
-
+    
     local namespace=`_objectNamespace "" "$2" "$1"`;
     eval 'export CLASS_NAME="$'"$namespace"'_CLASS";';
     eval 'export OBJECT_ID="$'"$namespace"'_ID";';
     if [ -z "$1" ]; then
-        export _OBJECT_PATH_OLD="$_OBJECT_PATH";
-        export _OBJECT_PATH="$_OBJECT_PATH"'__'"$OBJECT_NAME""$OBJECT_ID";
+        if [ "$OBJECT_VISIBILITY" == 'global' ]; then
+            export _OBJECT_PATH_OLD='';
+            export _OBJECT_PATH='__'"$OBJECT_NAME""$OBJECT_ID";        
+        else    
+            export _OBJECT_PATH_OLD="$_OBJECT_PATH";
+            export _OBJECT_PATH="$_OBJECT_PATH"'__'"$OBJECT_NAME""$OBJECT_ID";
+        fi
     fi
     [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
     export CLASS_PARENT="";
