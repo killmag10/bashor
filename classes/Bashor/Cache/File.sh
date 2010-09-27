@@ -30,6 +30,7 @@ function CLASS_Bashor_Cache_File___construct()
     parent call __construct;
     
     this set dir "$1";
+    mkdir -p "$1";
 }
 
 ##

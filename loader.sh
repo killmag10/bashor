@@ -20,7 +20,8 @@ if [[ ! "$BASHOR_PATH" =~ ^/ ]]; then
 fi
 
 shopt -s expand_aliases;
-export nl=`echo -e '\n\r'`;
+export NL=$'\n';
+export nl="$NL";
 
 # Set paths
 export BASHOR_PATH;

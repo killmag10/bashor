@@ -160,6 +160,7 @@ function _staticCall()
     local OLD_STATIC="$STATIC";
     local OLD_OBJECT="$OBJECT";
     local _OLD_OBJECT_PATH="$_OBJECT_PATH"; 
+    local _OLD_OBJECT_PATH_OLD="$_OBJECT_PATH_OLD"; 
     export CLASS_NAME="$1";
     [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
     export CLASS_PARENT="";
@@ -184,6 +185,7 @@ function _staticCall()
     export STATIC="$OLD_STATIC";
     export OBJECT="$OLD_OBJECT";
     export _OBJECT_PATH="$_OLD_OBJECT_PATH";
+    export _OBJECT_PATH_OLD="$_OLD_OBJECT_PATH_OLD";
     return "$res";
 }
 
@@ -282,14 +284,14 @@ function _objectCall()
     
     local namespace=`_objectNamespace "" "$2" "$1"`;
     eval 'export CLASS_NAME="$'"$namespace"'_CLASS";';
-    eval 'export OBJECT_ID="$'"$namespace"'_ID";';
+    eval 'export OBJECT_ID="$'"$namespace"'_ID";';   
     if [ -z "$1" ]; then
         if [ "$OBJECT_VISIBILITY" == 'global' ]; then
-            export _OBJECT_PATH_OLD='';
-            export _OBJECT_PATH='__'"$OBJECT_NAME""$OBJECT_ID";        
+            export _OBJECT_PATH_OLD=''; 
+            export _OBJECT_PATH='__'"$OBJECT_ID";        
         else    
             export _OBJECT_PATH_OLD="$_OBJECT_PATH";
-            export _OBJECT_PATH="$_OBJECT_PATH"'__'"$OBJECT_NAME""$OBJECT_ID";
+            export _OBJECT_PATH="$_OBJECT_PATH"'__'"$OBJECT_ID";
         fi
     fi
     [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
@@ -342,9 +344,9 @@ function new()
     local namespace=`_objectNamespace "$ns" "$nsObj" ''`; 
     local dataVarName=`_objectVarNameData "$ns" "$nsObj" ''`;    
     
-    callLine="`caller | sed -n 's#^\([0-9]\+\).*$#\1#p';`";
-    eval 'export '"$namespace"'_ID='"$callLine"';';
+    local callLine="`caller | sed -n 's#^\([0-9]\+\).*$#\1#p';`";
     eval 'export '"$namespace"'_CLASS='"$ns"';';
+    eval 'export '"$namespace"'_ID='"${ns}${callLine}"';';
     eval 'export '"$dataVarName"'="";';
     declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null;
     if [ "$?" == 0 ]; then
