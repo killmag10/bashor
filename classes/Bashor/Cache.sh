@@ -51,7 +51,7 @@ function CLASS_Bashor_Cache_get()
     : ${1:?};
     : ${OBJECT:?};
     
-    return 0;
+    return 1;
 }
 
 ##
@@ -64,7 +64,7 @@ function CLASS_Bashor_Cache_check()
     : ${1:?};
     : ${OBJECT:?};
     
-    return 0;
+    return 1;
 }
 
 ##
@@ -75,6 +75,6 @@ function CLASS_Bashor_Cache_removeOutdated()
 {
     : ${OBJECT:?};
     
-    return 0;
+    return 1;
 }
 
