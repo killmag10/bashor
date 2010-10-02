@@ -32,6 +32,14 @@ function CLASS_Class___construct()
 }
 
 ##
+# Destructor
+function CLASS_Class___destruct()
+{
+    : ${OBJECT:?};
+    return 0;
+}
+
+##
 # Get the class name.
 #
 # $?    0:OK    1:ERROR
