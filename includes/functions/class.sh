@@ -673,7 +673,6 @@ function _objectSet()
 {
     : ${1:?};
     : ${2:?};
-    : ${3?};
 
     if [ -p /dev/stdin ] && [ -z "$3" ] && [ "$3" !=  "${3-null}"]; then
         local value=`cat -`;
