@@ -144,6 +144,7 @@ function handleError()
                 && local msgLog="$msgOut""$nl""$trace";
             echo "$msgLog" | class Bashor_Log error;
         fi
+        [ -n "$1" ] && exit "$1";
     done
 }
 
