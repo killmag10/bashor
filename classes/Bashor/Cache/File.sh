@@ -48,7 +48,7 @@ function CLASS_Bashor_Cache_File_filename()
     
     local hashMd5=`class Bashor_Hash md5 "$1"`;
     local hashCrc32=`echo "$1" | cksum | tr ' ' '_'`;
-    echo `this get dir`"/CACHE_${hashMd5}_${hashCrc32}";
+    echo "`this get dir`""/CACHE_${hashMd5}_${hashCrc32}";
     return 0;
 }
 
@@ -136,12 +136,13 @@ function CLASS_Bashor_Cache_File_removeOutdated()
 {
     : ${OBJECT:?};
     
-    local files=`ls -1 "$BASHOR_DIR_CACHE/file/"`;
+    local dir="`this get dir`";
+    local files="`ls -1 "$dir"`";
     local IFS=`echo -e "\n\r"`;
     for file in $files; do
-        cacheCheckByFilename "$BASHOR_FUNCTION_CACHE_DIR/$file";
+        this call check "$dir/$file";
         if [ "$?" != 0 ]; then
-            rm "$BASHOR_FUNCTION_CACHE_DIR/$file";
+            rm "$dir/$file";
         fi
     done;
     return 0;
