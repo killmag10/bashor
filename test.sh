@@ -93,6 +93,7 @@ doTest 'Hash';
 doTest 'Registry';
 doTest 'Data';
 doTest 'Session';
+doTest 'String';
 doTest 'Log';
 doTest 'Escape';
 doTest 'Temp';

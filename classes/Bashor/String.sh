@@ -36,3 +36,25 @@ function CLASS_Bashor_String_repeat()
     dd if=/dev/zero bs=1 count="$2" 2>/dev/null | tr '\0' "0" | sed "s#.#$char#g";
     return $?
 }
+
+##
+# Get the md5 hash
+#
+# &0    string  text
+# $1    string  find
+# $2    string  replacement
+# &1    string  text
+# $?    0:OK    1:ERROR
+function CLASS_Bashor_String_replace()
+{
+    : ${1?};
+    : ${2?};
+    
+    loadClassOnce 'Bashor_Escape';
+    local find="`class Bashor_Escape regEx "$1" '/'`";
+    local replacement="`class Bashor_Escape regExReplacement "$2" '/'`";
+    
+    sed 's/'"$find"'/'"$replacement"'/g';
+    return $?
+}
+
