@@ -252,9 +252,7 @@ function argList()
 # $2    string  long getopts expression
 # $?    0:FOUND 1:NOT FOUND
 function optSetOpts()
-{
-    : ${1:?};
-    
+{    
     OPT_OPTS="$1";
     OPT_OPTS_LONG="$2";
     return 0;
