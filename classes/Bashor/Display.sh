@@ -26,9 +26,9 @@ function CLASS_Bashor_Display_simpleRotateBar()
 {
     : ${1:?};
     
-    local bar="${1:-'#         '}";
-    local pbar_pre="${2:-'['}";
-    local pbar_post="${3:-']'}";
+    local bar="${1:-#         }";
+    local barPre="${2:-[}";
+    local barPost="${3:-]}";
     
     local barLength=`echo -n "$pbar" | wc -m`;
     echo "$barPre""$bar""$barPost";
