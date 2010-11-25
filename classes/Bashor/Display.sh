@@ -30,12 +30,12 @@ function CLASS_Bashor_Display_simpleRotateBar()
     local barPre="${2:-[}";
     local barPost="${3:-]}";
     
-    local barLength=`echo -n "$pbar" | wc -m`;
+    local barLength=`echo -n "$bar" | wc -m`;
     echo "$barPre""$bar""$barPost";
     echo -n -e "\e[1A";
     while read value; do
-        local barLast=`echo "$pbar" | cut -b "$barLength"`;
-        local bar=`echo "$barLast""$pbar" | cut -b 1-"$barLength"`;
+        local barLast=`echo "$bar" | cut -b "$barLength"`;
+        local bar=`echo "$barLast""$bar" | cut -b 1-"$barLength"`;
         echo "$barPre""$bar""$barPost";
         echo -n -e "\e[1A";
     done;
