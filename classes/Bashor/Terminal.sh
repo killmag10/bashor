@@ -165,7 +165,12 @@ function CLASS_Bashor_Terminal_resetStyle()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_getColumns()
 {
-    tput cols;
+	if [ -n "$COLUMNS" ]; then
+		echo "$COLUMNS";
+		return $?
+    fi
+    
+	stty -a | head -n 1 | sed 's/.*columns \([0-9]\+\).*/\1/';
     return $?
 }
 
@@ -174,8 +179,13 @@ function CLASS_Bashor_Terminal_getColumns()
 #
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_getLines()
-{
-    tput lines;
+{  
+	if [ -n "$LINES" ]; then
+		echo "$LINES";
+		return $?
+    fi
+	
+	stty -a | head -n 1 | sed 's/.*rows \([0-9]\+\).*/\1/';
     return $?
 }
 
