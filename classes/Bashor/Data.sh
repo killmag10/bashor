@@ -22,19 +22,19 @@
 # -c   compress
 function CLASS_Bashor_Data___construct()
 {    
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    optSetOpts 'cs:';
-    optSetArgs "$@";
+    optSetOpts 'cs:'
+    optSetArgs "$@"
     
-    this set data '';
+    this set data ''
     this set maxSize "65536"; # Default: 64K
-    optIsset 's' && this set maxSize "`optValue 's'`";
+    optIsset 's' && this set maxSize "`optValue 's'`"
     
-    this set compress "0";
-    optIsset 'c' && this set compress "1";
+    this set compress "0"
+    optIsset 'c' && this set compress "1"
     
-    return 0;
+    return 0
 }
 
 ##
@@ -46,26 +46,26 @@ function CLASS_Bashor_Data___construct()
 # &0    string  Data
 function CLASS_Bashor_Data_set()
 {
-    : ${OBJECT:?};
-    : ${1:?};
+    : ${OBJECT:?}
+    : ${1:?}
     
     if [ -p /dev/stdin ]; then
-        local value=`cat -`;
+        local value=`cat -`
     else
-        local value="$2";
+        local value="$2"
     fi
                 
-    local key=`echo "$1" | base64 -w 0`;
-    local value=`echo "$value" | this call _compress 'c' | base64 -w 0`;
-    local data="`this get data`";
-    local data=`echo "$data" | sed "s#^${key}\s\+.*##"`;
-    local data=`echo "$key $value"; echo -n "$data";`;
+    local key=`echo "$1" | base64 -w 0`
+    local value=`echo "$value" | this call _compress 'c' | base64 -w 0`
+    local data="`this get data`"
+    local data=`echo "$data" | sed "s#^${key}\s\+.*##"`
+    local data=`echo "$key $value"; echo -n "$data";`
     if [ "${#data}" -gt "`this get maxSize`" ]; then
-        warning "Max session memory overrun of `this get maxSize` with ${#data}";
-        return 1;
+        warning "Max session memory overrun of `this get maxSize` with ${#data}"
+        return 1
     fi
-    local data=`echo "$data" | sort -u;`;
-    this set data "$data";
+    local data=`echo "$data" | sort -u;`
+    this set data "$data"
 
     return "$?"
 }
@@ -77,15 +77,15 @@ function CLASS_Bashor_Data_set()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Data_remove()
 {
-    : ${OBJECT:?};
-    : ${1:?};
+    : ${OBJECT:?}
+    : ${1:?}
     
-    local key=`echo "$1" | base64 -w 0`;
-    local data=`this get data`;
+    local key=`echo "$1" | base64 -w 0`
+    local data=`this get data`
     data=`echo "$data" \
         | sed "s#^${key}\s\+.*##" \
-        | sort -u`;
-    this set data "$data";
+        | sort -u`
+    this set data "$data"
     
     return "$?"
 }
@@ -98,18 +98,18 @@ function CLASS_Bashor_Data_remove()
 # &1    string Data 
 function CLASS_Bashor_Data_get()
 {
-    : ${OBJECT:?};
-    : ${1:?};
+    : ${OBJECT:?}
+    : ${1:?}
     
-    local key=`echo "$1" | base64`;
-    local data=`this get data`;
-    local res=`echo "$data" | grep "^$key "`;
+    local key=`echo "$1" | base64`
+    local data=`this get data`
+    local res=`echo "$data" | grep "^$key "`
     if [ -n "$res" ]; then
-        echo "$res" | sed 's#\S\+\s\+##' | base64 -d | this call _compress 'd';
-        return 0;
+        echo "$res" | sed 's#\S\+\s\+##' | base64 -d | this call _compress 'd'
+        return 0
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -120,17 +120,17 @@ function CLASS_Bashor_Data_get()
 # &1    string Data 
 function CLASS_Bashor_Data_isset()
 {
-    : ${OBJECT:?};
-    : ${1:?};
+    : ${OBJECT:?}
+    : ${1:?}
     
-    local key=`echo "$1" | base64`;
-    local data=`this get data`;
+    local key=`echo "$1" | base64`
+    local data=`this get data`
     local res=`echo "$data" | grep "^$key "`
     if [ -n "$res" ]; then
-        return 0;
+        return 0
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -142,16 +142,16 @@ function CLASS_Bashor_Data_isset()
 # &1    string Data 
 function CLASS_Bashor_Data__compress()
 {
-    : ${OBJECT:?};
-    : ${1:?};
+    : ${OBJECT:?}
+    : ${1:?}
     
-    local compress=`this get compress`;
+    local compress=`this get compress`
     
     if [ "$compress" == 1 ]; then
-        [ "$1" == 'c' ] && gzip;
-        [ "$1" == 'd' ] && gzip -d;
+        [ "$1" == 'c' ] && gzip
+        [ "$1" == 'd' ] && gzip -d
     else
-        cat -;
+        cat -
     fi
 }
 
@@ -161,11 +161,11 @@ function CLASS_Bashor_Data__compress()
 # $?    0:YES   1:NO
 function CLASS_Bashor_Data_isCompressed()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local compress=`this get compress`;
-    [ "$compress" == 1 ];
-    return "$?";
+    local compress=`this get compress`
+    [ "$compress" == 1 ]
+    return "$?"
 }
 
 ##
@@ -174,10 +174,10 @@ function CLASS_Bashor_Data_isCompressed()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Data_size()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    this get data | wc -c;
-    return "$?";
+    this get data | wc -c
+    return "$?"
 }
 
 ##
@@ -187,19 +187,19 @@ function CLASS_Bashor_Data_size()
 # &1    string Data 
 function CLASS_Bashor_Data_getKeys()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local data=`this get data`;
+    local data=`this get data`
     if [ -n "$data" ]; then
-        local IFS=$'\n\r';
-        local line;
+        local IFS=$'\n\r'
+        local line
         for line in $data; do
-            echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d;
-        done;
-        return 0;
+            echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d
+        done
+        return 0
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -209,21 +209,21 @@ function CLASS_Bashor_Data_getKeys()
 # &1    string Data 
 function CLASS_Bashor_Data_getValues()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local data=`this get data`;
+    local data=`this get data`
     if [ -n "$data" ]; then
-        local IFS=$'\n\r';
-        local line;
+        local IFS=$'\n\r'
+        local line
         for line in $data; do
-            local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`;
-            local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d | this call _compress 'd'`;
-            echo "$key : $value";
-        done;
-        return 0;
+            local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`
+            local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d | this call _compress 'd'`
+            echo "$key : $value"
+        done
+        return 0
     fi
     
-    return 1;
+    return 1
 }
 
 
@@ -233,9 +233,9 @@ function CLASS_Bashor_Data_getValues()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Data_clear()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
 
-    this set data '';
+    this set data ''
     
     return "$?"
 }

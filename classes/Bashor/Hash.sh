@@ -23,8 +23,8 @@
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Hash_md5()
 {
-    : ${1?};
+    : ${1?}
     
-    echo "$1" | md5sum | sed 's/^\(\S\+\).*/\1/';
+    echo "$1" | md5sum | sed 's/^\(\S\+\).*/\1/'
     return $?
 }

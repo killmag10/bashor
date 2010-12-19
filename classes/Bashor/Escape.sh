@@ -23,15 +23,15 @@
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Escape_regEx()
 {
-    : ${1?};
-    local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`;
+    : ${1?}
+    local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`
 
     echo "$1" \
         | sed 's#\([.^$*\\]\)#\\\1#g' \
         | sed 's#\([]]\|[[]\)#[\1]#g' \
-        | sed 's/'"$replacement"'/\\'"$replacement"'/g';
+        | sed 's/'"$replacement"'/\\'"$replacement"'/g'
         
-    return "$?";
+    return "$?"
 }
 
 ##
@@ -42,12 +42,12 @@ function CLASS_Bashor_Escape_regEx()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Escape_regExReplacement()
 {
-    : ${1?};
-    local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`;
+    : ${1?}
+    local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`
 
     echo "$1" \
         | sed 's#\([\\]\)#\\\1#g' \
-        | sed 's/'"$replacement"'/\\'"$replacement"'/g';
+        | sed 's/'"$replacement"'/\\'"$replacement"'/g'
     
-    return "$?";
+    return "$?"
 }

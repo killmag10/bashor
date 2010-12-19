@@ -19,24 +19,24 @@
 # Loader
 function CLASS_Class___load()
 {
-    : ${STATIC:?};
-    return 0;
+    : ${STATIC:?}
+    return 0
 }
 
 ##
 # Constructor
 function CLASS_Class___construct()
 {
-    : ${OBJECT:?};
-    return 0;
+    : ${OBJECT:?}
+    return 0
 }
 
 ##
 # Destructor
 function CLASS_Class___destruct()
 {
-    : ${OBJECT:?};
-    return 0;
+    : ${OBJECT:?}
+    return 0
 }
 
 ##
@@ -46,9 +46,9 @@ function CLASS_Class___destruct()
 # &0    string  class name
 function CLASS_Class_getClass()
 {
-    : ${CLASS_NAME:?};
-    echo "$CLASS_NAME";
-    return 0;
+    : ${CLASS_NAME:?}
+    echo "$CLASS_NAME"
+    return 0
 }
 
 ##
@@ -58,10 +58,10 @@ function CLASS_Class_getClass()
 # &0    string  class name
 function CLASS_Class_getParentClass()
 {
-    : ${CLASS_NAME:?};
-    this call hasParentClass || return 1;
-    parent call getClass;
-    return "$?";
+    : ${CLASS_NAME:?}
+    this call hasParentClass || return 1
+    parent call getClass
+    return "$?"
 }
 
 ##
@@ -71,11 +71,11 @@ function CLASS_Class_getParentClass()
 # &0    string  class name
 function CLASS_Class_getClassTrace()
 {
-    : ${CLASS_NAME:?};
-    echo "$CLASS_NAME";
-    parent exists || return 1;
-    parent call getClassTrace;
-    return 0;
+    : ${CLASS_NAME:?}
+    echo "$CLASS_NAME"
+    parent exists || return 1
+    parent call getClassTrace
+    return 0
 }
 
 ##
@@ -84,9 +84,9 @@ function CLASS_Class_getClassTrace()
 # $?    0:TRUE   1:FALSE
 function CLASS_Class_hasParentClass()
 {
-    : ${CLASS_NAME:?};
-    parent exists;
-    return "$?";
+    : ${CLASS_NAME:?}
+    parent exists
+    return "$?"
 }
 
 ##
@@ -95,12 +95,12 @@ function CLASS_Class_hasParentClass()
 # $?    0:TRUE    1:FALSE
 function CLASS_Class_isA()
 {
-    : ${CLASS_NAME:?};
-    : ${1:?};
-    [ "$CLASS_NAME" == "$1" ] && return 0;
-    parent exists || return 1;
-    parent call isA "$1";
-    return "$?";
+    : ${CLASS_NAME:?}
+    : ${1:?}
+    [ "$CLASS_NAME" == "$1" ] && return 0
+    parent exists || return 1
+    parent call isA "$1"
+    return "$?"
 }
 
 ##
@@ -110,5 +110,5 @@ function CLASS_Class_isA()
 function CLASS_Class_debug()
 {
     # @todo
-    return 0;
+    return 0
 }

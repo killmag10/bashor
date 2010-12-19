@@ -23,20 +23,20 @@
 # $?    0:OK    1:ERROR
 function loadClass()
 {
-    : ${1:?};
+    : ${1:?}
     
-    local ns="$1";        
-    local IFS=`echo -e "\n\r"`;
+    local ns="$1"
+    local IFS=`echo -e "\n\r"`
     for dn in $BASHOR_PATHS_CLASS; do
-        local filename="$dn/""`echo "$ns" | tr '_' '/'`"'.sh';
+        local filename="$dn/""`echo "$ns" | tr '_' '/'`"'.sh'
         if [ -f "$filename" ]; then
-            . "$filename";
-            addClass "$@";
-            return "$?";
+            . "$filename"
+            addClass "$@"
+            return "$?"
         fi
-    done;
+    done
     
-    return 1;
+    return 1
 }
 
 ##
@@ -47,13 +47,13 @@ function loadClass()
 # $?    0:OK    1:ERROR
 function loadClassOnce()
 {
-    : ${1:?};
+    : ${1:?}
     
-    eval '[ -n "$_CLASS_'"$1"'_LOADED" ] && return 0';
-    loadClass "$@";
-    local res="$?";
-    [ "$res" = 0 ] && eval _CLASS_"$1"_LOADED=1;
-    return "$res";
+    eval '[ -n "$_CLASS_'"$1"'_LOADED" ] && return 0'
+    loadClass "$@"
+    local res="$?"
+    [ "$res" = 0 ] && eval _CLASS_"$1"_LOADED=1
+    return "$res"
 }
 
 ##
@@ -64,19 +64,19 @@ function loadClassOnce()
 # $?    0:OK    1:ERROR
 function addClass()
 {
-    : ${1:?};
+    : ${1:?}
     
-    local ns="$1";
-    shift;
+    local ns="$1"
+    shift
     
-    eval '[ -z "$_OBJECT_CLASS_'"$ns"'_EXTENDS" ] && _addStdClass '"$ns"';';
-    declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null;
+    eval '[ -z "$_OBJECT_CLASS_'"$ns"'_EXTENDS" ] && _addStdClass '"$ns"';'
+    declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null
     if [ "$?" == 0 ]; then
-        _staticCall "$ns" __load;
-        return "$?";
+        _staticCall "$ns" __load
+        return "$?"
     fi
     
-    return 0;
+    return 0
 }
 
 ##
@@ -86,11 +86,11 @@ function addClass()
 # $?    0:OK    1:ERROR
 function _addStdClass()
 {
-    : ${1:?};
+    : ${1:?}
     
-    _createExtendedClassFunctions "$1" Class 1;
-    eval 'export _OBJECT_CLASS_'"$1"'_EXTENDS=Class;';
-    return 0;
+    _createExtendedClassFunctions "$1" Class 1
+    eval 'export _OBJECT_CLASS_'"$1"'_EXTENDS=Class;'
+    return 0
 }
 
 ##
@@ -101,23 +101,23 @@ function _addStdClass()
 # $?    0:OK    1:ERROR
 function _createExtendedClassFunctions()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
     
-    local nsParent="$2";
-    local nsNew="$1";
-    local noOverwrite="$3";
+    local nsParent="$2"
+    local nsNew="$1"
+    local noOverwrite="$3"
     
     local fList=`declare -F \
-        | sed -n 's#^declare -f CLASS_'"$nsParent"'_\(.*\)$#\1#p'`;
-    local IFS=$'\n\r';
+        | sed -n 's#^declare -f CLASS_'"$nsParent"'_\(.*\)$#\1#p'`
+    local IFS=$'\n\r'
     for f in $fList; do
-        local fNameParent=CLASS_"$nsParent"_"$f";
-        local fNameNew=CLASS_"$nsNew"_"$f";
+        local fNameParent=CLASS_"$nsParent"_"$f"
+        local fNameNew=CLASS_"$nsNew"_"$f"
         if [ -z "$noOverwrite" ] || ! functionExists "$fNameNew"; then
-            eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return "$?"; }';
+            eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return "$?"; }'
         fi
-    done;
+    done
 }
 
 ##
@@ -129,12 +129,12 @@ function _createExtendedClassFunctions()
 # $?    0:OK    1:ERROR
 function class()
 {
-    local OLD_CLASS_PARENT="$CLASS_PARENT";
-    export CLASS_PARENT='';
-    _staticCall "$@";
-    local res="$?";
-    export CLASS_PARENT="$OLD_CLASS_PARENT";
-    return "$res";
+    local OLD_CLASS_PARENT="$CLASS_PARENT"
+    export CLASS_PARENT=''
+    _staticCall "$@"
+    local res="$?"
+    export CLASS_PARENT="$OLD_CLASS_PARENT"
+    return "$res"
 }
 
 ##
@@ -147,26 +147,26 @@ function class()
 # $?    0:OK    1:ERROR
 function _staticCall()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
     
-    local -x CLASS_NAME="$1";
-    [ -n "$CLASS_PARENT" ] && local -x CLASS_NAME="$CLASS_PARENT";
-    local -x CLASS_PARENT=;
-    local -x OBJECT_NAME=;
-    local -x FUNCTION_NAME="$2";
-    local -x STATIC=1;
-    local -x OBJECT=;
-    local -x _OBJECT_PATH_OLD=;
-    local -x _OBJECT_PATH=___"$CLASS_NAME";
-    local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME";
-    shift 2;
+    local -x CLASS_NAME="$1"
+    [ -n "$CLASS_PARENT" ] && local -x CLASS_NAME="$CLASS_PARENT"
+    local -x CLASS_PARENT=
+    local -x OBJECT_NAME=
+    local -x FUNCTION_NAME="$2"
+    local -x STATIC=1
+    local -x OBJECT=
+    local -x _OBJECT_PATH_OLD=
+    local -x _OBJECT_PATH=___"$CLASS_NAME"
+    local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
+    shift 2
     if declare -f "$fName" > /dev/null; then
-        "$fName" "$@";
-        return $?;
+        "$fName" "$@"
+        return $?
     fi
     
-    error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!";
+    error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!"
     return 1
 }
 
@@ -179,25 +179,25 @@ function _staticCall()
 # $?    0:OK    1:ERROR
 function object()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
     
-    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY";
+    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY"
     if [ "$1" == local ]; then
-        : ${3:?};
-        export OBJECT_VISIBILITY=local;
-        shift 1;
+        : ${3:?}
+        export OBJECT_VISIBILITY=local
+        shift 1
     else
-        export OBJECT_VISIBILITY=global;
+        export OBJECT_VISIBILITY=global
     fi
  
-    local OLD_CLASS_PARENT="$CLASS_PARENT";
-    export CLASS_PARENT=;
-    _objectCall '' "$@";
-    local res="$?";
-    export CLASS_PARENT="$OLD_CLASS_PARENT";
-    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY";
-    return "$res";
+    local OLD_CLASS_PARENT="$CLASS_PARENT"
+    export CLASS_PARENT=
+    _objectCall '' "$@"
+    local res="$?"
+    export CLASS_PARENT="$OLD_CLASS_PARENT"
+    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY"
+    return "$res"
 }
 
 ##
@@ -208,19 +208,19 @@ function object()
 # $?    0:OK    1:ERROR
 function _objectLoadData()
 {
-    : ${1:?};
-    : ${2?};
+    : ${1:?}
+    : ${2?}
     
     if [ -p /dev/stdin ]; then
-        local value=`cat -`;
+        local value=`cat -`
     else
-        local value="$2";
+        local value="$2"
     fi
     
-    local value=`echo "$value" | tail -n +2 | base64 -d`;
+    local value=`echo "$value" | tail -n +2 | base64 -d`
     
-    eval 'export '"$1"'="$value";';
-    return "$?";
+    eval 'export '"$1"'="$value";'
+    return "$?"
 }
 
 ##
@@ -230,10 +230,10 @@ function _objectLoadData()
 # $?    0:OK    1:ERROR
 function _objectSaveData()
 {
-    : ${1:?};
-    echo "bashor dump 0.0.0 objectData";    
-    eval 'echo "$'"$1"'"' | base64;
-    return "$?";
+    : ${1:?}
+    echo "bashor dump 0.0.0 objectData"
+    eval 'echo "$'"$1"'"' | base64
+    return "$?"
 }
 
 ##
@@ -247,37 +247,37 @@ function _objectSaveData()
 # $?    0:OK    1:ERROR
 function _objectCall()
 {    
-    : ${1?};
-    : ${2:?};
-    : ${3:?};
+    : ${1?}
+    : ${2:?}
+    : ${3:?}
 
-    local -x OBJECT_NAME="$2";
-    local -x FUNCTION_NAME="$3";
-    local -x STATIC=;
-    local -x OBJECT=1;
-    local namespace=`_objectNamespace "" "$2" "$1"`;
-    eval 'local -x CLASS_NAME="$'"$namespace"'_CLASS";';
-    eval 'local -x OBJECT_ID="$'"$namespace"'_ID";';   
+    local -x OBJECT_NAME="$2"
+    local -x FUNCTION_NAME="$3"
+    local -x STATIC=
+    local -x OBJECT=1
+    local namespace=`_objectNamespace "" "$2" "$1"`
+    eval 'local -x CLASS_NAME="$'"$namespace"'_CLASS";'
+    eval 'local -x OBJECT_ID="$'"$namespace"'_ID";'
     if [ -z "$1" ]; then
         if [ "$OBJECT_VISIBILITY" == 'global' ]; then
-            local -x _OBJECT_PATH_OLD=; 
-            local -x _OBJECT_PATH=__"$OBJECT_ID";        
+            local -x _OBJECT_PATH_OLD=
+            local -x _OBJECT_PATH=__"$OBJECT_ID"
         else    
-            local -x _OBJECT_PATH_OLD="$_OBJECT_PATH";
-            local -x _OBJECT_PATH="$_OBJECT_PATH"__"$OBJECT_ID";
+            local -x _OBJECT_PATH_OLD="$_OBJECT_PATH"
+            local -x _OBJECT_PATH="$_OBJECT_PATH"__"$OBJECT_ID"
         fi
     fi
-    [ -n "$CLASS_PARENT" ] && local -x CLASS_NAME="$CLASS_PARENT";
-    local -x CLASS_PARENT="";
-    local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME";
-    shift 3;
+    [ -n "$CLASS_PARENT" ] && local -x CLASS_NAME="$CLASS_PARENT"
+    local -x CLASS_PARENT=""
+    local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
+    shift 3
     if declare -f "$fName" > /dev/null; then
-        "$fName" "$@";
-        return $?;
+        "$fName" "$@"
+        return $?
     fi
     
-    error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!";
-    return 1;
+    error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!"
+    return 1
 }
 
 ##
@@ -289,35 +289,35 @@ function _objectCall()
 # $?    0:OK    1:ERROR
 function new()
 {
-    : ${1:?No class name set};
-    : ${2:?No object name set};
+    : ${1:?No class name set}
+    : ${2:?No object name set}
     
     if [ "$1" == local ]; then
-        : ${3:?};
-        local -x OBJECT_VISIBILITY=local;
-        shift 1;
+        : ${3:?}
+        local -x OBJECT_VISIBILITY=local
+        shift 1
     else
-        local -x OBJECT_VISIBILITY=global;
+        local -x OBJECT_VISIBILITY=global
     fi
     
-    local ns="$1";
-    local nsObj="$2";
-    shift 2;
+    local ns="$1"
+    local nsObj="$2"
+    shift 2
     
-    local namespace=`_objectNamespace "$ns" "$nsObj" ''`; 
-    local dataVarName=`_objectVarNameData "$ns" "$nsObj" ''`;    
+    local namespace=`_objectNamespace "$ns" "$nsObj" ''`
+    local dataVarName=`_objectVarNameData "$ns" "$nsObj" ''`
     
-    local callLine="`caller | sed -n 's#^\([0-9]\+\).*$#\1#p';`";
-    eval 'export '"$namespace"'_CLASS='"$ns"';';
-    eval 'export '"$namespace"'_ID='"${ns}${callLine}"';';
-    eval 'export '"$dataVarName"'="";';
-    declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null;
+    local callLine="`caller | sed -n 's#^\([0-9]\+\).*$#\1#p';`"
+    eval 'export '"$namespace"'_CLASS='"$ns"';'
+    eval 'export '"$namespace"'_ID='"${ns}${callLine}"';'
+    eval 'export '"$dataVarName"'="";'
+    declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null
     if [ "$?" == 0 ]; then
-        _objectCall '' "$nsObj" __construct "$@";
-        return 0;
+        _objectCall '' "$nsObj" __construct "$@"
+        return 0
     fi
 
-    return 0;
+    return 0
 }
 
 ##
@@ -329,14 +329,14 @@ function new()
 # $?    0:OK    1:ERROR
 function extends()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
     
-    local namespace=`_objectNamespace "$1" "" ''`;     
-    eval 'export '"$namespace"'_EXTENDS'"='$2';";
-    _createExtendedClassFunctions "$1" "$2";
+    local namespace=`_objectNamespace "$1" "" ''`
+    eval 'export '"$namespace"'_EXTENDS'"='$2';"
+    _createExtendedClassFunctions "$1" "$2"
     
-    return 0;
+    return 0
 }
 
 ##
@@ -348,42 +348,42 @@ function extends()
 # $?    0:OK    1:ERROR
 function clone()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
     
     if [ "$1" == 'local' ]; then
-        : ${2:?};
-        local -x OBJECT_VISIBILITY="$1";
-        shift 1;
+        : ${2:?}
+        local -x OBJECT_VISIBILITY="$1"
+        shift 1
     else
-        local -x OBJECT_VISIBILITY=global;
+        local -x OBJECT_VISIBILITY=global
     fi
-    local name1="$1";
-    local namespace1=`_objectNamespace "" "$name1" ''`;
-    shift 1;
+    local name1="$1"
+    local namespace1=`_objectNamespace "" "$name1" ''`
+    shift 1
     
     if [ "$1" == 'local' ]; then
-        : ${2:?};
-        local -x OBJECT_VISIBILITY="$1";
-        shift 1;
+        : ${2:?}
+        local -x OBJECT_VISIBILITY="$1"
+        shift 1
     else
-        local -x OBJECT_VISIBILITY=global;
+        local -x OBJECT_VISIBILITY=global
     fi
-    local name2="$1";
-    local namespace2=`_objectNamespace "" "$name2" ''`;
-    shift 1;
+    local name2="$1"
+    local namespace2=`_objectNamespace "" "$name2" ''`
+    shift 1
     
-    eval 'local class1="$'"$namespace1"'_CLASS";';
-    eval 'export '"$namespace2"'_CLASS="$'"$namespace1"'_CLASS";';
-    eval 'export '"$namespace2"'_DATA="$'"$namespace1"'_DATA";';
+    eval 'local class1="$'"$namespace1"'_CLASS";'
+    eval 'export '"$namespace2"'_CLASS="$'"$namespace1"'_CLASS";'
+    eval 'export '"$namespace2"'_DATA="$'"$namespace1"'_DATA";'
         
-    declare -F | grep '^declare -f CLASS_'"$class1"'___clone$' > /dev/null;
+    declare -F | grep '^declare -f CLASS_'"$class1"'___clone$' > /dev/null
     if [ "$?" == 0 ]; then
-        _objectCall '' "$name2" __clone;
-        return "$?";
+        _objectCall '' "$name2" __clone
+        return "$?"
     fi
     
-    return 0;    
+    return 0
 }
 
 ##
@@ -394,18 +394,18 @@ function clone()
 # $?    0:OK    1:ERROR
 function remove()
 {
-    : ${1:?};
+    : ${1:?}
     
     if [ "$1" == local ]; then
-        : ${2:?};
-        local -x OBJECT_VISIBILITY="$1";
-        shift 1;
+        : ${2:?}
+        local -x OBJECT_VISIBILITY="$1"
+        shift 1
     else
-        local -x OBJECT_VISIBILITY=global;
+        local -x OBJECT_VISIBILITY=global
     fi
 
-    _objectRemove "$1" "1";   
-    return $?;
+    _objectRemove "$1" "1"
+    return $?
 }
 
 ##
@@ -417,29 +417,29 @@ function remove()
 # $?    0:OK    1:ERROR
 function _objectRemove()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
 
-    local res=0;
-    local nsObj="$1";
-    local doCall="$2";    
-    local nsObjVarOld=`_objectVarNameData '' "$1" ''`;
-    local namespace=`_objectNamespace "$ns" "$nsObj" ''`;
-    eval 'local ns="$'"$nsObjClassOld"'";';
+    local res=0
+    local nsObj="$1"
+    local doCall="$2"
+    local nsObjVarOld=`_objectVarNameData '' "$1" ''`
+    local namespace=`_objectNamespace "$ns" "$nsObj" ''`
+    eval 'local ns="$'"$nsObjClassOld"'";'
         
     if [ "$2" == 1 ]; then
-        declare -F | grep '^declare -f CLASS_'"$ns"'___destruct$' > /dev/null;
+        declare -F | grep '^declare -f CLASS_'"$ns"'___destruct$' > /dev/null
         if [ "$?" == 0 ]; then
-            _objectCall '' "$ns" "$nsObj" __destruct;
-            res="$?";
+            _objectCall '' "$ns" "$nsObj" __destruct
+            res="$?"
         fi
     fi
     
-    eval 'unset -v '"$namespace"'_ID';
-    eval 'unset -v '"$namespace"'_CLASS';
-    eval 'unset -v '"$nsObjVarOld";
+    eval 'unset -v '"$namespace"'_ID'
+    eval 'unset -v '"$namespace"'_CLASS'
+    eval 'unset -v '"$nsObjVarOld"
     
-    return "$res";
+    return "$res"
 }
 
 ##
@@ -452,12 +452,12 @@ function _objectRemove()
 # $?    0:OK    1:ERROR
 function _objectVarNameData()
 {
-    : ${1?};
-    : ${2?};
+    : ${1?}
+    : ${2?}
     
-    local namespace=`_objectNamespace "$1" "$2" "$3"`;
-    echo "$namespace"_DATA;
-    return 0;
+    local namespace=`_objectNamespace "$1" "$2" "$3"`
+    echo "$namespace"_DATA
+    return 0
 }
 
 ##
@@ -470,22 +470,22 @@ function _objectVarNameData()
 # $?    0:OK    1:ERROR
 function _objectNamespace()
 {
-    : ${1?};
-    : ${2?};
-    : ${3?};
+    : ${1?}
+    : ${2?}
+    : ${3?}
        
     if [ -n "$2" ]; then
         if [ "$OBJECT_VISIBILITY" == global ]; then
-            local namespace='OBJECT_GLOBAL_'"$2";
+            local namespace='OBJECT_GLOBAL_'"$2"
         else
-            [ -n "$3" ] && local _OBJECT_PATH="$_OBJECT_PATH_OLD";
-            local namespace=OBJECT_LOCAL"$_OBJECT_PATH"'_'"$2";
+            [ -n "$3" ] && local _OBJECT_PATH="$_OBJECT_PATH_OLD"
+            local namespace=OBJECT_LOCAL"$_OBJECT_PATH"'_'"$2"
         fi
     else
-        local namespace=CLASS_"$1"; 
+        local namespace=CLASS_"$1"
     fi
-    echo _"$namespace";
-    return 0;
+    echo _"$namespace"
+    return 0
 }
 
 ##
@@ -498,56 +498,56 @@ function _objectNamespace()
 # $?    0:OK    1:ERROR
 function this()
 {
-    : ${1:?};
-    : ${CLASS_NAME:?};
+    : ${1:?}
+    : ${CLASS_NAME:?}
     
-    local dataVarName=`_objectVarNameData "$CLASS_NAME" "$OBJECT_NAME" '1'`;
+    local dataVarName=`_objectVarNameData "$CLASS_NAME" "$OBJECT_NAME" '1'`
     
     case "$1" in
         set)
-            : ${2:?};
-            : ${3?};
-            _objectSet "$dataVarName" "$2" "$3";
-            return "$?";
+            : ${2:?}
+            : ${3?}
+            _objectSet "$dataVarName" "$2" "$3"
+            return "$?"
             ;;
         get)
-            : ${2:?};
-            _objectGet "$dataVarName" "$2";
-            return "$?";
+            : ${2:?}
+            _objectGet "$dataVarName" "$2"
+            return "$?"
             ;;
         unset)
-            : ${2:?};
-            _objectUnset "$dataVarName" "$2";
-            return "$?";
+            : ${2:?}
+            _objectUnset "$dataVarName" "$2"
+            return "$?"
             ;;
         isset)
-            : ${2:?};
-            _objectIsset "$dataVarName" "$2";
-            return "$?";
+            : ${2:?}
+            _objectIsset "$dataVarName" "$2"
+            return "$?"
             ;;
         call)
-            : ${2:?};
+            : ${2:?}
             local fName="$2"
-            shift 2;
+            shift 2
             if [ -z "$OBJECT_NAME" ]; then
-                _staticCall "$CLASS_NAME" "$fName" "$@";
-                return "$?";
+                _staticCall "$CLASS_NAME" "$fName" "$@"
+                return "$?"
             fi
             if [ -n "$OBJECT_NAME" ]; then          
-                _objectCall 1 "$OBJECT_NAME" "$fName" "$@";
-                return "$?";
+                _objectCall 1 "$OBJECT_NAME" "$fName" "$@"
+                return "$?"
             fi
             ;;
         save)
-            _objectSaveData "$dataVarName";
-            return "$?";
+            _objectSaveData "$dataVarName"
+            return "$?"
             ;;
         load)
-            _objectLoadData "$dataVarName" "$2";
-            return "$?";
+            _objectLoadData "$dataVarName" "$2"
+            return "$?"
             ;;
         *)
-            error "\"$1\" is not a option of this!";
+            error "\"$1\" is not a option of this!"
             ;;
     esac
 }
@@ -562,42 +562,42 @@ function this()
 # $?    0:OK    1:ERROR
 function parent()
 {
-    : ${1:?};
-    : ${CLASS_NAME:?};
+    : ${1:?}
+    : ${CLASS_NAME:?}
     
     if [ -n "$CLASS_PARENT" ]; then
-        local namespace=`_objectNamespace "$CLASS_PARENT" "" '1'`;
+        local namespace=`_objectNamespace "$CLASS_PARENT" "" '1'`
     else
-        local namespace=`_objectNamespace "$CLASS_NAME" "" '1'`;
+        local namespace=`_objectNamespace "$CLASS_NAME" "" '1'`
     fi    
-    eval 'local -x CLASS_PARENT="$'"$namespace"'_EXTENDS";';
+    eval 'local -x CLASS_PARENT="$'"$namespace"'_EXTENDS";'
         
-    local return=1;
+    local return=1
     case "$1" in
         call)
-            : ${CLASS_PARENT:?};
-            : ${2:?};
+            : ${CLASS_PARENT:?}
+            : ${2:?}
             local fName="$2"
-            shift 2;
+            shift 2
             if [ -z "$OBJECT_NAME" ]; then
-                _staticCall "$CLASS_NAME" "$fName" "$@";
-                return="$?";
+                _staticCall "$CLASS_NAME" "$fName" "$@"
+                return="$?"
             fi
             if [ -n "$OBJECT_NAME" ]; then
-                _objectCall '1' "$OBJECT_NAME" "$fName" "$@";
-                return="$?";
+                _objectCall '1' "$OBJECT_NAME" "$fName" "$@"
+                return="$?"
             fi
             ;;
         exists)
-            [ -n "$CLASS_PARENT" ];
+            [ -n "$CLASS_PARENT" ]
             return="$?"
             ;;
         *)
-            error "\"$1\" is not a option of parent!";
+            error "\"$1\" is not a option of parent!"
             ;;
     esac
     
-    return "$return";
+    return "$return"
 }
 
 ##
@@ -608,10 +608,10 @@ function parent()
 # $?    0:OK    1:ERROR
 function isStatic()
 {
-    : ${CLASS_NAME:?};   
-    : ${OBJECT_NAME?};
-    [ -z "$OBJECT_NAME" ];
-    return "$?";
+    : ${CLASS_NAME:?}
+    : ${OBJECT_NAME?}
+    [ -z "$OBJECT_NAME" ]
+    return "$?"
 }
 
 ##
@@ -624,23 +624,23 @@ function isStatic()
 # &0    string  Data
 function _objectSet()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
 
     if [ -p /dev/stdin ] && [ -z "$3" ] && [ "$3" !=  "${3-null}"]; then
-        local value=`cat -`;
+        local value=`cat -`
     else
-        local value="$3";
+        local value="$3"
     fi
                 
-    local key=`echo "$2" | base64 -w 0`;
-    local value=`echo "$value" | base64 -w 0`;
+    local key=`echo "$2" | base64 -w 0`
+    local value=`echo "$value" | base64 -w 0`
     
     eval 'local data="$'"$1"'";'
-    local data=`echo "$data" | sed "s#^${key}\s\+.*##"`;
-    local data=`echo "$key $value"; echo -n "$data";`;
-    local data=`echo "$data" | sort -u;`;
-    eval 'export '"$1"'="$data";';
+    local data=`echo "$data" | sed "s#^${key}\s\+.*##"`
+    local data=`echo "$key $value"; echo -n "$data";`
+    local data=`echo "$data" | sort -u;`
+    eval 'export '"$1"'="$data";'
     
     return "$?"
 }
@@ -653,15 +653,15 @@ function _objectSet()
 # $?    0:OK    1:ERROR
 function _objectUnset()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
     
     eval 'local data="$'"$1"'";' 
-    local key=`echo "$2" | base64 -w 0`;
+    local key=`echo "$2" | base64 -w 0`
     local data=`echo "$data" \
         | sed "s#^${key}\s\+.*##" \
-        | sort -u`;
-    eval 'export '"$1"'="$data";';
+        | sort -u`
+    eval 'export '"$1"'="$data";'
     
     return "$?"
 }
@@ -675,19 +675,19 @@ function _objectUnset()
 # &0    string  Data
 function _objectGet()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
     
     eval 'local data="$'"$1"'";' 
-    local key=`echo "$2" | base64`;
-    local res=`echo "$data" | grep "^$key "`;
+    local key=`echo "$2" | base64`
+    local res=`echo "$data" | grep "^$key "`
     
     if [ -n "$res" ]; then
-        echo "$res" | sed 's#\S\+\s\+##' | base64 -d;
-        return 0;
+        echo "$res" | sed 's#\S\+\s\+##' | base64 -d
+        return 0
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -698,19 +698,19 @@ function _objectGet()
 # $?    0:OK    1:ERROR
 function _objectIsset()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
     
     eval 'local data="$'"$1"'";'
-    local key=`echo "$2" | base64`;
+    local key=`echo "$2" | base64`
     local res=`echo "$data" | grep "^$key "`
     if [ -n "$res" ]; then
-        return 0;
+        return 0
     fi
     
-    return 1;
+    return 1
 }
 
-_OBJECT_PATH=;
+_OBJECT_PATH=
 
-. "$BASHOR_PATH_INCLUDES/Class.sh";
+. "$BASHOR_PATH_INCLUDES/Class.sh"

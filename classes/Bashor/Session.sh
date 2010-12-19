@@ -15,8 +15,8 @@
 # @version      $Id: registry.sh 16 2010-03-12 23:35:45Z lars $
 ################################################################################
 
-loadClassOnce 'Bashor_Registry';
-extends Bashor_Session Bashor_Registry;
+loadClassOnce 'Bashor_Registry'
+extends Bashor_Session Bashor_Registry
 
 ##
 # Constructor
@@ -24,16 +24,16 @@ extends Bashor_Session Bashor_Registry;
 # $1    string  session dir
 function CLASS_Bashor_Session___construct()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    optSetOpts 'c';
-    optSetArgs "$@";
+    optSetOpts 'c'
+    optSetArgs "$@"
     
-    argIsNotEmpty "1" || error "session dir not set";
-    local sessionDir=`argValue "1"`;
+    argIsNotEmpty "1" || error "session dir not set"
+    local sessionDir=`argValue "1"`
 
-    local optionCompress='';
-    optIsset 'c' && local optionCompress='-c';
+    local optionCompress=''
+    optIsset 'c' && local optionCompress='-c'
     
-    parent call __construct $optionCompress -- "$sessionDir""$$";
+    parent call __construct $optionCompress -- "$sessionDir""$$"
 }

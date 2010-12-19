@@ -19,14 +19,14 @@
 # Loader.
 function CLASS_Bashor_Output___load()
 {
-    this set 'prefixes' '';
+    this set 'prefixes' ''
 }
 
 ##
 # Constructor.
 function CLASS_Bashor_Output___construct()
 {
-    this set 'prefixes' '';
+    this set 'prefixes' ''
 }
 
 ##
@@ -35,12 +35,12 @@ function CLASS_Bashor_Output___construct()
 # $1    string  prefix
 function CLASS_Bashor_Output_prepare()
 {
-    local IFS="$NL";   
-    local prefixes=(`this get 'prefixes'`); 
-    local IFS="";   
-    local preString="${prefixes[*]}${1}";
+    local IFS="$NL"
+    local prefixes=(`this get 'prefixes'`)
+    local IFS=""
+    local preString="${prefixes[*]}${1}"
     
-    local IFS="$NL";
+    local IFS="$NL"
     while read msg; do echo "${preString}${msg}"; done
 }
 
@@ -50,11 +50,11 @@ function CLASS_Bashor_Output_prepare()
 # @see echo
 function CLASS_Bashor_Output_echo()
 {
-    local IFS="$NL";   
-    local prefixes=(`this get 'prefixes'`); 
-    local IFS="";
-    echo -n "${prefixes[*]}";
-    echo "$@";
+    local IFS="$NL"
+    local prefixes=(`this get 'prefixes'`)
+    local IFS=""
+    echo -n "${prefixes[*]}"
+    echo "$@"
 }
 
 ##
@@ -63,28 +63,28 @@ function CLASS_Bashor_Output_echo()
 # $1    string  prefix
 function CLASS_Bashor_Output_addPrefix()
 {    
-    local IFS="$NL";
+    local IFS="$NL"
     
-    local prefixes="`this get 'prefixes'`";  
-    this set 'prefixes' "${prefixes}${NL}${1:-    }";
+    local prefixes="`this get 'prefixes'`"
+    this set 'prefixes' "${prefixes}${NL}${1:-    }"
 }
 
 ##
 # Remove last prefix.
 function CLASS_Bashor_Output_removePrefix()
 {
-    local IFS="$NL";
+    local IFS="$NL"
     
-    local prefixes=(`this get 'prefixes'`);  
-    local level=${#prefixes[*]};
-    ((--level));
-    unset prefixes[$level];
-    this set 'prefixes' "${prefixes[*]}";
+    local prefixes=(`this get 'prefixes'`)
+    local level=${#prefixes[*]}
+    ((--level))
+    unset prefixes[$level]
+    this set 'prefixes' "${prefixes[*]}"
 }
 
 ##
 # Remove complete prefix.
 function CLASS_Bashor_Output_clearPrefix()
 {
-    this set 'prefixes' '';
+    this set 'prefixes' ''
 }

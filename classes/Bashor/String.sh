@@ -24,16 +24,16 @@
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_String_repeat()
 {
-    : ${1:?};
-    : ${2:?};
+    : ${1:?}
+    : ${2:?}
     
-    local replacement=`echo "'" | sed 's#/#\\\\/#g'`;
+    local replacement=`echo "'" | sed 's#/#\\\\/#g'`
 
     local char=`echo "$1" \
         | sed 's#\([\\]\)#\\\1#g' \
-        | sed 's/'"$replacement"'/\\'"$replacement"'/g'`;
+        | sed 's/'"$replacement"'/\\'"$replacement"'/g'`
     
-    dd if=/dev/zero bs=1 count="$2" 2>/dev/null | tr '\0' "0" | sed "s#.#$char#g";
+    dd if=/dev/zero bs=1 count="$2" 2>/dev/null | tr '\0' "0" | sed "s#.#$char#g"
     return $?
 }
 
@@ -47,14 +47,14 @@ function CLASS_Bashor_String_repeat()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_String_replace()
 {
-    : ${1?};
-    : ${2?};
+    : ${1?}
+    : ${2?}
     
-    loadClassOnce Bashor_Escape;
-    local find="`class Bashor_Escape regEx "$1" '/'`";
-    local replacement="`class Bashor_Escape regExReplacement "$2" '/'`";
+    loadClassOnce Bashor_Escape
+    local find="`class Bashor_Escape regEx "$1" '/'`"
+    local replacement="`class Bashor_Escape regExReplacement "$2" '/'`"
     
-    sed 's/'"$find"'/'"$replacement"'/g';
+    sed 's/'"$find"'/'"$replacement"'/g'
     return $?
 }
 

@@ -21,7 +21,7 @@
 # $1    string  log file
 function CLASS_Bashor_Log___load()
 {
-    this set file "$BASHOR_LOG_FILE";
+    this set file "$BASHOR_LOG_FILE"
 }
 
 ##
@@ -30,9 +30,9 @@ function CLASS_Bashor_Log___load()
 # $1    string  cache dir
 function CLASS_Bashor_Log___construct()
 {
-    : ${1?};
+    : ${1?}
     
-    this set file "$1";
+    this set file "$1"
 }
 
 ##
@@ -42,12 +42,12 @@ function CLASS_Bashor_Log___construct()
 # &0    string  Text
 function CLASS_Bashor_Log_log()
 {
-    local logFile=`this get file`;
+    local logFile=`this get file`
     
     if [ -p "/dev/stdin" ]; then
-        cat - >> "$logFile";
+        cat - >> "$logFile"
     else
-        echo "$1" >> "$logFile";
+        echo "$1" >> "$logFile"
     fi
 }
 
@@ -58,14 +58,14 @@ function CLASS_Bashor_Log_log()
 # &0    string  Text
 function CLASS_Bashor_Log_get()
 {
-    local logFile=`this get file`;
+    local logFile=`this get file`
     
     if [ -f "$logFile" ]; then
-        cat "$logFile";
-        return "$?";
+        cat "$logFile"
+        return "$?"
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -75,14 +75,14 @@ function CLASS_Bashor_Log_get()
 # &0    string  Text
 function CLASS_Bashor_Log_remove()
 {
-    local logFile=`this get file`;
+    local logFile=`this get file`
     
     if [ -f "$logFile" ]; then
-        rm "$logFile";
-        return "$?";
+        rm "$logFile"
+        return "$?"
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -92,11 +92,11 @@ function CLASS_Bashor_Log_remove()
 # &0    string  Text
 function CLASS_Bashor_Log_error()
 {
-    datestring=`date +'%Y-%m-%d %H:%M:%S'`;
+    datestring=`date +'%Y-%m-%d %H:%M:%S'`
     if [ -p "/dev/stdin" ]; then
-        nl | sed "s#^#$datestring ERROR: #" | this call log;
+        nl | sed "s#^#$datestring ERROR: #" | this call log
     else
-        echo "$1" | nl | sed "s#^#$datestring ERROR: #" | this call log;
+        echo "$1" | nl | sed "s#^#$datestring ERROR: #" | this call log
     fi
 }
 
@@ -107,11 +107,11 @@ function CLASS_Bashor_Log_error()
 # &0    string  Text
 function CLASS_Bashor_Log_warning()
 {
-    datestring=`date +'%Y-%m-%d %H:%M:%S'`;
+    datestring=`date +'%Y-%m-%d %H:%M:%S'`
     if [ -p "/dev/stdin" ]; then
-        nl | sed "s#^#$datestring WARNING: #" | this call log;
+        nl | sed "s#^#$datestring WARNING: #" | this call log
     else
-        echo "$1" | nl | sed "s#^#$datestring WARNING: #" | this call log;
+        echo "$1" | nl | sed "s#^#$datestring WARNING: #" | this call log
     fi
 }
 
@@ -122,11 +122,11 @@ function CLASS_Bashor_Log_warning()
 # &0    string  Text
 function CLASS_Bashor_Log_debug()
 {
-    datestring=`date +'%Y-%m-%d %H:%M:%S'`;
+    datestring=`date +'%Y-%m-%d %H:%M:%S'`
     if [ -p "/dev/stdin" ]; then
-        nl | sed "s#^#$datestring DEBUG: #" | this call log;
+        nl | sed "s#^#$datestring DEBUG: #" | this call log
     else
-        echo "$1" | nl | sed "s#^#$datestring DEBUG: #" | this call log;
+        echo "$1" | nl | sed "s#^#$datestring DEBUG: #" | this call log
     fi
 
 }

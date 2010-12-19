@@ -21,10 +21,10 @@
 # $1    string  temp dir
 function CLASS_Bashor_Temp___construct()
 {
-    : ${1?};
-    : ${OBJECT:?};
+    : ${1?}
+    : ${OBJECT:?}
     
-    this set dir "$1";
+    this set dir "$1"
 }
 
 
@@ -36,13 +36,13 @@ function CLASS_Bashor_Temp___construct()
 # &0    string  path
 function CLASS_Bashor_Temp_dir()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
-    local dir=`this get dir`;
-    mkdir -p "$dir/";
-    echo -n "$dir/"`this call generateFilename "$1"`;
-    return "$?";
+    local dir=`this get dir`
+    mkdir -p "$dir/"
+    echo -n "$dir/"`this call generateFilename "$1"`
+    return "$?"
 }
 
 ##
@@ -53,11 +53,11 @@ function CLASS_Bashor_Temp_dir()
 # &0    string  path
 function CLASS_Bashor_Temp_file()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
 
-    echo "`this call dir \"$1\"`"'.tmp';
-    return "$?";
+    echo "`this call dir \"$1\"`"'.tmp'
+    return "$?"
 }
 
 ##
@@ -68,10 +68,10 @@ function CLASS_Bashor_Temp_file()
 # &0    string  name
 function CLASS_Bashor_Temp_generateFilename()
 {
-    : ${1?};
+    : ${1?}
 
-    echo 'temp_'`date +'%Y%m%dT%H%M%S'`"_""$$""_""$1""_""$RANDOM";
-    return 0;
+    echo 'temp_'`date +'%Y%m%dT%H%M%S'`"_""$$""_""$1""_""$RANDOM"
+    return 0
 }
 
 ##
@@ -80,11 +80,11 @@ function CLASS_Bashor_Temp_generateFilename()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Temp_clear()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local dir=`this get dir`;
+    local dir=`this get dir`
     if [ -n "$dir" ] && [ -d "$dir" ]; then
-        rm -r "$dir/"*;
-        return "$?";
+        rm -r "$dir/"*
+        return "$?"
     fi
 }

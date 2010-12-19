@@ -15,8 +15,8 @@
 # @version      $Id: cache.sh 17 2010-03-13 00:12:19Z lars $
 ################################################################################
 
-loadClassOnce 'Bashor_Cache';
-extends Bashor_Cache_File Bashor_Cache;
+loadClassOnce Bashor_Cache
+extends Bashor_Cache_File Bashor_Cache
 
 ##
 # Constructor
@@ -24,13 +24,13 @@ extends Bashor_Cache_File Bashor_Cache;
 # $1    string  cache dir
 function CLASS_Bashor_Cache_File___construct()
 {
-    : ${1?};
-    : ${OBJECT:?};
+    : ${1?}
+    : ${OBJECT:?}
     
-    parent call __construct;
+    parent call __construct
     
-    this set dir "$1";
-    mkdir -p "$1";
+    this set dir "$1"
+    mkdir -p "$1"
 }
 
 ##
@@ -41,15 +41,15 @@ function CLASS_Bashor_Cache_File___construct()
 # &1    string filename 
 function CLASS_Bashor_Cache_File_filename()
 {
-    : ${1?};
-    : ${OBJECT:?};
+    : ${1?}
+    : ${OBJECT:?}
     
-    loadClassOnce Bashor_Hash;
+    loadClassOnce Bashor_Hash
     
-    local hashMd5=`class Bashor_Hash md5 "$1"`;
-    local hashCrc32=`echo "$1" | cksum | tr ' ' '_'`;
-    echo "`this get dir`""/CACHE_${hashMd5}_${hashCrc32}";
-    return 0;
+    local hashMd5=`class Bashor_Hash md5 "$1"`
+    local hashCrc32=`echo "$1" | cksum | tr ' ' '_'`
+    echo "`this get dir`""/CACHE_${hashMd5}_${hashCrc32}"
+    return 0
 }
 
 ##
@@ -62,22 +62,22 @@ function CLASS_Bashor_Cache_File_filename()
 # &0    string  Data
 function CLASS_Bashor_Cache_File_set()
 {
-    : ${1:?};
-    : ${2:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${2:?}
+    : ${OBJECT:?}
     
-    local filename=`this call filename "$1"`;
-    local time=`date +%s`;
-    ((time="$time"+"$2"));
+    local filename=`this call filename "$1"`
+    local time=`date +%s`
+    ((time="$time"+"$2"))
     {
-        echo "$time";
-        echo "`echo "$1" | tr '\n\r' ' '`";
+        echo "$time"
+        echo "`echo "$1" | tr '\n\r' ' '`"
         if [ -p /dev/stdin ]; then
-            cat /dev/stdin;
+            cat /dev/stdin
         else
-            echo -n "$3";
+            echo -n "$3"
         fi
-    } > "$filename";
+    } > "$filename"
     
     return "$?"
 }
@@ -90,20 +90,20 @@ function CLASS_Bashor_Cache_File_set()
 # &1    string Data 
 function CLASS_Bashor_Cache_File_get()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
-    local filename=`this call filename "$1"`;
-    local curTime=`date +%s`;
+    local filename=`this call filename "$1"`
+    local curTime=`date +%s`
     if [ -f "$filename" ]; then
-        local time=`cat "$filename" | head -n 1`;
+        local time=`cat "$filename" | head -n 1`
         if [ -n "$time" ] && [ "$time" -gt "$curTime" ]; then
-            cat "$filename" | tail -n +3;
-            return 0;
+            cat "$filename" | tail -n +3
+            return 0
         fi
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -113,19 +113,19 @@ function CLASS_Bashor_Cache_File_get()
 # $?    0:CACHED    1:NOT CACHED
 function CLASS_Bashor_Cache_File_check()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
-    local filename=`this call filename "$1"`;
-    local curTime=`date +%s`;
+    local filename=`this call filename "$1"`
+    local curTime=`date +%s`
     if [ -f "$filename" ]; then
-        local head=`cat "$filename" | head -n 1`;
+        local head=`cat "$filename" | head -n 1`
         if [ -n "$head" ] && [ "$head" -gt "$curTime" ]; then
-            return 0;
+            return 0
         fi
     fi
 
-    return 1;
+    return 1
 }
 
 ##
@@ -134,17 +134,17 @@ function CLASS_Bashor_Cache_File_check()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Cache_File_removeOutdated()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local dir="`this get dir`";
-    local files="`ls -1 "$dir"`";
-    local IFS=$'\n\r';
+    local dir="`this get dir`"
+    local files="`ls -1 "$dir"`"
+    local IFS=$'\n\r'
     for file in $files; do
-        this call check "$dir/$file";
+        this call check "$dir/$file"
         if [ "$?" != 0 ]; then
-            rm "$dir/$file";
+            rm "$dir/$file"
         fi
-    done;
-    return 0;
+    done
+    return 0
 }
 

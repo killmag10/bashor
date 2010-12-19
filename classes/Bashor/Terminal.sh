@@ -31,8 +31,8 @@
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setBackgroundColor()
 {
-    : ${1:?};    
-    tput setb "$1";
+    : ${1:?}
+    tput setb "$1"
     return $?
 }
 
@@ -52,10 +52,10 @@ function CLASS_Bashor_Terminal_setBackgroundColor()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setBackgroundColorAnsi()
 {
-    : ${1:?};
-    [ "$1" -lt 0 ] && return 1;
-    [ "$1" -gt 7 ] && return 1;
-    echo -en '\033[4'"$1"'m';
+    : ${1:?}
+    [ "$1" -lt 0 ] && return 1
+    [ "$1" -gt 7 ] && return 1
+    echo -en '\033[4'"$1"'m'
     return $?
 }
 
@@ -75,8 +75,8 @@ function CLASS_Bashor_Terminal_setBackgroundColorAnsi()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setFordergroundColor()
 {
-    : ${1:?};    
-    tput setf "$1";
+    : ${1:?}
+    tput setf "$1"
     return $?
 }
 
@@ -96,10 +96,10 @@ function CLASS_Bashor_Terminal_setFordergroundColor()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setFordergroundColorAnsi()
 {
-    : ${1:?};
-    [ "$1" -lt 0 ] && return 1;
-    [ "$1" -gt 7 ] && return 1;
-    echo -en '\033[3'"$1"'m';
+    : ${1:?}
+    [ "$1" -lt 0 ] && return 1
+    [ "$1" -gt 7 ] && return 1
+    echo -en '\033[3'"$1"'m'
     return $?
 }
 
@@ -113,8 +113,8 @@ function CLASS_Bashor_Terminal_setFordergroundColorAnsi()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setStyleBold()
 {
-    : ${1:?};    
-    [ "$1" == 1 ] && echo -en '\033[1m' || tput dim;
+    : ${1:?}
+    [ "$1" == 1 ] && echo -en '\033[1m' || tput dim
     return $?
 }
 
@@ -128,8 +128,8 @@ function CLASS_Bashor_Terminal_setStyleBold()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setExtendedCharacters()
 {
-    : ${1:?};    
-    [ "$1" == 1 ] && echo -en '\033(0' || echo -en '\033(B';
+    : ${1:?}
+    [ "$1" == 1 ] && echo -en '\033(0' || echo -en '\033(B'
     return $?
 }
 
@@ -143,8 +143,8 @@ function CLASS_Bashor_Terminal_setExtendedCharacters()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setStyleUnderline()
 {
-    : ${1:?};    
-    [ "$1" == 1 ] && tput smul || tput rmul;
+    : ${1:?}
+    [ "$1" == 1 ] && tput smul || tput rmul
     return $?
 }
 
@@ -155,7 +155,7 @@ function CLASS_Bashor_Terminal_setStyleUnderline()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_resetStyle()
 {    
-    echo -en '\033[0m';
+    echo -en '\033[0m'
     return $?
 }
 
@@ -166,11 +166,11 @@ function CLASS_Bashor_Terminal_resetStyle()
 function CLASS_Bashor_Terminal_getColumns()
 {
 	if [ -n "$COLUMNS" ]; then
-		echo "$COLUMNS";
+		echo "$COLUMNS"
 		return $?
     fi
     
-	stty -a | head -n 1 | sed 's/.*columns \([0-9]\+\).*/\1/';
+	stty -a | head -n 1 | sed 's/.*columns \([0-9]\+\).*/\1/'
     return $?
 }
 
@@ -181,11 +181,11 @@ function CLASS_Bashor_Terminal_getColumns()
 function CLASS_Bashor_Terminal_getLines()
 {  
 	if [ -n "$LINES" ]; then
-		echo "$LINES";
+		echo "$LINES"
 		return $?
     fi
 	
-	stty -a | head -n 1 | sed 's/.*rows \([0-9]\+\).*/\1/';
+	stty -a | head -n 1 | sed 's/.*rows \([0-9]\+\).*/\1/'
     return $?
 }
 
@@ -195,7 +195,7 @@ function CLASS_Bashor_Terminal_getLines()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_restoreCurser()
 {
-    echo -en '\033[u';
+    echo -en '\033[u'
     return $?
 }
 
@@ -205,7 +205,7 @@ function CLASS_Bashor_Terminal_restoreCurser()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_saveCurser()
 {
-    echo -en '\033[s';
+    echo -en '\033[s'
     return $?
 }
 
@@ -216,8 +216,8 @@ function CLASS_Bashor_Terminal_saveCurser()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserUp()
 {
-    : ${1:?};    
-    echo -en '\033['"$1"'A';
+    : ${1:?}
+    echo -en '\033['"$1"'A'
     return $?
 }
 
@@ -228,8 +228,8 @@ function CLASS_Bashor_Terminal_moveCurserUp()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserDown()
 {
-    : ${1:?};    
-    echo -en '\033['"$1"'B';
+    : ${1:?}
+    echo -en '\033['"$1"'B'
     return $?
 }
 
@@ -240,8 +240,8 @@ function CLASS_Bashor_Terminal_moveCurserDown()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserForward()
 {
-    : ${1:?};
-    echo -en '\033['"$1"'C';
+    : ${1:?}
+    echo -en '\033['"$1"'C'
     return $?
 }
 
@@ -252,8 +252,8 @@ function CLASS_Bashor_Terminal_moveCurserForward()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserBackward()
 {
-    : ${1:?};
-    echo -en '\033['"$1"'D';
+    : ${1:?}
+    echo -en '\033['"$1"'D'
     return $?
 }
 
@@ -265,12 +265,12 @@ function CLASS_Bashor_Terminal_moveCurserBackward()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserBy()
 {
-    : ${1:?};
-    : ${2:?};    
-    [ "$1" -gt 0 ] && this call moveCurserForward "$1";
-    [ "$1" -lt 0 ] && this call moveCurserBackward "${1:1}";    
-    [ "$2" -gt 0 ] && this call moveCurserDown "$2";
-    [ "$2" -lt 0 ] && this call moveCurserUp "${2:1}";    
+    : ${1:?}
+    : ${2:?}
+    [ "$1" -gt 0 ] && this call moveCurserForward "$1"
+    [ "$1" -lt 0 ] && this call moveCurserBackward "${1:1}"
+    [ "$2" -gt 0 ] && this call moveCurserDown "$2"
+    [ "$2" -lt 0 ] && this call moveCurserUp "${2:1}"
     return $?
 }
 
@@ -282,9 +282,9 @@ function CLASS_Bashor_Terminal_moveCurserBy()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserTo()
 {
-    : ${1:?};
-    : ${2:?};    
-    echo -en '\033['"$2"';'"$1"'H';
+    : ${1:?}
+    : ${2:?}
+    echo -en '\033['"$2"';'"$1"'H'
     return $?
 }
 
@@ -294,8 +294,8 @@ function CLASS_Bashor_Terminal_moveCurserTo()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_clear()
 {
-    clear;
-    return $?;
+    clear
+    return $?
 }
 
 ##
@@ -304,6 +304,6 @@ function CLASS_Bashor_Terminal_clear()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_flash()
 {
-    tput flash;
+    tput flash
     return $?
 }

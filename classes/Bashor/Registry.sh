@@ -21,29 +21,29 @@
 # $1    string  registry file
 function CLASS_Bashor_Registry___construct()
 {
-    : ${1?};
-    : ${OBJECT:?};
+    : ${1?}
+    : ${OBJECT:?}
     
-    optSetOpts 'c';
-    optSetArgs "$@";
+    optSetOpts 'c'
+    optSetArgs "$@"
     
-    this set compress "0";
-    optIsset 'c' && this set compress "1";
+    this set compress "0"
+    optIsset 'c' && this set compress "1"
   
-    argIsNotEmpty "1" || error "registry file not set";
-    local registryFile=`argValue "1"`;
+    argIsNotEmpty "1" || error "registry file not set"
+    local registryFile=`argValue "1"`
     
-    this set file "$registryFile";
-    this set lockFile "$registryFile"'.lock';
-    local lockFile=`this get lockFile`;
+    this set file "$registryFile"
+    this set lockFile "$registryFile"'.lock'
+    local lockFile=`this get lockFile`
     
     if [ ! -f "`this get file`" ]; then
-        loadClassOnce 'Bashor_Lock';
+        loadClassOnce 'Bashor_Lock'
         {
-            flock 200;
+            flock 200
             echo '' | this call _compress 'c' > "`this get file`"    
-        } 200>"$lockFile";
-        class Bashor_Lock delete "$lockFile";
+        } 200>"$lockFile"
+        class Bashor_Lock delete "$lockFile"
     fi
 }
 
@@ -56,32 +56,32 @@ function CLASS_Bashor_Registry___construct()
 # &0    string  Data
 function CLASS_Bashor_Registry_set()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
     if [ -p /dev/stdin ] && [ -z "$2" ] && [ "$2" !=  "${2-null}"]; then
-        local value=`cat -`;
+        local value=`cat -`
     else
-        local value="$2";
+        local value="$2"
     fi
     
-    loadClassOnce Bashor_Lock;
-    local file=`this get file`;
-    local lockFile=`this get lockFile`;
+    loadClassOnce Bashor_Lock
+    local file=`this get file`
+    local lockFile=`this get lockFile`
        
     {
-        flock 200;
+        flock 200
         
-        local key=`echo "$1" | base64 -w 0`;
-        local value=`echo "$value" | base64 -w 0`;
+        local key=`echo "$1" | base64 -w 0`
+        local value=`echo "$value" | base64 -w 0`
         [ ! -f "$file" ] \
-            && echo "" | this call _compress 'c' > "$file";   
-        local data=`cat "$file" | this call _compress 'd'`;
-        local data=`echo "$data" | sed "s#^${key}\s\+.*##"`;
-        local data=`echo "$key $value"; echo -n "$data";`;
-        echo "$data" | sort -u | this call _compress 'c' > "$file";
-    } 200>"$lockFile";
-    class Bashor_Lock delete "$lockFile";
+            && echo "" | this call _compress 'c' > "$file"
+        local data=`cat "$file" | this call _compress 'd'`
+        local data=`echo "$data" | sed "s#^${key}\s\+.*##"`
+        local data=`echo "$key $value"; echo -n "$data";`
+        echo "$data" | sort -u | this call _compress 'c' > "$file"
+    } 200>"$lockFile"
+    class Bashor_Lock delete "$lockFile"
     
     return "$?"
 }
@@ -93,24 +93,24 @@ function CLASS_Bashor_Registry_set()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Registry_remove()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
-    loadClassOnce Bashor_Lock;
-    local file=`this get file`;
-    local lockFile=`this get lockFile`;
-    local key=`echo "$1" | base64 -w 0`;
+    loadClassOnce Bashor_Lock
+    local file=`this get file`
+    local lockFile=`this get lockFile`
+    local key=`echo "$1" | base64 -w 0`
     
     if [ -f "$file" ]; then
         {
-            flock 200;
+            flock 200
             
-            local data=`cat "$file" | this call _compress 'd'`;
+            local data=`cat "$file" | this call _compress 'd'`
             echo "$data" | sed "s#^${key}\s\+.*##" \
                 | sort -u \
-                | this call _compress 'c' > "$file";
-        } 200>"$lockFile";
-        class Bashor_Lock delete "$lockFile";
+                | this call _compress 'c' > "$file"
+        } 200>"$lockFile"
+        class Bashor_Lock delete "$lockFile"
         
         return "$?"
     fi
@@ -124,29 +124,29 @@ function CLASS_Bashor_Registry_remove()
 # &1    string Data 
 function CLASS_Bashor_Registry_get()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
-    loadClassOnce Bashor_Lock;
-    local file=`this get file`;
-    local lockFile=`this get lockFile`;
+    loadClassOnce Bashor_Lock
+    local file=`this get file`
+    local lockFile=`this get lockFile`
     
     if [ -f "$file" ]; then
         {
-            flock -s 200;
+            flock -s 200
             
-            local key=`echo "$1" | base64`;
+            local key=`echo "$1" | base64`
             local res=`cat "$file" \
-                | this call _compress 'd' | grep "^$key "`;
+                | this call _compress 'd' | grep "^$key "`
             if [ -n "$res" ]; then
-                echo "$res" | sed 's#\S\+\s\+##' | base64 -d;
-                return 0;
+                echo "$res" | sed 's#\S\+\s\+##' | base64 -d
+                return 0
             fi
-        } 200>"$lockFile";
-        class Bashor_Lock delete "$lockFile";
+        } 200>"$lockFile"
+        class Bashor_Lock delete "$lockFile"
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -157,27 +157,27 @@ function CLASS_Bashor_Registry_get()
 # &1    string Data 
 function CLASS_Bashor_Registry_isset()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
-    loadClassOnce Bashor_Lock;
-    local file=`this get file`;
-    local lockFile=`this get lockFile`;
+    loadClassOnce Bashor_Lock
+    local file=`this get file`
+    local lockFile=`this get lockFile`
     
     if [ -f "$file" ]; then
         {
-            flock -s 200;
+            flock -s 200
     
-            local key=`echo "$1" | base64`;
+            local key=`echo "$1" | base64`
             local res=`cat "$file" \
-                | this call _compress 'd' | grep "^$key "`;
+                | this call _compress 'd' | grep "^$key "`
             if [ -n "$res" ]; then
-                return 0;
+                return 0
             fi
-        } 200>"$lockFile";
+        } 200>"$lockFile"
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -189,16 +189,16 @@ function CLASS_Bashor_Registry_isset()
 # &1    string Data 
 function CLASS_Bashor_Registry__compress()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
-    local compress=`this get compress`;
+    local compress=`this get compress`
     
     if [ "$compress" == 1 ]; then
-        [ "$1" == c ] && gzip;
-        [ "$1" == d ] && gzip -d;
+        [ "$1" == c ] && gzip
+        [ "$1" == d ] && gzip -d
     else
-        cat -;
+        cat -
     fi
 }
 
@@ -208,11 +208,11 @@ function CLASS_Bashor_Registry__compress()
 # $?    0:YES   1:NO
 function CLASS_Bashor_Registry_isCompressed()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local compress=`this get compress`;
-    [ "$compress" == 1 ];
-    return "$?";
+    local compress=`this get compress`
+    [ "$compress" == 1 ]
+    return "$?"
 }
 
 ##
@@ -222,10 +222,10 @@ function CLASS_Bashor_Registry_isCompressed()
 # $?    0:YES   1:NO
 function CLASS_Bashor_Registry_getFilename()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    echo "`this get file`";
-    return "$?";
+    echo "`this get file`"
+    return "$?"
 }
 
 ##
@@ -235,30 +235,30 @@ function CLASS_Bashor_Registry_getFilename()
 # &1    string Data 
 function CLASS_Bashor_Registry_getKeys()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    loadClassOnce Bashor_Lock;
-    local file=`this get file`;
-    local lockFile=`this get lockFile`;
+    loadClassOnce Bashor_Lock
+    local file=`this get file`
+    local lockFile=`this get lockFile`
     
     if [ -f "$file" ]; then
         {
-            flock -s 200;
+            flock -s 200
             
             local res=`cat "$file" \
-                | this call _compress 'd'`;
+                | this call _compress 'd'`
             if [ -n "$res" ]; then
-                local IFS=$'\n\r';
-                local line;
+                local IFS=$'\n\r'
+                local line
                 for line in $res; do
-                    echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d;
-                done;
-                return 0;
+                    echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d
+                done
+                return 0
             fi
-        } 200>"$lockFile";
+        } 200>"$lockFile"
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -268,32 +268,32 @@ function CLASS_Bashor_Registry_getKeys()
 # &1    string Data 
 function CLASS_Bashor_Registry_getValues()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    loadClassOnce Bashor_Lock;
-    local file=`this get file`;
-    local lockFile=`this get lockFile`;
+    loadClassOnce Bashor_Lock
+    local file=`this get file`
+    local lockFile=`this get lockFile`
     
     if [ -f "$file" ]; then
         {
-            flock -s 200;
+            flock -s 200
             
             local res=`cat "$file" \
-                | this call _compress 'd'`;
+                | this call _compress 'd'`
             if [ -n "$res" ]; then
-                local IFS=$'\n\r';
-                local line;
+                local IFS=$'\n\r'
+                local line
                 for line in $res; do
-                    local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`;
-                    local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d`;
-                    echo "$key : $value";
-                done;
-                return 0;
+                    local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`
+                    local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d`
+                    echo "$key : $value"
+                done
+                return 0
             fi
-        } 200>"$lockFile";
+        } 200>"$lockFile"
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -301,15 +301,15 @@ function CLASS_Bashor_Registry_getValues()
 #
 function CLASS_Bashor_Registry_clear()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local lockFile=`this get lockFile`;    
-    loadClassOnce Bashor_Lock;
+    local lockFile=`this get lockFile`
+    loadClassOnce Bashor_Lock
     {
-        flock 200;
+        flock 200
         echo | this call _compress 'c' > "`this get file`"    
-    } 200>"$lockFile";
-    class Bashor_Lock delete "$lockFile";
+    } 200>"$lockFile"
+    class Bashor_Lock delete "$lockFile"
 }
 
 ##
@@ -317,16 +317,16 @@ function CLASS_Bashor_Registry_clear()
 #
 function CLASS_Bashor_Registry_removeFile()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local lockFile=`this get lockFile`;
-    local file=`this get file`;
-    [ -f "$file" ] || return 1;
+    local lockFile=`this get lockFile`
+    local file=`this get file`
+    [ -f "$file" ] || return 1
     
-    loadClassOnce Bashor_Lock;
+    loadClassOnce Bashor_Lock
     {
-        flock 200;
+        flock 200
         rm "$file"    
-    } 200>"$lockFile";
-    class Bashor_Lock delete "$lockFile";
+    } 200>"$lockFile"
+    class Bashor_Lock delete "$lockFile"
 }

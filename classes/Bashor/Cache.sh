@@ -19,8 +19,8 @@
 # Constructor
 function CLASS_Bashor_Cache___construct()
 {
-    : ${OBJECT:?};
-    return 0;
+    : ${OBJECT:?}
+    return 0
 }
 
 ##
@@ -33,11 +33,11 @@ function CLASS_Bashor_Cache___construct()
 # &0    string  Data
 function CLASS_Bashor_Cache_set()
 {
-    : ${1:?};
-    : ${2:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${2:?}
+    : ${OBJECT:?}
     
-    return 0;
+    return 0
 }
 
 ##
@@ -48,10 +48,10 @@ function CLASS_Bashor_Cache_set()
 # &1    string Data 
 function CLASS_Bashor_Cache_get()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
-    return 1;
+    return 1
 }
 
 ##
@@ -61,10 +61,10 @@ function CLASS_Bashor_Cache_get()
 # $?    0:CACHED    1:NOT CACHED
 function CLASS_Bashor_Cache_check()
 {
-    : ${1:?};
-    : ${OBJECT:?};
+    : ${1:?}
+    : ${OBJECT:?}
     
-    return 1;
+    return 1
 }
 
 ##
@@ -73,8 +73,8 @@ function CLASS_Bashor_Cache_check()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Cache_removeOutdated()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    return 1;
+    return 1
 }
 

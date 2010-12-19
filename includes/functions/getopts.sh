@@ -22,16 +22,16 @@
 # $?    0:FOUND 1:NOT FOUND
 function optIsset()
 {
-    : ${1:?};
+    : ${1:?}
     
-    local OPTIND=1;    
-    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
+    local OPTIND=1
+    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`
     while getopts "$OPT_OPTS" key $pArgs
     do
-        [ "$key" = "$1" ] && return 0;
+        [ "$key" = "$1" ] && return 0
     done
     
-    return 1;
+    return 1
 }
 
 ##
@@ -41,11 +41,11 @@ function optIsset()
 # $?    0:OK    1:ERROR
 function optIsNotEmpty()
 {
-    : ${1:?};
-    optIsset "$1" || return 1;
-    local tmp=`optValue "$@"`;
-    [ -n "$tmp" ];
-    return "$?";
+    : ${1:?}
+    optIsset "$1" || return 1
+    local tmp=`optValue "$@"`
+    [ -n "$tmp" ]
+    return "$?"
 }
 
 ##
@@ -55,19 +55,19 @@ function optIsNotEmpty()
 # $?    0:FOUND 1:NOT FOUND
 function optValue()
 { 
-    : ${1:?};
+    : ${1:?}
        
-    local OPTIND=1;    
-    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
+    local OPTIND=1
+    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`
     while getopts "$OPT_OPTS" key $pArgs
     do
         if [ "$key" == "$1" ]; then
-            echo "$OPTARG";
-            return 0;
+            echo "$OPTARG"
+            return 0
         fi
     done
     
-    return 1;
+    return 1
 }
 
 ##
@@ -76,14 +76,14 @@ function optValue()
 # $?    0:OK    1:ERROR
 function optKeys()
 {
-    local OPTIND=1;    
-    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
+    local OPTIND=1
+    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`
     while getopts "$OPT_OPTS" key $pArgs
     do
-        echo "$key";
+        echo "$key"
     done
     
-    return 0;
+    return 0
 }
 
 ##
@@ -92,14 +92,14 @@ function optKeys()
 # $?    0:OK    1:ERROR
 function optList()
 {
-    local OPTIND=1;    
-    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
+    local OPTIND=1
+    local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`
     while getopts "$OPT_OPTS" key $pArgs
     do
-        echo "$key=$OPTARG";
+        echo "$key=$OPTARG"
     done
     
-    return 0;
+    return 0
 }
 
 ##
@@ -110,11 +110,11 @@ function optList()
 # $?    0:OK 1:ERROR
 function optSetOpts()
 {
-    : ${1:?};
+    : ${1:?}
     
-    OPT_OPTS="$1";
-    OPT_OPTS_LONG="$2";
-    return 0;
+    OPT_OPTS="$1"
+    OPT_OPTS_LONG="$2"
+    return 0
 }
 
 ##
@@ -124,19 +124,19 @@ function optSetOpts()
 # $?    0:OK 1:ERROR
 function optSetArgs()
 {        
-    local v;
-    OPT_ARGS="$@";
+    local v
+    OPT_ARGS="$@"
     OPT_ARGS_QUOTED=`
         for v in "$@"; do
-            local v=\`echo "$v" | sed 's/"/\\\\\\\\"/' \`;
-            echo -n \""$v"\"" ";
-        done; echo;`;
+            local v=\`echo "$v" | sed 's/"/\\\\\\\\"/' \`
+            echo -n \""$v"\"" "
+        done; echo;`
     OPT_PARAM_QUOTED=`
-        echo -n "$OPT_ARGS_QUOTED" | sed -n 's#\(\|\(.\)\s\)"-.*#\2#p';
-        echo -n " ";
-        echo "$OPT_ARGS_QUOTED" | grep -o -- '"--".*' | sed 's/"--"\s\?//';
-    `;
-    return "$?";
+        echo -n "$OPT_ARGS_QUOTED" | sed -n 's#\(\|\(.\)\s\)"-.*#\2#p'
+        echo -n " "
+        echo "$OPT_ARGS_QUOTED" | grep -o -- '"--".*' | sed 's/"--"\s\?//'
+    `
+    return "$?"
 }
 
 ##
@@ -147,9 +147,9 @@ function optSetArgs()
 # $?    0:OK 1:ERROR
 function optGetOpts()
 {    
-    echo "$OPT_OPTS";
-    echo "$OPT_OPTS_LONG";
-    return 0;
+    echo "$OPT_OPTS"
+    echo "$OPT_OPTS_LONG"
+    return 0
 }
 
 ##
@@ -158,8 +158,8 @@ function optGetOpts()
 # $?    0:OK 1:ERROR
 function optGetArgs()
 {        
-    echo "$OPT_ARGS";
-    return 0;
+    echo "$OPT_ARGS"
+    return 0
 }
 
 ##
@@ -169,20 +169,20 @@ function optGetArgs()
 function argList()
 {
     (
-        local return=1;
-        eval set -- $OPT_PARAM_QUOTED;    
+        local return=1
+        eval set -- $OPT_PARAM_QUOTED
 
-        local first=0;
+        local first=0
         while shift "$first"; do
-            first=1;
-            echo "$1";
-            return=0;
-        done;
+            first=1
+            echo "$1"
+            return=0
+        done
         
-        return "$return";
-    ) | head -n -1;
+        return "$return"
+    ) | head -n -1
 
-    return "$?";
+    return "$?"
 }
 
 ##
@@ -192,16 +192,16 @@ function argList()
 # $?    0:OK    1:ERROR
 function argValue()
 {
-    : ${1:?};
-    local key="$1";
-    eval set -- $OPT_PARAM_QUOTED;
+    : ${1:?}
+    local key="$1"
+    eval set -- $OPT_PARAM_QUOTED
 
-    shift $(( $key - 1 ));
+    shift $(( $key - 1 ))
     if [ "$?" = 0 ]; then
-        echo "$1";
-        return 0;
+        echo "$1"
+        return 0
     fi
-    return 1;        
+    return 1
 }
 
 ##
@@ -211,11 +211,11 @@ function argValue()
 # $?    0:OK    1:ERROR
 function argIsset()
 {
-    : ${1:?};    
-    local key="$1";
-    eval set -- $OPT_PARAM_QUOTED;
-    [ "$#" -ge "$key" ] && [ "0" -lt "$key" ];
-    return "$?";
+    : ${1:?}
+    local key="$1"
+    eval set -- $OPT_PARAM_QUOTED
+    [ "$#" -ge "$key" ] && [ "0" -lt "$key" ]
+    return "$?"
 }
 
 ##
@@ -225,9 +225,9 @@ function argIsset()
 # $?    0:OK    1:ERROR
 function argIsNotEmpty()
 {
-    : ${1:?};    
-    argIsset "$1" || return 1;    
-    local tmp=`argValue "$1"`;
-    [ -n "$tmp" ];
-    return "$?";
+    : ${1:?}
+    argIsset "$1" || return 1
+    local tmp=`argValue "$1"`
+    [ -n "$tmp" ]
+    return "$?"
 }

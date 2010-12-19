@@ -24,21 +24,21 @@
 # $3?   string post
 function CLASS_Bashor_Display_simpleRotateBar()
 {
-    : ${1:?};
+    : ${1:?}
     
-    local bar="${1:-#         }";
-    local barPre="${2:-[}";
-    local barPost="${3:-]}";
+    local bar="${1:-#         }"
+    local barPre="${2:-[}"
+    local barPost="${3:-]}"
     
-    local barLength=`echo -n "$bar" | wc -m`;
-    echo "$barPre""$bar""$barPost";
-    echo -n -e "\e[1A";
-    local value;
+    local barLength=`echo -n "$bar" | wc -m`
+    echo "$barPre""$bar""$barPost"
+    echo -n -e "\e[1A"
+    local value
     while read value; do
-        local barLast=`echo "$bar" | cut -b "$barLength"`;
-        local bar=`echo "$barLast""$bar" | cut -b 1-"$barLength"`;
-        echo "$barPre""$bar""$barPost";
-        echo -n -e "\e[1A";
-    done;
-    echo;
+        local barLast=`echo "$bar" | cut -b "$barLength"`
+        local bar=`echo "$barLast""$bar" | cut -b 1-"$barLength"`
+        echo "$barPre""$bar""$barPost"
+        echo -n -e "\e[1A"
+    done
+    echo
 }
