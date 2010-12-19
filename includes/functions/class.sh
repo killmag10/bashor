@@ -149,40 +149,25 @@ function _staticCall()
 {
     : ${1:?};
     : ${2:?};
-        
-    local OLD_CLASS_NAME="$CLASS_NAME";
-    local OLD_OBJECT_NAME="$OBJECT_NAME";
-    local OLD_FUNCTION_NAME="$FUNCTION_NAME";
-    local OLD_STATIC="$STATIC";
-    local OLD_OBJECT="$OBJECT";
-    local _OLD_OBJECT_PATH="$_OBJECT_PATH"; 
-    local _OLD_OBJECT_PATH_OLD="$_OBJECT_PATH_OLD"; 
-    export CLASS_NAME="$1";
-    [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
-    export CLASS_PARENT=;
-    export OBJECT_NAME=;
-    export FUNCTION_NAME="$2";
-    export STATIC=1;
-    export OBJECT=;
-    export _OBJECT_PATH_OLD=;
-    export _OBJECT_PATH=___"$CLASS_NAME";
+    
+    local -x CLASS_NAME="$1";
+    [ -n "$CLASS_PARENT" ] && local -x CLASS_NAME="$CLASS_PARENT";
+    local -x CLASS_PARENT=;
+    local -x OBJECT_NAME=;
+    local -x FUNCTION_NAME="$2";
+    local -x STATIC=1;
+    local -x OBJECT=;
+    local -x _OBJECT_PATH_OLD=;
+    local -x _OBJECT_PATH=___"$CLASS_NAME";
     local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME";
     shift 2;
     if declare -f "$fName" > /dev/null; then
         "$fName" "$@";
-        local res="$?"
-    else
-        error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!";
-        local res="1"
+        return $?;
     fi
-    export CLASS_NAME="$OLD_CLASS_NAME";
-    export OBJECT_NAME="$OLD_OBJECT_NAME";
-    export FUNCTION_NAME="$OLD_FUNCTION_NAME"
-    export STATIC="$OLD_STATIC";
-    export OBJECT="$OLD_OBJECT";
-    export _OBJECT_PATH="$_OLD_OBJECT_PATH";
-    export _OBJECT_PATH_OLD="$_OLD_OBJECT_PATH_OLD";
-    return "$res";
+    
+    error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!";
+    return 1
 }
 
 ##
@@ -265,50 +250,34 @@ function _objectCall()
     : ${1?};
     : ${2:?};
     : ${3:?};
-        
-    local OLD_CLASS_NAME="$CLASS_NAME";
-    local OLD_OBJECT_NAME="$OBJECT_NAME";
-    local OLD_FUNCTION_NAME="$FUNCTION_NAME";
-    local OLD_STATIC="$STATIC";
-    local OLD_OBJECT="$OBJECT";
-    local _OLD_OBJECT_PATH_OLD="$_OBJECT_PATH_OLD";
-    local _OLD_OBJECT_PATH="$_OBJECT_PATH";
-    export OBJECT_NAME="$2";
-    export FUNCTION_NAME="$3";
-    export STATIC=;
-    export OBJECT=1;
-    
+
+    local -x OBJECT_NAME="$2";
+    local -x FUNCTION_NAME="$3";
+    local -x STATIC=;
+    local -x OBJECT=1;
     local namespace=`_objectNamespace "" "$2" "$1"`;
-    eval 'export CLASS_NAME="$'"$namespace"'_CLASS";';
-    eval 'export OBJECT_ID="$'"$namespace"'_ID";';   
+    eval 'local -x CLASS_NAME="$'"$namespace"'_CLASS";';
+    eval 'local -x OBJECT_ID="$'"$namespace"'_ID";';   
     if [ -z "$1" ]; then
         if [ "$OBJECT_VISIBILITY" == 'global' ]; then
-            export _OBJECT_PATH_OLD=; 
-            export _OBJECT_PATH=__"$OBJECT_ID";        
+            local -x _OBJECT_PATH_OLD=; 
+            local -x _OBJECT_PATH=__"$OBJECT_ID";        
         else    
-            export _OBJECT_PATH_OLD="$_OBJECT_PATH";
-            export _OBJECT_PATH="$_OBJECT_PATH"__"$OBJECT_ID";
+            local -x _OBJECT_PATH_OLD="$_OBJECT_PATH";
+            local -x _OBJECT_PATH="$_OBJECT_PATH"__"$OBJECT_ID";
         fi
     fi
-    [ -n "$CLASS_PARENT" ] && export CLASS_NAME="$CLASS_PARENT";
-    export CLASS_PARENT="";
+    [ -n "$CLASS_PARENT" ] && local -x CLASS_NAME="$CLASS_PARENT";
+    local -x CLASS_PARENT="";
     local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME";
     shift 3;
     if declare -f "$fName" > /dev/null; then
         "$fName" "$@";
-        local res="$?"
-    else
-        error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!";
-        local res=1
+        return $?;
     fi
-    export CLASS_NAME="$OLD_CLASS_NAME";
-    export OBJECT_NAME="$OLD_OBJECT_NAME";
-    export FUNCTION_NAME="$OLD_FUNCTION_NAME";
-    export STATIC="$OLD_STATIC";
-    export OBJECT="$OLD_OBJECT";
-    export _OBJECT_PATH_OLD="$_OLD_OBJECT_PATH_OLD";
-    export _OBJECT_PATH="$_OLD_OBJECT_PATH";
-    return "$res";
+    
+    error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!";
+    return 1;
 }
 
 ##
@@ -323,18 +292,16 @@ function new()
     : ${1:?No class name set};
     : ${2:?No object name set};
     
-    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY";
     if [ "$1" == local ]; then
         : ${3:?};
-        export OBJECT_VISIBILITY=local;
+        local -x OBJECT_VISIBILITY=local;
         shift 1;
     else
-        export OBJECT_VISIBILITY=global;
+        local -x OBJECT_VISIBILITY=global;
     fi
     
     local ns="$1";
-    local nsObj="$2";    
-    local res="0";
+    local nsObj="$2";
     shift 2;
     
     local namespace=`_objectNamespace "$ns" "$nsObj" ''`; 
@@ -347,11 +314,10 @@ function new()
     declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null;
     if [ "$?" == 0 ]; then
         _objectCall '' "$nsObj" __construct "$@";
-        local res="$?";
+        return 0;
     fi
-        
-    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY";    
-    return "$res";
+
+    return 0;
 }
 
 ##
@@ -385,30 +351,26 @@ function clone()
     : ${1:?};
     : ${2:?};
     
-    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY";
     if [ "$1" == 'local' ]; then
         : ${2:?};
-        export OBJECT_VISIBILITY="$1";
+        local -x OBJECT_VISIBILITY="$1";
         shift 1;
     else
-        export OBJECT_VISIBILITY=global;
+        local -x OBJECT_VISIBILITY=global;
     fi
     local name1="$1";
     local namespace1=`_objectNamespace "" "$name1" ''`;
-    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY";
     shift 1;
     
-    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY";
     if [ "$1" == 'local' ]; then
         : ${2:?};
-        export OBJECT_VISIBILITY="$1";
+        local -x OBJECT_VISIBILITY="$1";
         shift 1;
     else
-        export OBJECT_VISIBILITY=global;
+        local -x OBJECT_VISIBILITY=global;
     fi
     local name2="$1";
     local namespace2=`_objectNamespace "" "$name2" ''`;
-    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY";
     shift 1;
     
     eval 'local class1="$'"$namespace1"'_CLASS";';
@@ -434,19 +396,16 @@ function remove()
 {
     : ${1:?};
     
-    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY";
     if [ "$1" == local ]; then
         : ${2:?};
-        export OBJECT_VISIBILITY="$1";
+        local -x OBJECT_VISIBILITY="$1";
         shift 1;
     else
-        export OBJECT_VISIBILITY=global;
+        local -x OBJECT_VISIBILITY=global;
     fi
 
-    _objectRemove "$1" "1";
-    local res="$?";
-    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY";   
-    return "$res";
+    _objectRemove "$1" "1";   
+    return $?;
 }
 
 ##
@@ -476,6 +435,7 @@ function _objectRemove()
         fi
     fi
     
+    eval 'unset -v '"$namespace"'_ID';
     eval 'unset -v '"$namespace"'_CLASS';
     eval 'unset -v '"$nsObjVarOld";
     
@@ -605,19 +565,17 @@ function parent()
     : ${1:?};
     : ${CLASS_NAME:?};
     
-    local OLD_CLASS_PARENT="$CLASS_PARENT";
     if [ -n "$CLASS_PARENT" ]; then
         local namespace=`_objectNamespace "$CLASS_PARENT" "" '1'`;
     else
         local namespace=`_objectNamespace "$CLASS_NAME" "" '1'`;
     fi    
-    eval 'local CLASS_PARENT="$'"$namespace"'_EXTENDS";';
+    eval 'local -x CLASS_PARENT="$'"$namespace"'_EXTENDS";';
         
     local return=1;
     case "$1" in
         call)
             : ${CLASS_PARENT:?};
-            export CLASS_PARENT;
             : ${2:?};
             local fName="$2"
             shift 2;
@@ -639,7 +597,6 @@ function parent()
             ;;
     esac
     
-    export CLASS_PARENT="$OLD_CLASS_PARENT";
     return "$return";
 }
 
