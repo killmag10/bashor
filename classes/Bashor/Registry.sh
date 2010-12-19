@@ -65,7 +65,7 @@ function CLASS_Bashor_Registry_set()
         local value="$2";
     fi
     
-    loadClassOnce 'Bashor_Lock';
+    loadClassOnce Bashor_Lock;
     local file=`this get file`;
     local lockFile=`this get lockFile`;
        
@@ -96,7 +96,7 @@ function CLASS_Bashor_Registry_remove()
     : ${1:?};
     : ${OBJECT:?};
     
-    loadClassOnce 'Bashor_Lock';
+    loadClassOnce Bashor_Lock;
     local file=`this get file`;
     local lockFile=`this get lockFile`;
     local key=`echo "$1" | base64 -w 0`;
@@ -127,7 +127,7 @@ function CLASS_Bashor_Registry_get()
     : ${1:?};
     : ${OBJECT:?};
     
-    loadClassOnce 'Bashor_Lock';
+    loadClassOnce Bashor_Lock;
     local file=`this get file`;
     local lockFile=`this get lockFile`;
     
@@ -160,7 +160,7 @@ function CLASS_Bashor_Registry_isset()
     : ${1:?};
     : ${OBJECT:?};
     
-    loadClassOnce 'Bashor_Lock';
+    loadClassOnce Bashor_Lock;
     local file=`this get file`;
     local lockFile=`this get lockFile`;
     
@@ -195,8 +195,8 @@ function CLASS_Bashor_Registry__compress()
     local compress=`this get compress`;
     
     if [ "$compress" == 1 ]; then
-        [ "$1" == 'c' ] && gzip;
-        [ "$1" == 'd' ] && gzip -d;
+        [ "$1" == c ] && gzip;
+        [ "$1" == d ] && gzip -d;
     else
         cat -;
     fi
@@ -237,7 +237,7 @@ function CLASS_Bashor_Registry_getKeys()
 {
     : ${OBJECT:?};
     
-    loadClassOnce 'Bashor_Lock';
+    loadClassOnce Bashor_Lock;
     local file=`this get file`;
     local lockFile=`this get lockFile`;
     
@@ -248,12 +248,11 @@ function CLASS_Bashor_Registry_getKeys()
             local res=`cat "$file" \
                 | this call _compress 'd'`;
             if [ -n "$res" ]; then
-                (
-                    local IFS=`echo -e '\n\r'`;
-                    for line in $res; do
-                        echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d;
-                    done;
-                )
+                local IFS=$'\n\r';
+                local line;
+                for line in $res; do
+                    echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d;
+                done;
                 return 0;
             fi
         } 200>"$lockFile";
@@ -271,7 +270,7 @@ function CLASS_Bashor_Registry_getValues()
 {
     : ${OBJECT:?};
     
-    loadClassOnce 'Bashor_Lock';
+    loadClassOnce Bashor_Lock;
     local file=`this get file`;
     local lockFile=`this get lockFile`;
     
@@ -282,14 +281,13 @@ function CLASS_Bashor_Registry_getValues()
             local res=`cat "$file" \
                 | this call _compress 'd'`;
             if [ -n "$res" ]; then
-                (
-                    local IFS=`echo -e '\n\r'`;
-                    for line in $res; do
-                        local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`;
-                        local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d`;
-                        echo "$key : $value";
-                    done;
-                )
+                local IFS=$'\n\r';
+                local line;
+                for line in $res; do
+                    local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`;
+                    local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d`;
+                    echo "$key : $value";
+                done;
                 return 0;
             fi
         } 200>"$lockFile";
@@ -306,10 +304,10 @@ function CLASS_Bashor_Registry_clear()
     : ${OBJECT:?};
     
     local lockFile=`this get lockFile`;    
-    loadClassOnce 'Bashor_Lock';
+    loadClassOnce Bashor_Lock;
     {
         flock 200;
-        echo '' | this call _compress 'c' > "`this get file`"    
+        echo | this call _compress 'c' > "`this get file`"    
     } 200>"$lockFile";
     class Bashor_Lock delete "$lockFile";
 }
@@ -325,7 +323,7 @@ function CLASS_Bashor_Registry_removeFile()
     local file=`this get file`;
     [ -f "$file" ] || return 1;
     
-    loadClassOnce 'Bashor_Lock';
+    loadClassOnce Bashor_Lock;
     {
         flock 200;
         rm "$file"    

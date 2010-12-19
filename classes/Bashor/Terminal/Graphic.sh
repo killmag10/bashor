@@ -30,7 +30,7 @@ function CLASS_Bashor_Terminal_Graphic_setPixel()
 {
     : ${1:?};
     : ${2:?};
-    loadClassOnce 'Bashor_Terminal';
+    loadClassOnce Bashor_Terminal;
 
     class Bashor_Terminal saveCurser;
     class Bashor_Terminal moveCurserBy "$1" "$2";
@@ -65,7 +65,7 @@ function CLASS_Bashor_Terminal_Graphic_printText()
     : ${1:?};
     : ${2:?};
     : ${3:?};
-    loadClassOnce 'Bashor_Terminal';
+    loadClassOnce Bashor_Terminal;
 
     class Bashor_Terminal saveCurser;
     class Bashor_Terminal moveCurserBy "$1" "$2";
@@ -100,8 +100,8 @@ function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
     : ${2:?};
     : ${3:?};
     : ${4:?};
-    loadClassOnce 'Bashor_Terminal';
-    loadClassOnce 'Bashor_Escape';
+    loadClassOnce Bashor_Terminal;
+    loadClassOnce Bashor_Escape;
     
     (
         local char="${5:- }";

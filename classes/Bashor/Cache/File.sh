@@ -44,7 +44,7 @@ function CLASS_Bashor_Cache_File_filename()
     : ${1?};
     : ${OBJECT:?};
     
-    loadClass 'Bashor_Hash';
+    loadClassOnce Bashor_Hash;
     
     local hashMd5=`class Bashor_Hash md5 "$1"`;
     local hashCrc32=`echo "$1" | cksum | tr ' ' '_'`;
@@ -71,7 +71,7 @@ function CLASS_Bashor_Cache_File_set()
     ((time="$time"+"$2"));
     {
         echo "$time";
-        echo "`echo '$1' | tr '\n\r' ' '`";
+        echo "`echo "$1" | tr '\n\r' ' '`";
         if [ -p /dev/stdin ]; then
             cat /dev/stdin;
         else
@@ -138,7 +138,7 @@ function CLASS_Bashor_Cache_File_removeOutdated()
     
     local dir="`this get dir`";
     local files="`ls -1 "$dir"`";
-    local IFS=`echo -e "\n\r"`;
+    local IFS=$'\n\r';
     for file in $files; do
         this call check "$dir/$file";
         if [ "$?" != 0 ]; then

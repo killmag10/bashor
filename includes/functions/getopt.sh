@@ -36,7 +36,7 @@ function optIsset()
         
         local res=`echo "$1" | sed 's#^-##'`;
         if [ "${res:0:1}" = '-' ]; then
-            local res="${res:1}";
+            res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
@@ -62,7 +62,7 @@ function optIsNotEmpty()
     : ${1:?};
     optIsset "$1" || return 1;
     local tmp=`optValue "$@"`;
-    [ "$tmp" != '' ];
+    [ -n "$tmp" ];
     return "$?";
 }
 
@@ -91,7 +91,7 @@ function argIsNotEmpty()
     : ${1:?};    
     argIsset "$1" || return 1;
     local tmp=`argValue "$1"`;
-    [ "$tmp" != '' ];
+    [ -n "$tmp" ];
     return "$?";
 }
 
@@ -108,13 +108,13 @@ function optValue()
 
     local first=0;
     while shift "$first"; do
-        local first=1;
+        first=1;
         [ "$1" == "--" ] && break;
         [ "${1:0:1}" = '-' ] || continue;
         
         local res=`echo "$1" | sed 's#^-##'`;
         if [ "${res:0:1}" = '-' ]; then
-            local res="${res:1}";
+            res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
@@ -140,16 +140,16 @@ function argValue()
 {
     : ${1:?};    
 
-        local key="$1";
-        eval set -- "$OPT_ARGS";
-        while [ "$1" != "--" ]; do shift 1; done;
+    local key="$1";
+    eval set -- "$OPT_ARGS";
+    while [ "$1" != "--" ]; do shift 1; done;
 
-        shift $key;
-        if [ "$?" = 0 ]; then
-            echo "$1";
-            return 0;
-        fi    
-        return "1";
+    shift $key;
+    if [ "$?" = 0 ]; then
+        echo "$1";
+        return 0;
+    fi    
+    return "1";
 }
 
 ##
@@ -169,13 +169,13 @@ function optKeys()
         
         local res=`echo "$1" | sed 's#^-##'`;
         if [ "${res:0:1}" = '-' ]; then
-                local res="${res:1}";
+            res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
         fi
         echo "$res";
-        local return=0;
+        return=0;
         if [ ":" == "$opt" ]; then
             shift;
         fi    
@@ -201,18 +201,18 @@ function optList()
         
         local res=`echo "$1" | sed 's#^-##'`;
         if [ "${res:0:1}" = '-' ]; then
-            local res="${res:1}";
+            res="${res:1}";
             local opt=`optGetOptLongExtension "$res"`;
         else
             local opt=`echo "$OPT_OPTS" | cut -f 2 -d "$res" | cut -b 1`;
         fi
         echo -n "$res=";
-        local return=0;
+        return=0;
         if [ ":" == "$opt" ]; then
             echo -n "$2";
             shift;
         fi
-        echo "";  
+        echo;  
     done
         
     return "$return";
@@ -236,7 +236,7 @@ function argList()
 
         while shift "$first"; do
             echo "$1";
-            local return=0;
+            return=0;
         done;
         
         return "$return";
@@ -289,7 +289,7 @@ function optGetOpts()
 function optGetArgs()
 {        
     echo "$OPT_ARGS";
-    return "0";
+    return 0;
 }
 
 ##
@@ -299,7 +299,7 @@ function optGetArgs()
 # $?    0:FOUND 1:NOT FOUND
 function optGetOptLongExtension()
 {
-    local IFS=",";
+    local IFS=',';
     for value in $OPT_OPTS_LONG; do
         local key=`echo "$value" | sed 's#:##g'`;
         if [ "$key" == "$1" ]; then

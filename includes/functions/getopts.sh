@@ -24,7 +24,7 @@ function optIsset()
 {
     : ${1:?};
     
-    local OPTIND='1';    
+    local OPTIND=1;    
     local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
     do
@@ -44,7 +44,7 @@ function optIsNotEmpty()
     : ${1:?};
     optIsset "$1" || return 1;
     local tmp=`optValue "$@"`;
-    [ "$tmp" != '' ];
+    [ -n "$tmp" ];
     return "$?";
 }
 
@@ -57,7 +57,7 @@ function optValue()
 { 
     : ${1:?};
        
-    local OPTIND='1';    
+    local OPTIND=1;    
     local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
     do
@@ -76,7 +76,7 @@ function optValue()
 # $?    0:OK    1:ERROR
 function optKeys()
 {
-    local OPTIND='1';    
+    local OPTIND=1;    
     local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
     do
@@ -92,7 +92,7 @@ function optKeys()
 # $?    0:OK    1:ERROR
 function optList()
 {
-    local OPTIND='1';    
+    local OPTIND=1;    
     local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`;
     while getopts "$OPT_OPTS" key $pArgs
     do
@@ -124,6 +124,7 @@ function optSetOpts()
 # $?    0:OK 1:ERROR
 function optSetArgs()
 {        
+    local v;
     OPT_ARGS="$@";
     OPT_ARGS_QUOTED=`
         for v in "$@"; do
@@ -158,7 +159,7 @@ function optGetOpts()
 function optGetArgs()
 {        
     echo "$OPT_ARGS";
-    return "0";
+    return 0;
 }
 
 ##
@@ -173,9 +174,9 @@ function argList()
 
         local first=0;
         while shift "$first"; do
-            local first=1;
+            first=1;
             echo "$1";
-            local return=0;
+            return=0;
         done;
         
         return "$return";
@@ -227,6 +228,6 @@ function argIsNotEmpty()
     : ${1:?};    
     argIsset "$1" || return 1;    
     local tmp=`argValue "$1"`;
-    [ "$tmp" != '' ];
+    [ -n "$tmp" ];
     return "$?";
 }

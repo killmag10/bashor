@@ -92,10 +92,9 @@ function prepareOutput()
 {
     : ${1:?};
     
-    local IFS_BAK=$IFS;
-    local IFS=`echo -e "\n\r"`;
+    local IFS=$'\n\r';
+    local msg;
     while read msg; do echo "$1$msg"; done
-    local IFS="$IFS_BAK";
 }
 
 ##
@@ -103,17 +102,15 @@ function prepareOutput()
 #
 function getBacktrace()
 {    
-    (
-        local res='1';
-        local pos=0;
-        while [ -n "$res" ]; do
-            local res=`caller "$pos"`;
-            [ -n "$res" ] && echo "$pos: $res";
-            ((pos++));
-        done
-        [ -n "$res" ];
-        return "$?";
-    )
+    local res='1';
+    local pos=0;
+    while [ -n "$res" ]; do
+        local res=`caller "$pos"`;
+        [ -n "$res" ] && echo "$pos: $res";
+        ((pos++));
+    done
+    [ -n "$res" ];
+    return "$?";
 }
 
 ##

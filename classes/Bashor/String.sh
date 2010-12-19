@@ -50,7 +50,7 @@ function CLASS_Bashor_String_replace()
     : ${1?};
     : ${2?};
     
-    loadClassOnce 'Bashor_Escape';
+    loadClassOnce Bashor_Escape;
     local find="`class Bashor_Escape regEx "$1" '/'`";
     local replacement="`class Bashor_Escape regExReplacement "$2" '/'`";
     
