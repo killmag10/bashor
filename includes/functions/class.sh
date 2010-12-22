@@ -25,10 +25,9 @@ function loadClass()
 {
     : ${1:?}
     
-    local ns="$1"
-    local IFS=`echo -e "\n\r"`
+    local IFS=$'\n\r'
     for dn in $BASHOR_PATHS_CLASS; do
-        local filename="$dn/""`echo "$ns" | tr '_' '/'`"'.sh'
+        local filename="$dn/""`echo "$1" | tr '_' '/'`"'.sh'
         if [ -f "$filename" ]; then
             . "$filename"
             addClass "$@"
@@ -49,10 +48,10 @@ function loadClassOnce()
 {
     : ${1:?}
     
-    eval '[ -n "$_CLASS_'"$1"'_LOADED" ] && return 0'
+    eval '[ -n "$_BASHOR_CLASS_'"$1"'_LOADED" ] && return 0'
     loadClass "$@"
     local res="$?"
-    [ "$res" = 0 ] && eval _CLASS_"$1"_LOADED=1
+    [ "$res" = 0 ] && eval _BASHOR_CLASS_"$1"_LOADED=1
     return "$res"
 }
 
@@ -129,12 +128,9 @@ function _createExtendedClassFunctions()
 # $?    0:OK    1:ERROR
 function class()
 {
-    local OLD_CLASS_PARENT="$CLASS_PARENT"
-    export CLASS_PARENT=''
+    local -x CLASS_PARENT=
     _staticCall "$@"
-    local res="$?"
-    export CLASS_PARENT="$OLD_CLASS_PARENT"
-    return "$res"
+    return $?;
 }
 
 ##
@@ -182,22 +178,17 @@ function object()
     : ${1:?}
     : ${2:?}
     
-    local OLD_OBJECT_VISIBILITY="$OBJECT_VISIBILITY"
     if [ "$1" == local ]; then
         : ${3:?}
-        export OBJECT_VISIBILITY=local
+        local -x OBJECT_VISIBILITY=local
         shift 1
     else
-        export OBJECT_VISIBILITY=global
+        local -x OBJECT_VISIBILITY=global
     fi
- 
-    local OLD_CLASS_PARENT="$CLASS_PARENT"
-    export CLASS_PARENT=
+
+    local -x CLASS_PARENT=
     _objectCall '' "$@"
-    local res="$?"
-    export CLASS_PARENT="$OLD_CLASS_PARENT"
-    export OBJECT_VISIBILITY="$OLD_OBJECT_VISIBILITY"
-    return "$res"
+    return $?
 }
 
 ##
@@ -305,12 +296,11 @@ function new()
     shift 2
     
     local namespace=`_objectNamespace "$ns" "$nsObj" ''`
-    local dataVarName=`_objectVarNameData "$ns" "$nsObj" ''`
     
     local callLine="`caller | sed -n 's#^\([0-9]\+\).*$#\1#p';`"
     eval 'export '"$namespace"'_CLASS='"$ns"';'
     eval 'export '"$namespace"'_ID='"${ns}${callLine}"';'
-    eval 'export '"$dataVarName"'="";'
+    eval 'export '"$namespace"'_DATA="";'
     declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null
     if [ "$?" == 0 ]; then
         _objectCall '' "$nsObj" __construct "$@"
@@ -423,7 +413,6 @@ function _objectRemove()
     local res=0
     local nsObj="$1"
     local doCall="$2"
-    local nsObjVarOld=`_objectVarNameData '' "$1" ''`
     local namespace=`_objectNamespace "$ns" "$nsObj" ''`
     eval 'local ns="$'"$nsObjClassOld"'";'
         
@@ -437,27 +426,9 @@ function _objectRemove()
     
     eval 'unset -v '"$namespace"'_ID'
     eval 'unset -v '"$namespace"'_CLASS'
-    eval 'unset -v '"$nsObjVarOld"
+    eval 'unset -v '"$namespace"'_DATA'
     
     return "$res"
-}
-
-##
-# Get object var name.
-#
-# $1   string  class name
-# $2   string  class name
-# $3    boolean internal call '':FALSE '1':TRUE
-# &1    string var name
-# $?    0:OK    1:ERROR
-function _objectVarNameData()
-{
-    : ${1?}
-    : ${2?}
-    
-    local namespace=`_objectNamespace "$1" "$2" "$3"`
-    echo "$namespace"_DATA
-    return 0
 }
 
 ##
@@ -484,7 +455,7 @@ function _objectNamespace()
     else
         local namespace=CLASS_"$1"
     fi
-    echo _"$namespace"
+    echo _BASHOR_"$namespace"
     return 0
 }
 
@@ -501,7 +472,7 @@ function this()
     : ${1:?}
     : ${CLASS_NAME:?}
     
-    local dataVarName=`_objectVarNameData "$CLASS_NAME" "$OBJECT_NAME" '1'`
+    local dataVarName="`_objectNamespace "$CLASS_NAME" "$OBJECT_NAME" '1'`"_DATA
     
     case "$1" in
         set)
@@ -527,14 +498,12 @@ function this()
             ;;
         call)
             : ${2:?}
-            local fName="$2"
-            shift 2
-            if [ -z "$OBJECT_NAME" ]; then
-                _staticCall "$CLASS_NAME" "$fName" "$@"
-                return "$?"
-            fi
+            shift
             if [ -n "$OBJECT_NAME" ]; then          
-                _objectCall 1 "$OBJECT_NAME" "$fName" "$@"
+                _objectCall 1 "$OBJECT_NAME" "$@"
+                return "$?"
+            else
+                _staticCall "$CLASS_NAME" "$@"
                 return "$?"
             fi
             ;;
@@ -543,6 +512,7 @@ function this()
             return "$?"
             ;;
         load)
+            : ${2:?}
             _objectLoadData "$dataVarName" "$2"
             return "$?"
             ;;
@@ -704,9 +674,7 @@ function _objectIsset()
     eval 'local data="$'"$1"'";'
     local key=`echo "$2" | base64`
     local res=`echo "$data" | grep "^$key "`
-    if [ -n "$res" ]; then
-        return 0
-    fi
+    [ -n "$res" ] && return 0
     
     return 1
 }
