@@ -222,7 +222,7 @@ function _objectLoadData()
 function _objectSaveData()
 {
     : ${1:?}
-    echo "bashor dump 0.0.0 objectData"
+    echo 'bashor dump 0.0.0 objectData'
     eval 'echo "$'"$1"'"' | base64
     return "$?"
 }
@@ -597,19 +597,19 @@ function _objectSet()
     : ${1:?}
     : ${2:?}
 
-    if [ -p /dev/stdin ] && [ -z "$3" ] && [ "$3" !=  "${3-null}"]; then
+    if [ -z "$3" ] && [ "$3" != "${3-null}" ] && [ -p /dev/stdin ]; then
         local value=`cat -`
     else
         local value="$3"
     fi
                 
     local key=`echo "$2" | base64 -w 0`
-    local value=`echo "$value" | base64 -w 0`
+    value=`echo "$value" | base64 -w 0`
     
     eval 'local data="$'"$1"'";'
-    local data=`echo "$data" | sed "s#^${key}\s\+.*##"`
-    local data=`echo "$key $value"; echo -n "$data";`
-    local data=`echo "$data" | sort -u;`
+    data=`echo "$data" | sed "s#^${key}\s\+.*##"`
+    data=`echo "$key $value"; echo -n "$data";`
+    data=`echo "$data" | sort -u;`
     eval 'export '"$1"'="$data";'
     
     return "$?"
