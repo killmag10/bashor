@@ -458,10 +458,13 @@ function _objectNamespace()
        
     if [ -n "$2" ]; then
         if [ "$OBJECT_VISIBILITY" == global ]; then
-            local namespace='OBJECT_GLOBAL_'"$2"
+            local namespace=OBJECT_GLOBAL_"$2"
         else
-            [ -n "$3" ] && local _OBJECT_PATH="$_OBJECT_PATH_OLD"
-            local namespace=OBJECT_LOCAL"$_OBJECT_PATH"'_'"$2"
+            if [ -n "$3" ]; then
+				local namespace=OBJECT_LOCAL"$_OBJECT_PATH_OLD"_"$2"
+			else
+				local namespace=OBJECT_LOCAL"$_OBJECT_PATH"_"$2"
+			fi
         fi
     else
         local namespace=CLASS_"$1"
