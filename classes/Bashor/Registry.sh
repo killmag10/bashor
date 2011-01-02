@@ -37,7 +37,7 @@ function CLASS_Bashor_Registry___construct()
     this set lockFile "$registryFile"'.lock'
     local lockFile=`this get lockFile`
     
-    if [ ! -f "`this get file`" ]; then
+    if [ ! -f "$registryFile" ]; then
         loadClassOnce 'Bashor_Lock'
         {
             flock 200
@@ -77,8 +77,8 @@ function CLASS_Bashor_Registry_set()
         [ ! -f "$file" ] \
             && echo "" | this call _compress 'c' > "$file"
         local data=`cat "$file" | this call _compress 'd'`
-        local data=`echo "$data" | sed "s#^${key}\s\+.*##"`
-        local data=`echo "$key $value"; echo -n "$data";`
+        data=`echo "$data" | sed "s#^${key}\s\+.*##"`
+        data=`echo "$key $value"; echo -n "$data";`
         echo "$data" | sort -u | this call _compress 'c' > "$file"
     } 200>"$lockFile"
     class Bashor_Lock delete "$lockFile"

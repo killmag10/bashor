@@ -25,15 +25,14 @@ function loadFunctions()
     : ${1:?}
     
     if [ -n "$1" ]; then
-        local ns="$1"
-        local nsFile=`echo "$ns" | tr '_' '/'`
-        
+        local nsFile=`echo "$1" | tr '_' '/'`
         local IFS=`echo -e "\r\n"`
+        local filename
         for dn in $BASHOR_PATHS_FUNCTIONS; do
-            local filename="$dn/""$nsFile"'.sh'
+            filename="$dn/""$nsFile"'.sh'
             if [ -f "$filename" ]; then
                 . "$filename"
-                return "$?"
+                return $?
             fi
         done
     fi
@@ -81,7 +80,7 @@ function renameFunction()
 function functionExists()
 {
     declare -f "$1" > /dev/null
-    return "$?"
+    return $?
 }
 
 ##
@@ -110,7 +109,7 @@ function getBacktrace()
         ((pos++))
     done
     [ -n "$res" ]
-    return "$?"
+    return $?
 }
 
 ##
@@ -245,7 +244,7 @@ function bufferStream()
 {
     local tmp=`cat -`
     echo -n "$tmp"
-    return "$?"
+    return $?
 }
 
 . "$BASHOR_PATH_INCLUDES/functions/class.sh"

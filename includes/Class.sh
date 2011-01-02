@@ -61,7 +61,7 @@ function CLASS_Class_getParentClass()
     : ${CLASS_NAME:?}
     this call hasParentClass || return 1
     parent call getClass
-    return "$?"
+    return $?
 }
 
 ##
@@ -86,7 +86,7 @@ function CLASS_Class_hasParentClass()
 {
     : ${CLASS_NAME:?}
     parent exists
-    return "$?"
+    return $?
 }
 
 ##
@@ -100,7 +100,7 @@ function CLASS_Class_isA()
     [ "$CLASS_NAME" == "$1" ] && return 0
     parent exists || return 1
     parent call isA "$1"
-    return "$?"
+    return $?
 }
 
 ##

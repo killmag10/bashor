@@ -26,12 +26,14 @@ function loadClass()
     : ${1:?}
     
     local IFS=$'\n\r'
+    local dn
+    local filename
     for dn in $BASHOR_PATHS_CLASS; do
-        local filename="$dn/""`echo "$1" | tr '_' '/'`"'.sh'
+        filename="$dn/""`echo "$1" | tr '_' '/'`"'.sh'
         if [ -f "$filename" ]; then
             . "$filename"
             addClass "$@"
-            return "$?"
+            return $?
         fi
     done
     
@@ -50,8 +52,8 @@ function loadClassOnce()
     
     eval '[ -n "$_BASHOR_CLASS_'"$1"'_LOADED" ] && return 0'
     loadClass "$@"
-    local res="$?"
-    [ "$res" = 0 ] && eval _BASHOR_CLASS_"$1"_LOADED=1
+    local res=$?
+    [ "$res" == 0 ] && eval _BASHOR_CLASS_"$1"_LOADED=1
     return "$res"
 }
 
@@ -72,7 +74,7 @@ function addClass()
     declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null
     if [ "$?" == 0 ]; then
         _staticCall "$ns" __load
-        return "$?"
+        return $?
     fi
     
     return 0
@@ -103,18 +105,17 @@ function _createExtendedClassFunctions()
     : ${1:?}
     : ${2:?}
     
-    local nsParent="$2"
-    local nsNew="$1"
-    local noOverwrite="$3"
-    
     local fList=`declare -F \
-        | sed -n 's#^declare -f CLASS_'"$nsParent"'_\(.*\)$#\1#p'`
+        | sed -n 's#^declare -f CLASS_'"$2"'_\(.*\)$#\1#p'`
     local IFS=$'\n\r'
+    local f
+    local fNameParent
+    local fNameNew
     for f in $fList; do
-        local fNameParent=CLASS_"$nsParent"_"$f"
-        local fNameNew=CLASS_"$nsNew"_"$f"
-        if [ -z "$noOverwrite" ] || ! functionExists "$fNameNew"; then
-            eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return "$?"; }'
+        fNameParent=CLASS_"$2"_"$f"
+        fNameNew=CLASS_"$1"_"$f"
+        if [ -z "$3" ] || ! functionExists "$fNameNew"; then
+            eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return $?; }'
         fi
     done
 }
@@ -130,7 +131,7 @@ function class()
 {
     local -x CLASS_PARENT=
     _staticCall "$@"
-    return $?;
+    return $?
 }
 
 ##
@@ -156,8 +157,15 @@ function _staticCall()
     local -x _OBJECT_PATH_OLD=
     local -x _OBJECT_PATH=___"$CLASS_NAME"
     local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
-    shift 2
     if declare -f "$fName" > /dev/null; then
+		shift 2
+        "$fName" "$@"
+        return $?
+    fi
+
+    local fName=CLASS_"$CLASS_NAME"___call
+    if declare -f "$fName" > /dev/null; then
+		shift 1
         "$fName" "$@"
         return $?
     fi
@@ -208,10 +216,9 @@ function _objectLoadData()
         local value="$2"
     fi
     
-    local value=`echo "$value" | tail -n +2 | base64 -d`
-    
+    value=`echo "$value" | tail -n +2 | base64 -d`    
     eval 'export '"$1"'="$value";'
-    return "$?"
+    return $?
 }
 
 ##
@@ -224,7 +231,7 @@ function _objectSaveData()
     : ${1:?}
     echo 'bashor dump 0.0.0 objectData'
     eval 'echo "$'"$1"'"' | base64
-    return "$?"
+    return $?
 }
 
 ##
@@ -260,9 +267,17 @@ function _objectCall()
     fi
     [ -n "$CLASS_PARENT" ] && local -x CLASS_NAME="$CLASS_PARENT"
     local -x CLASS_PARENT=""
+    
     local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
-    shift 3
     if declare -f "$fName" > /dev/null; then
+        shift 3
+        "$fName" "$@"
+        return $?
+    fi
+
+    local fName=CLASS_"$CLASS_NAME"___call
+    if declare -f "$fName" > /dev/null; then
+        shift 2
         "$fName" "$@"
         return $?
     fi
@@ -370,7 +385,7 @@ function clone()
     declare -F | grep '^declare -f CLASS_'"$class1"'___clone$' > /dev/null
     if [ "$?" == 0 ]; then
         _objectCall '' "$name2" __clone
-        return "$?"
+        return $?
     fi
     
     return 0
@@ -420,7 +435,7 @@ function _objectRemove()
         declare -F | grep '^declare -f CLASS_'"$ns"'___destruct$' > /dev/null
         if [ "$?" == 0 ]; then
             _objectCall '' "$ns" "$nsObj" __destruct
-            res="$?"
+            res=$?
         fi
     fi
     
@@ -479,42 +494,42 @@ function this()
             : ${2:?}
             : ${3?}
             _objectSet "$dataVarName" "$2" "$3"
-            return "$?"
+            return $?
             ;;
         get)
             : ${2:?}
             _objectGet "$dataVarName" "$2"
-            return "$?"
+            return $?
             ;;
         unset)
             : ${2:?}
             _objectUnset "$dataVarName" "$2"
-            return "$?"
+            return $?
             ;;
         isset)
             : ${2:?}
             _objectIsset "$dataVarName" "$2"
-            return "$?"
+            return $?
             ;;
         call)
             : ${2:?}
             shift
             if [ -n "$OBJECT_NAME" ]; then          
                 _objectCall 1 "$OBJECT_NAME" "$@"
-                return "$?"
+                return $?
             else
                 _staticCall "$CLASS_NAME" "$@"
-                return "$?"
+                return $?
             fi
             ;;
         save)
             _objectSaveData "$dataVarName"
-            return "$?"
+            return $?
             ;;
         load)
             : ${2:?}
             _objectLoadData "$dataVarName" "$2"
-            return "$?"
+            return $?
             ;;
         *)
             error "\"$1\" is not a option of this!"
@@ -551,23 +566,23 @@ function parent()
             shift 2
             if [ -z "$OBJECT_NAME" ]; then
                 _staticCall "$CLASS_NAME" "$fName" "$@"
-                return="$?"
+                return=$?
             fi
             if [ -n "$OBJECT_NAME" ]; then
                 _objectCall '1' "$OBJECT_NAME" "$fName" "$@"
-                return="$?"
+                return=$?
             fi
             ;;
         exists)
             [ -n "$CLASS_PARENT" ]
-            return="$?"
+            return=$?
             ;;
         *)
             error "\"$1\" is not a option of parent!"
             ;;
     esac
     
-    return "$return"
+    return $return
 }
 
 ##
@@ -581,7 +596,7 @@ function isStatic()
     : ${CLASS_NAME:?}
     : ${OBJECT_NAME?}
     [ -z "$OBJECT_NAME" ]
-    return "$?"
+    return $?
 }
 
 ##
@@ -612,7 +627,7 @@ function _objectSet()
     data=`echo "$data" | sort -u;`
     eval 'export '"$1"'="$data";'
     
-    return "$?"
+    return $?
 }
 
 ##
@@ -628,12 +643,12 @@ function _objectUnset()
     
     eval 'local data="$'"$1"'";' 
     local key=`echo "$2" | base64 -w 0`
-    local data=`echo "$data" \
+    data=`echo "$data" \
         | sed "s#^${key}\s\+.*##" \
         | sort -u`
     eval 'export '"$1"'="$data";'
     
-    return "$?"
+    return $?
 }
 
 ##
