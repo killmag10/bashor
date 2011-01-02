@@ -53,3 +53,18 @@ checkSimple "object local clone 1 get" "$res" "local";
 
 remove local DataClone;
 checkSimple "remove local clone object 1" "$?" "0";
+
+
+loadClassOnce 'Include';
+checkSimple "loadClassOnce Include" "$?" "0";
+
+new local Include Include 'abc123' 'def456';
+checkSimple "new Include" "$?" "0";
+
+res=`object local Include get`;
+checkSimple "object local Include get" "$res" "abc123";
+
+res=`object local Include getInclude`;
+checkSimple "object local Include getInclude" "$res" "def456";
+
+

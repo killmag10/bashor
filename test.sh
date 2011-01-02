@@ -28,6 +28,8 @@ export TESTS_FAIL='0';
 
 export BASHOR_LOG_FILE="$TEST_TEMP_DIR/log.log";
 
+export BASHOR_PATHS_CLASS="${BASHOR_PATHS_CLASS}${NL}${TEST_DIR}/lib";
+
 function doTest()
 {
     echo "##### Test: $1 #####";
