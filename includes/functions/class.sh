@@ -32,6 +32,7 @@ function loadClass()
         filename="$dn/""`echo "$1" | tr '_' '/'`"'.sh'
         if [ -f "$filename" ]; then
             . "$filename"
+            eval _BASHOR_CLASS_"$1"_LOADED=1
             addClass "$@"
             return $?
         fi
@@ -52,9 +53,7 @@ function loadClassOnce()
     
     eval '[ -n "$_BASHOR_CLASS_'"$1"'_LOADED" ] && return 0'
     loadClass "$@"
-    local res=$?
-    [ "$res" == 0 ] && eval _BASHOR_CLASS_"$1"_LOADED=1
-    return "$res"
+    return $?
 }
 
 ##
@@ -129,7 +128,6 @@ function _createExtendedClassFunctions()
 # $?    0:OK    1:ERROR
 function class()
 {
-    local -x CLASS_PARENT=
     _staticCall "$@"
     return $?
 }
@@ -147,31 +145,17 @@ function _staticCall()
     : ${1:?}
     : ${2:?}
     
-    local -x CLASS_NAME="$1"
-    [ -n "$CLASS_PARENT" ] && local -x CLASS_NAME="$CLASS_PARENT"
-    local -x CLASS_PARENT=
+	local -x CLASS_NAME="$1"
+	local -x CLASS_TOP_NAME="$1"
     local -x OBJECT_NAME=
-    local -x FUNCTION_NAME="$2"
     local -x STATIC=1
     local -x OBJECT=
     local -x _OBJECT_PATH_OLD=
     local -x _OBJECT_PATH=___"$CLASS_NAME"
-    local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
-    if declare -f "$fName" > /dev/null; then
-		shift 2
-        "$fName" "$@"
-        return $?
-    fi
-
-    local fName=CLASS_"$CLASS_NAME"___call
-    if declare -f "$fName" > /dev/null; then
-		shift 1
-        "$fName" "$@"
-        return $?
-    fi
-    
-    error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!"
-    return 1
+	
+	shift
+	_call "$@"
+    return $?
 }
 
 ##
@@ -194,7 +178,6 @@ function object()
         local -x OBJECT_VISIBILITY=global
     fi
 
-    local -x CLASS_PARENT=
     _objectCall '' "$@"
     return $?
 }
@@ -240,7 +223,6 @@ function _objectSaveData()
 # $1    boolean internal call '':FALSE '1':TRUE
 # $2    string  object name
 # $3    string  function name
-# $PARENT?   string  child class name
 # $@    params
 # $?    0:OK    1:ERROR
 function _objectCall()
@@ -250,12 +232,12 @@ function _objectCall()
     : ${3:?}
 
     local -x OBJECT_NAME="$2"
-    local -x FUNCTION_NAME="$3"
     local -x STATIC=
     local -x OBJECT=1
     local namespace=`_objectNamespace "" "$2" "$1"`
-    eval 'local -x CLASS_NAME="$'"$namespace"'_CLASS";'
-    eval 'local -x OBJECT_ID="$'"$namespace"'_ID";'
+    eval 'local -x CLASS_NAME="$'"$namespace"'_CLASS"'
+    local -x CLASS_TOP_NAME="$CLASS_NAME"
+    eval 'local -x OBJECT_ID="$'"$namespace"'_ID"'
     if [ -z "$1" ]; then
         if [ "$OBJECT_VISIBILITY" == 'global' ]; then
             local -x _OBJECT_PATH_OLD=
@@ -265,19 +247,33 @@ function _objectCall()
             local -x _OBJECT_PATH="$_OBJECT_PATH"__"$OBJECT_ID"
         fi
     fi
-    [ -n "$CLASS_PARENT" ] && local -x CLASS_NAME="$CLASS_PARENT"
-    local -x CLASS_PARENT=""
     
+    shift 2;
+    _call "$@"
+    return $?
+}
+
+##
+# Call a object / static method
+#
+# $1    string  function name
+# $@    params
+# $?    0:OK    1:ERROR
+function _call()
+{    
+    : ${1:?}
+    
+    local -x FUNCTION_NAME="$1"
     local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
     if declare -f "$fName" > /dev/null; then
-        shift 3
+        shift 1
         "$fName" "$@"
         return $?
     fi
 
-    local fName=CLASS_"$CLASS_NAME"___call
+    #local -x FUNCTION_NAME=__call
+    local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
     if declare -f "$fName" > /dev/null; then
-        shift 2
         "$fName" "$@"
         return $?
     fi
@@ -487,7 +483,7 @@ function this()
     : ${1:?}
     : ${CLASS_NAME:?}
     
-    local dataVarName="`_objectNamespace "$CLASS_NAME" "$OBJECT_NAME" '1'`"_DATA
+    local dataVarName="`_objectNamespace "$CLASS_TOP_NAME" "$OBJECT_NAME" '1'`"_DATA
     
     case "$1" in
         set)
@@ -514,13 +510,8 @@ function this()
         call)
             : ${2:?}
             shift
-            if [ -n "$OBJECT_NAME" ]; then          
-                _objectCall 1 "$OBJECT_NAME" "$@"
-                return $?
-            else
-                _staticCall "$CLASS_NAME" "$@"
-                return $?
-            fi
+			_call "$@"
+			return $?
             ;;
         save)
             _objectSaveData "$dataVarName"
@@ -550,31 +541,21 @@ function parent()
     : ${1:?}
     : ${CLASS_NAME:?}
     
-    if [ -n "$CLASS_PARENT" ]; then
-        local namespace=`_objectNamespace "$CLASS_PARENT" "" '1'`
-    else
-        local namespace=`_objectNamespace "$CLASS_NAME" "" '1'`
-    fi    
-    eval 'local -x CLASS_PARENT="$'"$namespace"'_EXTENDS";'
+	local namespace=`_objectNamespace "$CLASS_NAME" "" '1'` 
+    eval 'local parent="$'"$namespace"'_EXTENDS";'
         
     local return=1
     case "$1" in
         call)
-            : ${CLASS_PARENT:?}
+            : ${parent:?}
             : ${2:?}
-            local fName="$2"
-            shift 2
-            if [ -z "$OBJECT_NAME" ]; then
-                _staticCall "$CLASS_NAME" "$fName" "$@"
-                return=$?
-            fi
-            if [ -n "$OBJECT_NAME" ]; then
-                _objectCall '1' "$OBJECT_NAME" "$fName" "$@"
-                return=$?
-            fi
+            shift
+            local -x CLASS_NAME="$parent";
+			_call "$@"
+			return=$?
             ;;
         exists)
-            [ -n "$CLASS_PARENT" ]
+            [ -n "$parent" ]
             return=$?
             ;;
         *)

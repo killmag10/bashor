@@ -15,6 +15,8 @@
 # @version      $Id: escape.sh 16 2010-03-12 23:35:45Z lars $
 ################################################################################
 
+loadClassOnce Bashor_Terminal
+
 ##
 # set one pixel
 #
@@ -30,20 +32,19 @@ function CLASS_Bashor_Terminal_Graphic_setPixel()
 {
     : ${1:?}
     : ${2:?}
-    loadClassOnce Bashor_Terminal
 
     class Bashor_Terminal saveCurser
     class Bashor_Terminal moveCurserBy "$1" "$2"
     [ -n "$4" ] && class Bashor_Terminal setBackgroundColorAnsi "$4"
     [ -n "$5" ] && class Bashor_Terminal setFordergroundColorAnsi "$5"
     if [ -n "$6" ]; then
-        [ "$6" != "${6/B/}" ] && class Bashor_Terminal setStyleBold 1
-        [ "$6" != "${6/U/}" ] && class Bashor_Terminal setStyleUnderline 1
-        [ "$6" != "${6/X/}" ] && class Bashor_Terminal setExtendedCharacters 1
+        [[ "$6" =~ B ]] && class Bashor_Terminal setStyleBold 1
+        [[ "$6" =~ U ]] && class Bashor_Terminal setStyleUnderline 1
+        [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 1
     fi    
     local char="${3:- }"
     echo -n "${char:0:1}"
-    [ "$6" != "${6/X/}" ] && class Bashor_Terminal setExtendedCharacters 0
+    [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
     class Bashor_Terminal resetStyle
     class Bashor_Terminal restoreCurser
     
@@ -66,19 +67,18 @@ function CLASS_Bashor_Terminal_Graphic_printText()
     : ${1:?}
     : ${2:?}
     : ${3:?}
-    loadClassOnce Bashor_Terminal
 
     class Bashor_Terminal saveCurser
     class Bashor_Terminal moveCurserBy "$1" "$2"
     [ -n "$4" ] && class Bashor_Terminal setBackgroundColorAnsi "$4"
     [ -n "$5" ] && class Bashor_Terminal setFordergroundColorAnsi "$5"
     if [ -n "$6" ]; then
-        [ "$6" != "${6/B/}" ] && class Bashor_Terminal setStyleBold 1
-        [ "$6" != "${6/U/}" ] && class Bashor_Terminal setStyleUnderline 1
-        [ "$6" != "${6/X/}" ] && class Bashor_Terminal setExtendedCharacters 1
+        [[ "$6" =~ B ]] && class Bashor_Terminal setStyleBold 1
+        [[ "$6" =~ U ]] && class Bashor_Terminal setStyleUnderline 1
+        [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 1
     fi    
     echo -n "$3"
-    [ "$6" != "${6/X/}" ] && class Bashor_Terminal setExtendedCharacters 0
+    [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
     class Bashor_Terminal resetStyle
     class Bashor_Terminal restoreCurser
     return 0
@@ -101,7 +101,6 @@ function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
     : ${2:?}
     : ${3:?}
     : ${4:?}
-    loadClassOnce Bashor_Terminal
     loadClassOnce Bashor_Escape
 
 	local char="${5:- }"
@@ -110,20 +109,21 @@ function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
 	[ -n "$6" ] && class Bashor_Terminal setBackgroundColorAnsi "$6"
 	[ -n "$7" ] && class Bashor_Terminal setFordergroundColorAnsi "$7"
 	if [ -n "$8" ]; then
-		[ "$8" != "${8/B/}" ] && class Bashor_Terminal setStyleBold 1
-		[ "$8" != "${8/U/}" ] && class Bashor_Terminal setStyleUnderline 1
-		[ "$8" != "${8/X/}" ] && class Bashor_Terminal setExtendedCharacters 1
+		[[ "$8" =~ B ]] && class Bashor_Terminal setStyleBold 1
+        [[ "$8" =~ U ]] && class Bashor_Terminal setStyleUnderline 1
+        [[ "$8" =~ X ]] && class Bashor_Terminal setExtendedCharacters 1
 	fi        
 	class Bashor_Terminal moveCurserBy "$1" "$2"
 	local tmp=`
-		dd if=/dev/zero 2>/dev/null bs="$3" count="1" | sed 's/\x00/'"$char"'/g'
-		class Bashor_Terminal moveCurserBy -"$3" 1
+		printf "%${3}s" | tr ' ' "$char"
+		class Bashor_Terminal moveCurserBackward "$3"
+		class Bashor_Terminal moveCurserDown 1
 	`
 	local out=
 	local i
 	for i in `seq "$4"`; do out="${out}${tmp}"; done
 	echo -n "$out"
-	[ "$8" != "${8/X/}" ] && class Bashor_Terminal setExtendedCharacters 0
+	[[ "$8" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
 	class Bashor_Terminal resetStyle
 	class Bashor_Terminal restoreCurser
 

@@ -258,7 +258,7 @@ function CLASS_Bashor_Terminal_moveCurserBackward()
 }
 
 ##
-# Set curser to x y
+# Move curser by x y
 #
 # $1    integer x
 # $2    integer y
@@ -271,7 +271,24 @@ function CLASS_Bashor_Terminal_moveCurserBy()
     [ "$1" -lt 0 ] && this call moveCurserBackward "${1:1}"
     [ "$2" -gt 0 ] && this call moveCurserDown "$2"
     [ "$2" -lt 0 ] && this call moveCurserUp "${2:1}"
-    return $?
+    return 0
+}
+
+##
+# Move curser reversed by x y
+#
+# $1    integer x
+# $2    integer y
+# $?    0:OK    1:ERROR
+function CLASS_Bashor_Terminal_moveCurserReversedBy()
+{
+    : ${1:?}
+    : ${2:?}
+    [ "$1" -lt 0 ] && this call moveCurserForward "${1:1}"
+    [ "$1" -gt 0 ] && this call moveCurserBackward "$1"
+    [ "$2" -lt 0 ] && this call moveCurserDown "${2:1}"
+    [ "$2" -gt 0 ] && this call moveCurserUp "$2"
+    return 0
 }
 
 ##
