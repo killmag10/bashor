@@ -115,7 +115,7 @@ function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
 	fi        
 	class Bashor_Terminal moveCurserBy "$1" "$2"
 	local tmp=`
-		printf "%${3}s" | sed 's/\x00/'"$char"'/g'
+		printf "%${3}s" | sed 's/ /'"$char"'/g'
 		class Bashor_Terminal moveCurserBackward "$3"
 		class Bashor_Terminal moveCurserDown 1
 	`
