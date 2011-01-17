@@ -240,6 +240,23 @@ function debug()
     fi
 }
 
+function isset()
+{
+    : ${1:?}
+    
+    case "$1" in
+        var)
+            : ${2:?}
+            declare -p "$2" 2>/dev/null > /dev/null
+            return $?
+            ;;
+        *)
+            error "\"$1\" is not a option of isset!"
+            ;;
+    esac
+    
+}
+
 function bufferStream()
 {
     local tmp=`cat -`
