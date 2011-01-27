@@ -66,13 +66,10 @@ function addClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    local ns="$1"
-    shift
-    
-    eval '[ -z "$_OBJECT_CLASS_'"$ns"'_EXTENDS" ] && _addStdClass '"$ns"';'
-    declare -F | grep '^declare -f CLASS_'"$ns"'___load$' > /dev/null
+    eval '[ -z "$_OBJECT_CLASS_'"$1"'_EXTENDS" ] && _addStdClass '"$1"
+    declare -F | grep '^declare -f CLASS_'"$1"'___load$' > /dev/null
     if [ "$?" == 0 ]; then
-        _staticCall "$ns" __load
+        _staticCall "$1" __load
         return $?
     fi
     
@@ -89,7 +86,7 @@ function _addStdClass()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
     _createExtendedClassFunctions "$1" Class 1
-    eval '_OBJECT_CLASS_'"$1"'_EXTENDS=Class;'
+    eval '_OBJECT_CLASS_'"$1"'_EXTENDS=Class'
     return 0
 }
 
@@ -173,7 +170,7 @@ function object()
     if [ "$1" == local ]; then
         [ -z "$3" ] && error '3: Parameter empty or not set'
         local OBJECT_VISIBILITY=local
-        shift 1
+        shift
     else
         local OBJECT_VISIBILITY=global
     fi
@@ -200,7 +197,7 @@ function _objectLoadData()
     fi
     
     value=`echo "$value" | tail -n +2 | base64 -d`    
-    eval "$1"'="$value";'
+    eval "$1"'="$value"'
     return $?
 }
 
@@ -266,13 +263,12 @@ function _call()
     local FUNCTION_NAME="$1"
     local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
     if declare -f "$fName" > /dev/null; then
-        shift 1
+        shift
         "$fName" "$@"
         return $?
     fi
 
-    #local FUNCTION_NAME=__call
-    local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
+    local fName=CLASS_"$CLASS_NAME"___call
     if declare -f "$fName" > /dev/null; then
         "$fName" "$@"
         return $?
@@ -297,7 +293,7 @@ function new()
     if [ "$1" == local ]; then
         [ -z "$3" ] && error '3: Parameter empty or not set'
         local OBJECT_VISIBILITY=local
-        shift 1
+        shift
     else
         local OBJECT_VISIBILITY=global
     fi
@@ -309,9 +305,9 @@ function new()
     local namespace=`_objectNamespace "$ns" "$nsObj" ''`
     
     local callLine="`caller | sed -n 's#^\([0-9]\+\).*$#\1#p';`"
-    eval "$namespace"'_CLASS='"$ns"';'
-    eval "$namespace"'_ID='"${ns}${callLine}"';'
-    eval "$namespace"'_DATA="";'
+    eval "$namespace"'_CLASS='"$ns"
+    eval "$namespace"'_ID='"${ns}${callLine}"
+    eval "$namespace"'_DATA=""'
     declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null
     if [ "$?" == 0 ]; then
         _objectCall '' "$nsObj" __construct "$@"
@@ -333,8 +329,8 @@ function extends()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
-    local namespace=`_objectNamespace "$1" "" ''`
-    eval "$namespace"'_EXTENDS'"='$2';"
+    local namespace=`_objectNamespace "$1" '' ''`
+    eval "$namespace"'_EXTENDS'"='$2'"
     _createExtendedClassFunctions "$1" "$2"
     
     return 0
@@ -353,29 +349,29 @@ function clone()
     if [ "$1" == 'local' ]; then
         [ -z "$2" ] && error '2: Parameter empty or not set'
         local OBJECT_VISIBILITY="$1"
-        shift 1
+        shift
     else
         local OBJECT_VISIBILITY=global
     fi
     local name1="$1"
     local namespace1=`_objectNamespace "" "$name1" ''`
-    shift 1
+    shift
     
     [ -z "$1" ] && error '1: Parameter empty or not set'
     if [ "$1" == 'local' ]; then
         [ -z "$2" ] && error '2: Parameter empty or not set'
         local OBJECT_VISIBILITY="$1"
-        shift 1
+        shift
     else
         local OBJECT_VISIBILITY=global
     fi
     local name2="$1"
     local namespace2=`_objectNamespace "" "$name2" ''`
-    shift 1
+    shift
     
-    eval 'local class1="$'"$namespace1"'_CLASS";'
-    eval "$namespace2"'_CLASS="$'"$namespace1"'_CLASS";'
-    eval "$namespace2"'_DATA="$'"$namespace1"'_DATA";'
+    eval 'local class1="$'"$namespace1"'_CLASS"'
+    eval "$namespace2"'_CLASS="$'"$namespace1"'_CLASS"'
+    eval "$namespace2"'_DATA="$'"$namespace1"'_DATA"'
         
     declare -F | grep '^declare -f CLASS_'"$class1"'___clone$' > /dev/null
     if [ "$?" == 0 ]; then
@@ -398,7 +394,7 @@ function remove()
     if [ "$1" == local ]; then
         [ -z "$2" ] && error '2: Parameter empty or not set'
         local OBJECT_VISIBILITY="$1"
-        shift 1
+        shift
     else
         local OBJECT_VISIBILITY=global
     fi
@@ -423,7 +419,7 @@ function _objectRemove()
     local nsObj="$1"
     local doCall="$2"
     local namespace=`_objectNamespace "$ns" "$nsObj" ''`
-    eval 'local ns="$'"$nsObjClassOld"'";'
+    eval 'local ns="$'"$nsObjClassOld"'"'
         
     if [ "$2" == 1 ]; then
         declare -F | grep '^declare -f CLASS_'"$ns"'___destruct$' > /dev/null
@@ -487,15 +483,15 @@ function this()
     local dataVarName="`_objectNamespace "$CLASS_TOP_NAME" "$OBJECT_NAME" '1'`"_DATA
     
     case "$1" in
+        get)
+            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            _objectGet "$dataVarName" "$2"
+            return $?
+            ;;
         set)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
             [ "$#" -lt 3 ] && error '3: Parameter not set'
             _objectSet "$dataVarName" "$2" "$3"
-            return $?
-            ;;
-        get)
-            [ -z "$2" ] && error '2: Parameter empty or not set' 
-            _objectGet "$dataVarName" "$2"
             return $?
             ;;
         unset)
@@ -527,6 +523,8 @@ function this()
             error "\"$1\" is not a option of this!"
             ;;
     esac
+    
+    return 1
 }
 
 ##
@@ -543,9 +541,8 @@ function parent()
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
 	local namespace=`_objectNamespace "$CLASS_NAME" "" '1'` 
-    eval 'local parent="$'"$namespace"'_EXTENDS";'
-        
-    local return=1
+    eval 'local parent="$'"$namespace"'_EXTENDS"'
+
     case "$1" in
         call)
             [ -z "$parent" ] && error 'parent: Parameter empty or not set' 
@@ -564,7 +561,7 @@ function parent()
             ;;
     esac
     
-    return $return
+    return 1
 }
 
 ##
@@ -594,14 +591,13 @@ function _objectSet()
     [ -z "$2" ] && error '2: Parameter empty or not set'  
 
     if [ "$#" -lt 3 ] && [ -p /dev/stdin ]; then
-        local value=`cat -`
+        local value=`cat - | base64 -w 0`
     else
-        local value="$3"
+        local value=`echo "$3" | base64 -w 0`
     fi
                 
     local key=`echo "$2" | base64 -w 0`
-    value=`echo "$value" | base64 -w 0`
-    
+        
     eval 'local data="$'"$1"'"'
     data=`echo "$key $value"; echo -n "$data" | grep -v "^${key}\s\+.*$"`
     eval "$1"'="$data"'
@@ -620,10 +616,10 @@ function _objectUnset()
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
-    eval 'local data="$'"$1"'";' 
+    eval 'local data="$'"$1"'"' 
     local key=`echo "$2" | base64 -w 0`
     data=`echo "$data" | grep -v "^${key}\s\+.*$"`
-    eval "$1"'="$data";'
+    eval "$1"'="$data"'
     
     return $?
 }
@@ -640,7 +636,7 @@ function _objectGet()
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
-    eval 'local data="$'"$1"'";' 
+    eval 'local data="$'"$1"'"' 
     local key=`echo "$2" | base64`
     data=`echo "$data" | grep "^$key "`    
     if [ $? == 0 ]; then
@@ -662,7 +658,7 @@ function _objectIsset()
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
-    eval 'local data="$'"$1"'";'
+    eval 'local data="$'"$1"'"'
     local key=`echo "$2" | base64`
     data="`echo "$data" | grep "^$key "`"
     return $?
