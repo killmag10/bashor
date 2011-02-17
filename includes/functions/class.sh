@@ -290,13 +290,21 @@ function new()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
-    if [ "$1" == local ]; then
-        [ -z "$3" ] && error '3: Parameter empty or not set'
-        local OBJECT_VISIBILITY=local
-        shift
-    else
-        local OBJECT_VISIBILITY=global
-    fi
+    case "$1" in
+        local)
+            [ -z "$3" ] && error '3: Parameter empty or not set'
+            local OBJECT_VISIBILITY=local
+            shift
+            ;;
+        global)
+            [ -z "$3" ] && error '3: Parameter empty or not set'
+            local OBJECT_VISIBILITY=global
+            shift
+            ;;
+        *)
+            local OBJECT_VISIBILITY=global
+            ;;
+    esac
     
     local ns="$1"
     local nsObj="$2"
@@ -307,7 +315,11 @@ function new()
     local callLine="`caller | sed -n 's#^\([0-9]\+\).*$#\1#p';`"
     eval "$namespace"'_CLASS='"$ns"
     eval "$namespace"'_ID='"${ns}${callLine}"
-    eval "$namespace"'_DATA=""'
+    eval "$namespace"'_POINTER='"`_generatePointer`"
+    
+    local pointer="`eval 'echo $'"$namespace"'_POINTER'`"
+    eval "$pointer"_DATA=
+    
     declare -F | grep '^declare -f CLASS_'"$ns"'___construct$' > /dev/null
     if [ "$?" == 0 ]; then
         _objectCall '' "$nsObj" __construct "$@"
@@ -346,32 +358,52 @@ function extends()
 function clone()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'    
-    if [ "$1" == 'local' ]; then
-        [ -z "$2" ] && error '2: Parameter empty or not set'
-        local OBJECT_VISIBILITY="$1"
-        shift
-    else
-        local OBJECT_VISIBILITY=global
-    fi
+    case "$1" in
+        local)
+            [ -z "$2" ] && error '2: Parameter empty or not set'
+            local OBJECT_VISIBILITY=local
+            shift
+            ;;
+        global)
+            [ -z "$2" ] && error '2: Parameter empty or not set'
+            local OBJECT_VISIBILITY=global
+            shift
+            ;;
+        *)
+            local OBJECT_VISIBILITY=global
+            ;;
+    esac
     local name1="$1"
     local namespace1=`_objectNamespace "" "$name1" ''`
     shift
     
     [ -z "$1" ] && error '1: Parameter empty or not set'
-    if [ "$1" == 'local' ]; then
-        [ -z "$2" ] && error '2: Parameter empty or not set'
-        local OBJECT_VISIBILITY="$1"
-        shift
-    else
-        local OBJECT_VISIBILITY=global
-    fi
+    case "$1" in
+        local)
+            [ -z "$2" ] && error '2: Parameter empty or not set'
+            local OBJECT_VISIBILITY=local
+            shift
+            ;;
+        global)
+            [ -z "$2" ] && error '2: Parameter empty or not set'
+            local OBJECT_VISIBILITY=global
+            shift
+            ;;
+        *)
+            local OBJECT_VISIBILITY=global
+            ;;
+    esac
     local name2="$1"
     local namespace2=`_objectNamespace "" "$name2" ''`
     shift
     
     eval 'local class1="$'"$namespace1"'_CLASS"'
     eval "$namespace2"'_CLASS="$'"$namespace1"'_CLASS"'
-    eval "$namespace2"'_DATA="$'"$namespace1"'_DATA"'
+    eval "$namespace2"'_POINTER='"`_generatePointer`"
+    
+    local pointer1="`eval 'echo $'"$namespace1"'_POINTER'`"
+    local pointer2="`eval 'echo $'"$namespace2"'_POINTER'`"
+    eval "$pointer2"'_DATA="$'"$pointer1"'_DATA"'        
         
     declare -F | grep '^declare -f CLASS_'"$class1"'___clone$' > /dev/null
     if [ "$?" == 0 ]; then
@@ -391,13 +423,21 @@ function clone()
 function remove()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'    
-    if [ "$1" == local ]; then
-        [ -z "$2" ] && error '2: Parameter empty or not set'
-        local OBJECT_VISIBILITY="$1"
-        shift
-    else
-        local OBJECT_VISIBILITY=global
-    fi
+    case "$1" in
+        local)
+            [ -z "$2" ] && error '2: Parameter empty or not set'
+            local OBJECT_VISIBILITY=local
+            shift
+            ;;
+        global)
+            [ -z "$2" ] && error '2: Parameter empty or not set'
+            local OBJECT_VISIBILITY=global
+            shift
+            ;;
+        *)
+            local OBJECT_VISIBILITY=global
+            ;;
+    esac
 
     _objectRemove "$1" "1"
     return $?
@@ -429,9 +469,13 @@ function _objectRemove()
         fi
     fi
     
-    eval 'unset -v '"$namespace"'_ID'
-    eval 'unset -v '"$namespace"'_CLASS'
-    eval 'unset -v '"$namespace"'_DATA'
+    # @todo remove pointer
+    local pointer="`eval 'echo $'"$namespace"'_POINTER'`"
+    eval 'unset -v '"$pointer"_DATA
+    
+    eval 'unset -v '"$namespace"_ID
+    eval 'unset -v '"$namespace"_CLASS
+    eval 'unset -v '"$namespace"_POINTER
     
     return "$res"
 }
@@ -468,6 +512,23 @@ function _objectNamespace()
 }
 
 ##
+# Generate a pointer id.
+#
+# &1    string  pointer id
+# $?    0:OK    1:ERROR
+function _generatePointer()
+{
+    local uniq=
+    local pointer
+    while true; do
+        pointer="`date +_P_%s%N_$RANDOM`"
+        isset var "$pointer" || break
+    done;
+    echo "$pointer"
+    return 0
+}
+
+##
 # Access to the object.
 #
 # $1    string  object name
@@ -480,7 +541,8 @@ function this()
     [ -z "$1" ] && error '1: Parameter empty or not set' 
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
-    local dataVarName="`_objectNamespace "$CLASS_TOP_NAME" "$OBJECT_NAME" '1'`"_DATA
+    local dataVarName="`_objectNamespace "$CLASS_TOP_NAME" "$OBJECT_NAME" '1'`"_POINTER
+    [ -n "$OBJECT_NAME" ] && local dataVarName="`eval echo \"$"$dataVarName"\"`"_DATA
     
     case "$1" in
         get)
