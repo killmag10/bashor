@@ -66,5 +66,3 @@ checkSimple "object local Include get" "$res" "abc123";
 
 res=`object local Include getInclude`;
 checkSimple "object local Include getInclude" "$res" "def456";
-
-

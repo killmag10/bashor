@@ -66,7 +66,12 @@ function addClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    eval '[ -z "$_OBJECT_CLASS_'"$1"'_EXTENDS" ] && _addStdClass '"$1"
+    local namespace=`_objectNamespace "$1" "" ''`   
+    eval '[ -z "$'"$namespace"'_EXTENDS" ] && _addStdClass '"$1"    
+    eval "$namespace"'_POINTER='"`_generatePointer`"    
+    local pointer="`eval 'echo $'"$namespace"'_POINTER'`"
+    eval "$pointer"_DATA=
+    
     declare -F | grep '^declare -f CLASS_'"$1"'___load$' > /dev/null
     if [ "$?" == 0 ]; then
         _staticCall "$1" __load
@@ -85,8 +90,10 @@ function _addStdClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
+    local namespace=`_objectNamespace "$1" "" ''` 
+    
     _createExtendedClassFunctions "$1" Class 1
-    eval '_OBJECT_CLASS_'"$1"'_EXTENDS=Class'
+    eval "$namespace"'_EXTENDS=Class'
     return 0
 }
 
@@ -147,6 +154,7 @@ function _staticCall()
     local OBJECT_NAME=
     local STATIC=1
     local OBJECT=
+    local OBJECT_POINTER=
     local _OBJECT_PATH_OLD=
     local _OBJECT_PATH=___"$CLASS_NAME"
 	
@@ -233,6 +241,7 @@ function _objectCall()
     local OBJECT=1
     local namespace=`_objectNamespace "" "$2" "$1"`
     eval 'local CLASS_NAME="$'"$namespace"'_CLASS"'
+    eval 'local OBJECT_POINTER="$'"$namespace"'_POINTER"'
     local CLASS_TOP_NAME="$CLASS_NAME"
     eval 'local OBJECT_ID="$'"$namespace"'_ID"'
     if [ -z "$1" ]; then
@@ -521,7 +530,7 @@ function _generatePointer()
     local uniq=
     local pointer
     while true; do
-        pointer="`date +_P_%s%N_$RANDOM`"
+        pointer="`date +_BASHOR_POINTER_%s%N_$RANDOM`"
         isset var "$pointer" || break
     done;
     echo "$pointer"
@@ -541,8 +550,13 @@ function this()
     [ -z "$1" ] && error '1: Parameter empty or not set' 
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
-    local dataVarName="`_objectNamespace "$CLASS_TOP_NAME" "$OBJECT_NAME" '1'`"_POINTER
-    [ -n "$OBJECT_NAME" ] && local dataVarName="`eval echo \"$"$dataVarName"\"`"_DATA
+    if [ -n "$OBJECT_POINTER" ]; then
+        local dataVarName="$OBJECT_POINTER"_DATA
+    else
+        local namespace=`_objectNamespace "$CLASS_TOP_NAME" "$OBJECT_NAME" '1'`
+        eval 'local pointer="$'"$namespace"'_POINTER"'
+        local dataVarName="$pointer"_DATA
+    fi
     
     case "$1" in
         get)
@@ -695,8 +709,8 @@ function _objectUnset()
 # &0    string  Data
 function _objectGet()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'   
-    [ -z "$2" ] && error '2: Parameter empty or not set'  
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    [ -z "$2" ] && error '2: Parameter empty or not set' 
     
     eval 'local data="$'"$1"'"' 
     local key=`echo "$2" | base64`
