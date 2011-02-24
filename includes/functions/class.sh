@@ -69,12 +69,13 @@ function addClass()
     local namespace=`_objectNamespace "$1"`   
     eval '[ -z "$'"$namespace"'_EXTENDS" ] && _addStdClass '"$1"    
     eval "$namespace"'_POINTER='"`_generatePointer`"    
-    local pointer="`eval 'echo $'"$namespace"'_POINTER'`"
-    eval "$pointer"_DATA=
+    local OBJECT_POINTER="`eval 'echo $'"$namespace"'_POINTER'`"
+    unset -v namespace
+    eval "$OBJECT_POINTER"_DATA=
     
     declare -F | grep '^declare -f CLASS_'"$1"'___load$' > /dev/null
     if [ "$?" == 0 ]; then
-        _staticCall "$1" __load
+        class "$1" __load
         return $?
     fi
     
@@ -132,25 +133,11 @@ function _createExtendedClassFunctions()
 # $?    0:OK    1:ERROR
 function class()
 {
-    _staticCall "$@"
-    return $?
-}
-
-##
-# Call a class method
-#
-# $1    string  class name
-# $2    string  function name
-# $PARENT?   string  child class name
-# $@    params
-# $?    0:OK    1:ERROR
-function _staticCall()
-{
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
 	local CLASS_NAME="$1"
-	local CLASS_TOP_NAME="$1"
+	local CLASS_TOP_NAME="$CLASS_NAME"
     local OBJECT_NAME=
     local STATIC=1
     local OBJECT=
@@ -158,19 +145,6 @@ function _staticCall()
 	
 	shift
 	_call "$@"
-    return $?
-}
-
-##
-# Call a object method
-#
-# $1    string  pointer
-# $2    string  function name
-# $@    params
-# $?    0:OK    1:ERROR
-function object()
-{
-    _objectCall "$@"
     return $?
 }
 
@@ -216,7 +190,7 @@ function _objectSaveData()
 # $2    string  function name
 # $@    params
 # $?    0:OK    1:ERROR
-function _objectCall()
+function object()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -226,9 +200,8 @@ function _objectCall()
     local STATIC=
     local OBJECT=1
     eval 'local CLASS_NAME="$'"$1"'_CLASS"'
-    eval 'local OBJECT_POINTER='"$1"    
+    local OBJECT_POINTER="$1"
     local CLASS_TOP_NAME="$CLASS_NAME"
-    eval 'local OBJECT_ID="$'"$1"'_ID"'
     
     shift 1;
     _call "$@"
@@ -253,7 +226,7 @@ function _call()
         return $?
     fi
 
-    local fName=CLASS_"$CLASS_NAME"___call
+    fName=CLASS_"$CLASS_NAME"___call
     if declare -f "$fName" > /dev/null; then
         "$fName" "$@"
         return $?
@@ -273,22 +246,18 @@ function _call()
 function new()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'    
-    local varname="$2"
-    local class="$1"
-    shift 2
-    
-    local pointer="`_generatePointer`";    
-    local callLine="`caller | sed -n 's#^\([0-9]\+\).*$#\1#p';`"
-    eval "$pointer"'_CLASS='"$class"
-    eval "$pointer"=    
-    eval "$pointer"_DATA=
-    
-    eval "$varname"="$pointer";
-    
-    declare -F | grep '^declare -f CLASS_'"$class"'___construct$' > /dev/null
+    [ -z "$2" ] && error '2: Parameter empty or not set'
+    local CLASS_NAME="$1"
+        
+    local OBJECT_POINTER="`_generatePointer`"
+    eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"    
+    eval "$OBJECT_POINTER"=
+    eval "$OBJECT_POINTER"_DATA=
+    eval "$2"="$OBJECT_POINTER"
+    shift 2    
+    declare -F | grep '^declare -f CLASS_'"$CLASS_NAME"'___construct$' > /dev/null
     if [ "$?" == 0 ]; then
-        _objectCall "$pointer" __construct "$@"
+        object "$OBJECT_POINTER" __construct "$@"
         return 0
     fi
 
@@ -299,7 +268,7 @@ function new()
 # Extends a class.
 #
 # $1    string  class name
-# $2    string  object name
+# $2    string  parent class name
 # $@?   mixed  params
 # $?    0:OK    1:ERROR
 function extends()
@@ -327,21 +296,23 @@ function clone()
     [ -z "$2" ] && error '2: Parameter empty or not set'
     isset var "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
         
-    local varname="$2";
-    local pointer1="$1";
-    local pointer2="`_generatePointer`"; 
-    shift
+    local varname="$2"
+    local pointer1="$1"
+    local pointer2="`_generatePointer`"
+    shift 2
         
     eval 'local class1="$'"$pointer1"'_CLASS"'
     eval "$pointer2"=
     eval "$pointer2"'_CLASS="$'"$pointer1"'_CLASS"'
-    eval "$pointer2"'_DATA="$'"$pointer1"'_DATA"'        
-    
+    eval "$pointer2"'_DATA="$'"$pointer1"'_DATA"'
     eval "$varname"="$pointer2";
+    
+    local OBJECT_POINTER="$pointer2"
+    unset -v 'pointer1' 'pointer2' 'varname'
         
     declare -F | grep '^declare -f CLASS_'"$class1"'___clone$' > /dev/null
     if [ "$?" == 0 ]; then
-        _objectCall "$pointer2" __clone
+        object "$OBJECT_POINTER" __clone
         return $?
     fi
     
@@ -351,7 +322,7 @@ function clone()
 ##
 # Remove a object.
 #
-# $1    string  object name
+# $1    tring  pointer
 # $@?   mixed  params
 # $?    0:OK    1:ERROR
 function remove()
@@ -373,19 +344,19 @@ function _objectRemove()
     [ -z "$1" ] && error '1: Parameter empty or not set' 
 
     local res=0
-    local pointer="$1"
-    eval 'local ns="$'"$nsObjClassOld"'"'
+    local OBJECT_POINTER="$1"
+    eval 'local CLASS_NAME="$'"$OBJECT_POINTER"'_CLASS"'
         
-    declare -F | grep '^declare -f CLASS_'"$ns"'___destruct$' > /dev/null
+    declare -F | grep '^declare -f CLASS_'"$CLASS_NAME"'___destruct$' > /dev/null
     if [ "$?" == 0 ]; then
-        _objectCall "$pointer" __destruct
+        object "$OBJECT_POINTER" __destruct
         res=$?
     fi
     
-    eval 'unset -v '"$pointer"_DATA    
-    eval 'unset -v '"$pointer"_ID
-    eval 'unset -v '"$pointer"_CLASS
-    eval 'unset -v '"$pointer"
+    eval 'unset -v '"$OBJECT_POINTER"_DATA    
+    eval 'unset -v '"$OBJECT_POINTER"_ID
+    eval 'unset -v '"$OBJECT_POINTER"_CLASS
+    eval 'unset -v '"$OBJECT_POINTER"
     
     return "$res"
 }
@@ -398,10 +369,8 @@ function _objectRemove()
 # $?    0:OK    1:ERROR
 function _objectNamespace()
 {
-    [ "$#" -lt 1 ] && error '1: Parameter empty or not set'   
-
-    local namespace=CLASS_"$1"
-    echo _BASHOR_"$namespace"
+    [ "$#" -lt 1 ] && error '1: Parameter empty or not set'
+    echo _BASHOR_CLASS_"$1"
     return 0
 }
 
@@ -412,7 +381,6 @@ function _objectNamespace()
 # $?    0:OK    1:ERROR
 function _generatePointer()
 {
-    local uniq=
     local pointer
     while true; do
         pointer="`date +_BASHOR_POINTER_%s%N_$RANDOM`"
@@ -440,6 +408,7 @@ function this()
     else
         local namespace=`_objectNamespace "$1"`  
         local OBJECT_POINTER="`eval 'echo $'"$namespace"'_POINTER'`"
+        unset -v namespace
         local dataVarName="$OBJECT_POINTER"_DATA
     fi
     
@@ -502,19 +471,19 @@ function parent()
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
 	local namespace=`_objectNamespace "$CLASS_NAME"` 
-    eval 'local parent="$'"$namespace"'_EXTENDS"'
+    eval 'local CLASS_NAME="$'"$namespace"'_EXTENDS"'
+    unset -v namespace
 
     case "$1" in
         call)
-            [ -z "$parent" ] && error 'parent: Parameter empty or not set' 
+            [ -z "$CLASS_NAME" ] && error 'parent: Parameter empty or not set' 
             [ -z "$2" ] && error '2: Parameter empty or not set' 
             shift
-            local CLASS_NAME="$parent";
 			_call "$@"
 			return=$?
             ;;
         exists)
-            [ -n "$parent" ]
+            [ -n "$CLASS_NAME" ]
             return=$?
             ;;
         *)

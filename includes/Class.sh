@@ -56,19 +56,6 @@ function CLASS_Class_getClass()
 #
 # $?    0:OK    1:ERROR
 # &0    string  class name
-function CLASS_Class_getParentClass()
-{
-    : ${CLASS_NAME:?}
-    this call hasParentClass || return 1
-    parent call getClass
-    return $?
-}
-
-##
-# Get the parent class name.
-#
-# $?    0:OK    1:ERROR
-# &0    string  class name
 function CLASS_Class_getClassTrace()
 {
     : ${CLASS_NAME:?}
