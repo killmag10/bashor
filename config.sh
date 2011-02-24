@@ -18,19 +18,19 @@
 [ -z "BASHOR_LOG_FILE" ] && export BASHOR_LOG_FILE="./error.log";
 
 # Compatibility
-export BASHOR_USE_GETOPT="0"; # 0|1
+export BASHOR_USE_GETOPT="1"; # 0|1
 export BASHOR_MODE_COMPATIBLE="0";
 
 # Options
-export BASHOR_ERROR_LOG="0";
+export BASHOR_ERROR_LOG="1";
 export BASHOR_ERROR_OUTPUT="1";
 export BASHOR_ERROR_BACKTRACE="1";
 
-export BASHOR_WARNING_LOG="0";
+export BASHOR_WARNING_LOG="1";
 export BASHOR_WARNING_OUTPUT="1";
 export BASHOR_WARNING_BACKTRACE="1";
 
-export BASHOR_DEBUG_LOG="0";
+export BASHOR_DEBUG_LOG="1";
 export BASHOR_DEBUG_OUTPUT="1";
 export BASHOR_DEBUG_BACKTRACE="1";
 

@@ -16,36 +16,37 @@
 ################################################################################
 
 loadClass 'Bashor_Data';
+local Data
 new Bashor_Data Data -c;
 
 nl=`echo -e '\n\r'`;
 
-object Data set "test" "blub 123blub";
+object "$Data" set "test" "blub 123blub";
 checkSimple "set 1" "$?" "0";
 
-object Data set "bli" "`dd if=\"$TEST_RESOURCE_DIR/random.dat\" bs=32K count=1 2>/dev/null`";
+object "$Data" set "bli" "`dd if=\"$TEST_RESOURCE_DIR/random.dat\" bs=32K count=1 2>/dev/null`";
 checkSimple "set 2" "$?" "0";
 
-res=`object Data get "test"`;
+res=`object "$Data" get "test"`;
 checkSimple "get 1" "$res" "blub 123blub";
 
-res=`object Data get "bli"`;
+res=`object "$Data" get "bli"`;
 checkSimple "get 2" "$res" "`dd if=\"$TEST_RESOURCE_DIR/random.dat\" bs=32K count=1 2>/dev/null`";
 
-object Data isset "test";
+object "$Data" isset "test";
 checkSimple "isset isset 1" "$?" "0";
 
-object Data remove "test";
+object "$Data" remove "test";
 checkSimple "remove 1" "$?" "0";
 
-object Data isset "test";
+object "$Data" isset "test";
 checkSimple "isset notset 1" "$?" "1";
 
-object Data isCompressed;
+object "$Data" isCompressed;
 checkSimple "isCompressed" "$?" "0";
 
-res=`object Data size`;
+res=`object "$Data" size`;
 checkSimple "size" "$res" "28795";
 
-remove local Data;
+remove "$Data";
 checkSimple "remove object" "$?" "0";

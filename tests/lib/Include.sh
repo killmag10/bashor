@@ -22,7 +22,9 @@ function CLASS_Include___construct()
     this set data "$1"
     
     loadClassOnce Include_Class
-    new local Include_Class Include "$2"
+    local Include
+    new Include_Class Include "$2"
+    this set Include "$Include"
     
     return 0
 }
@@ -39,6 +41,7 @@ function CLASS_Include_getInclude()
 {
     : ${OBJECT:?}
 	
-	object local Include get
+    local Include="`this get Include`";
+	object "$Include" get
     return "$?"
 }

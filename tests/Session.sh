@@ -17,36 +17,37 @@
 
 loadClass 'Bashor_Registry';
 loadClass 'Bashor_Session';
+local Session
 new 'Bashor_Session' 'Session' "$TEST_TEMP_DIR/" -c
 nl=`echo -e '\n\r'`;
 
-object Session set "test" "blub 123blub";
+object "$Session" set "test" "blub 123blub";
 checkSimple "set 1" "$?" "0";
 
-object Session set "bli" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
+object "$Session" set "bli" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
 checkSimple "set 2" "$?" "0";
 
-res=`object Session get "test"`;
+res=`object "$Session" get "test"`;
 checkSimple "get 1" "$res" "blub 123blub";
 
-res=`object Session get "bli"`;
+res=`object "$Session" get "bli"`;
 checkSimple "get 2" "$res" "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
 
-object Session isset "test";
+object "$Session" isset "test";
 checkSimple "isset isset 1" "$?" "0";
 
-object Session remove "test";
+object "$Session" remove "test";
 checkSimple "remove 1" "$?" "0";
 
-object Session isset "test";
+object "$Session" isset "test";
 checkSimple "isset notset 1" "$?" "1";
 
-object Session isCompressed;
+object "$Session" isCompressed;
 checkSimple "isCompressed" "$?" "0";
 
-object Session isset "bli";
+object "$Session" isset "bli";
 checkSimple "isset isset 2" "$?" "0";
 
-res=`object Session getFilename`;
+res=`object "$Session" getFilename`;
 checkSimple "getFilename" "$?" "0";
 checkRegex "getFilename data" "$res" "$TEST_TEMP_DIR/$$";

@@ -20,89 +20,90 @@ nl=`echo -e '\n\r'`;
 function test_getopts()
 {   
     loadClassOnce Bashor_Param;
+    local Param
     new Bashor_Param Param "abc:df:" "eins:,zwei:,drei";
     
-    object Param set "$@";
-    res=`object Param get`;
+    object "$Param" set "$@";
+    res=`object "$Param" get`;
     checkSimple "Param get" "$res" " -d -c '123' --zwei 'test' -f '456 789' -b -- 'aaa bbb' 'ccc' '--' 'gg'";
 
-    object Param issetOpt "-b";
+    object "$Param" issetOpt "-b";
     checkSimple "Param issetOpt is set" "$?" "0";
     
-    object Param issetOpt "-a";    
+    object "$Param" issetOpt "-a";    
     checkSimple "Param issetOpt not set" "$?" "1";
     
-    object Param notEmptyOpt "-f";    
+    object "$Param" notEmptyOpt "-f";    
     checkSimple "Param notEmptyOpt not Empty" "$?" "0";    
     
-    object Param issetOpt "--zwei";    
+    object "$Param" issetOpt "--zwei";    
     checkSimple "Param issetOpt long set" "$?" "0";
-    object Param issetOpt "--aaa";    
+    object "$Param" issetOpt "--aaa";    
     checkSimple "Param issetOpt long not set" "$?" "1";
     
-    res=`object Param getOpt "-c"`;
+    res=`object "$Param" getOpt "-c"`;
     checkSimple "Param getOpt 1" "$?" "0";
     checkSimple "Param getOpt data 1" "$res" "123";
     
-    res=`object Param getOpt "-f"`;
+    res=`object "$Param" getOpt "-f"`;
     checkSimple "Param getOpt 2" "$?" "0";
     checkSimple "Param getOpt data 2" "$res" "456 789";
     
-	res=`object Param getOpt "--zwei"`;
+	res=`object "$Param" getOpt "--zwei"`;
     checkSimple "Param getOpt long" "$?" "0";
     checkSimple "Param getOpt data long" "$res" "test";
     
-    res=`object Param getOptKeys`;
+    res=`object "$Param" getOptKeys`;
     checkSimple "Param getOptKeys" "$res" "-d
 -c
 --zwei
 -f
 -b";
 
-    res=`object Param listOpt`;
+    res=`object "$Param" listOpt`;
     checkSimple "Param listOpt" "$res" "-d
 -c 123
 --zwei test
 -f 456 789
 -b";
 
-    res=`object Param listArg`;
+    res=`object "$Param" listArg`;
     checkSimple "Param listArg" "$res" "aaa bbb
 ccc
 --
 gg";
 
-    res=`object Param getArg 2`;    
+    res=`object "$Param" getArg 2`;    
     checkSimple "Param getArg" "$?" "0";
     checkSimple "Param getArg data" "$res" "ccc";
 
-    object Param issetArg 4;    
+    object "$Param" issetArg 4;    
     checkSimple "Param issetArg is set" "$?" "0";
     
-    object Param issetArg 5;    
+    object "$Param" issetArg 5;    
     checkSimple "Param issetArg not set" "$?" "1";
     
-    object Param notEmptyArg "2";    
+    object "$Param" notEmptyArg "2";    
     checkSimple "Param notEmptyArg not Empty" "$?" "0";
     
-    res=`object Param get "-c"`;
+    res=`object "$Param" get "-c"`;
     checkSimple "Param get -c" "$?" "0";
     checkSimple "Param get data -c" "$res" "123";
     
-    res=`object Param get "2"`;
+    res=`object "$Param" get "2"`;
     checkSimple "Param get 2" "$?" "0";
     checkSimple "Param get data 2" "$res" "ccc";
     
-    res=`object Param isset "-c"`;
+    res=`object "$Param" isset "-c"`;
     checkSimple "Param isset -c" "$?" "0";
     
-    res=`object Param isset "2"`;
+    res=`object "$Param" isset "2"`;
     checkSimple "Param isset 2" "$?" "0";
     
-    res=`object Param isset "-k"`;
+    res=`object "$Param" isset "-k"`;
     checkSimple "Param isset not -c" "$?" "1";
     
-    res=`object Param isset "9"`;
+    res=`object "$Param" isset "9"`;
     checkSimple "Param isset not 2" "$?" "1";
     
 }
