@@ -264,6 +264,12 @@ function bufferStream()
     return $?
 }
 
+function getBashorVersion()
+{
+    echo '1.0.0'
+    return 0
+}
+
 . "$BASHOR_PATH_INCLUDES/functions/class.sh"
 
 # load opt function
