@@ -29,7 +29,6 @@ TESTS_FAIL='0';
 loadClass 'Bashor_Terminal';
 loadClass 'Bashor_Terminal_Graphic';
 
-
 function toPrint() {
     class Bashor_Terminal_Graphic printRectangleFilled "1" "3" "72" "28" ' ' "7"
     class Bashor_Terminal_Graphic printRectangleFilled "2" "4" "70" "26" ' ' "0"

@@ -119,8 +119,7 @@ function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
 		class Bashor_Terminal moveCurserBackward "$3"
 		class Bashor_Terminal moveCurserDown 1
 	`
-	local out=
-	local i
+	local i out=
 	for i in `seq "$4"`; do out="${out}${tmp}"; done
 	echo -n "$out"
 	[[ "$8" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0

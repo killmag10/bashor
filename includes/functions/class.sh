@@ -19,21 +19,19 @@
 # Load class.
 #
 # $1    string  namespace
-# $@?   mixed  params
 # $?    0:OK    1:ERROR
 function loadClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
     local IFS=$'\n\r'
-    local dn
-    local filename
+    local dn filename
     for dn in $BASHOR_PATHS_CLASS; do
         filename="$dn/""`echo "$1" | tr '_' '/'`"'.sh'
         if [ -f "$filename" ]; then
             . "$filename"
             eval _BASHOR_CLASS_"$1"_LOADED=1
-            addClass "$@"
+            addClass "$1"
             return $?
         fi
     done
@@ -45,16 +43,27 @@ function loadClass()
 # Load class once.
 #
 # $1    string  namespace
-# $@?   mixed  params
 # $?    0:OK    1:ERROR
 function loadClassOnce()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
     eval '[ -n "$_BASHOR_CLASS_'"$1"'_LOADED" ] && return 0'
-    loadClass "$@"
+    loadClass "$1"
     return $?
 }
+
+##
+# Autoloader for Classes
+#
+# $1    string  class
+# $?    0:OK    1:ERROR
+function __autoloadClass()
+{
+    loadClassOnce "$1"
+    return $?
+}
+
 
 ##
 # Add Class functions.
@@ -66,8 +75,9 @@ function addClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    local namespace=`_objectNamespace "$1"`   
-    eval '[ -z "$'"$namespace"'_EXTENDS" ] && _addStdClass '"$1"    
+    local namespace='_BASHOR_CLASS_'"$1"  
+    eval '[ -z "$'"$namespace"'_EXTENDS" ] && _addStdClass '"$1"   
+    eval "$namespace"="$1"
     eval "$namespace"'_POINTER='"`_generatePointer`"    
     local OBJECT_POINTER="`eval 'echo $'"$namespace"'_POINTER'`"
     unset -v namespace
@@ -91,10 +101,8 @@ function _addStdClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    local namespace=`_objectNamespace "$1"` 
-    
     _createExtendedClassFunctions "$1" Class 1
-    eval "$namespace"'_EXTENDS=Class'
+    eval '_BASHOR_CLASS_'"$1"'_EXTENDS=Class'
     return 0
 }
 
@@ -112,9 +120,7 @@ function _createExtendedClassFunctions()
     local fList=`declare -F \
         | sed -n 's#^declare -f CLASS_'"$2"'_\(.*\)$#\1#p'`
     local IFS=$'\n\r'
-    local f
-    local fNameParent
-    local fNameNew
+    local f fNameParent fNameNew
     for f in $fList; do
         fNameParent=CLASS_"$2"_"$f"
         fNameNew=CLASS_"$1"_"$f"
@@ -136,12 +142,10 @@ function class()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
-	local CLASS_NAME="$1"
-	local CLASS_TOP_NAME="$CLASS_NAME"
-    local OBJECT_NAME=
+	local CLASS_NAME="$1"    
+    local CLASS_TOP_NAME="$CLASS_NAME"
     local STATIC=1
-    local OBJECT=
-    local OBJECT_POINTER=
+    local OBJECT_NAME= OBJECT= OBJECT_POINTER=
 	
 	shift
 	_call "$@"
@@ -218,6 +222,11 @@ function _call()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
+    [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
+      
+    eval '[ -z "$_BASHOR_CLASS_'"$CLASS_NAME"'" ]' \
+         && error "No class $CLASS_NAME found!"
+    
     local FUNCTION_NAME="$1"
     local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
     if declare -f "$fName" > /dev/null; then
@@ -276,8 +285,7 @@ function extends()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
-    local namespace=`_objectNamespace "$1"`
-    eval "$namespace"'_EXTENDS'"='$2'"
+    eval '_BASHOR_CLASS_'"$1"'_EXTENDS'"='$2'"
     _createExtendedClassFunctions "$1" "$2"
     
     return 0
@@ -308,7 +316,7 @@ function clone()
     eval "$varname"="$pointer2";
     
     local OBJECT_POINTER="$pointer2"
-    unset -v 'pointer1' 'pointer2' 'varname'
+    unset -v pointer1 pointer2 varname
         
     declare -F | grep '^declare -f CLASS_'"$class1"'___clone$' > /dev/null
     if [ "$?" == 0 ]; then
@@ -362,19 +370,6 @@ function _objectRemove()
 }
 
 ##
-# Get object namespace.
-#
-# $1   string  class name
-# &1    string var name
-# $?    0:OK    1:ERROR
-function _objectNamespace()
-{
-    [ "$#" -lt 1 ] && error '1: Parameter empty or not set'
-    echo _BASHOR_CLASS_"$1"
-    return 0
-}
-
-##
 # Generate a pointer id.
 #
 # &1    string  pointer id
@@ -406,9 +401,7 @@ function this()
     if [ -n "$OBJECT" ]; then
         local dataVarName="$OBJECT_POINTER"_DATA
     else
-        local namespace=`_objectNamespace "$1"`  
-        local OBJECT_POINTER="`eval 'echo $'"$namespace"'_POINTER'`"
-        unset -v namespace
+        local OBJECT_POINTER="`eval 'echo \$'"'_BASHOR_CLASS_'"$CLASS_NAME""'_POINTER'`"
         local dataVarName="$OBJECT_POINTER"_DATA
     fi
     
@@ -470,9 +463,7 @@ function parent()
     [ -z "$1" ] && error '1: Parameter empty or not set' 
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
-	local namespace=`_objectNamespace "$CLASS_NAME"` 
-    eval 'local CLASS_NAME="$'"$namespace"'_EXTENDS"'
-    unset -v namespace
+    eval 'local CLASS_NAME="$''_BASHOR_CLASS_'"$CLASS_NAME"'_EXTENDS"'
 
     case "$1" in
         call)

@@ -161,6 +161,11 @@ trap 'signalErrBacktrace' ERR
 function error()
 {
     : ${1:?}
+    if [ -n "$BASHOR_ERROR" ]; then
+        echo 'Error in error handling!' >&2
+        exit 1
+    fi
+    local BASHOR_ERROR=ERROR;
     
     local pre='ERROR: '
     local msg="$1"

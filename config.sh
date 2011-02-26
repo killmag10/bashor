@@ -15,7 +15,10 @@
 ################################################################################
 
 # Directorys
-[ -z "BASHOR_LOG_FILE" ] && export BASHOR_LOG_FILE="./error.log";
+[ -z "$BASHOR_LOG_FILE" ] && export BASHOR_LOG_FILE="./error.log";
+
+# Performance
+export BASHOR_CLASS_AUTOLOAD="1";
 
 # Compatibility
 export BASHOR_USE_GETOPT="1"; # 0|1
