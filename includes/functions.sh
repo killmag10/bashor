@@ -25,8 +25,8 @@ function loadFunctions()
     : ${1:?}
     
     if [ -n "$1" ]; then
-        local nsFile=`echo "$1" | tr '_' '/'`
-        local IFS=`echo -e "\r\n"`
+        local nsFile=$(echo "$1" | tr '_' '/')
+        local IFS=$'\r\n'
         local filename
         for dn in $BASHOR_PATHS_FUNCTIONS; do
             filename="$dn/""$nsFile"'.sh'
@@ -51,8 +51,7 @@ function copyFunction()
     : ${1:?}
     : ${2:?}
     
-    local tmp=`echo "function $2"; declare -f "$1" | tail -n +2;`
-    eval "$tmp"
+    eval "$(echo "function $2"; declare -f "$1" | tail -n +2;)"
     return 0
 }
 
@@ -68,19 +67,8 @@ function renameFunction()
     : ${2:?}
     
     copyFunction "$1" "$2"
-    unset "$1"
+    unset -f "$1"
     return 0
-}
-
-##
-# Check if function exists.
-#
-# $1    string  function name
-# $?    0:TRUE  1:FALSE
-function functionExists()
-{
-    declare -f "$1" > /dev/null
-    return $?
 }
 
 ##
@@ -104,7 +92,7 @@ function getBacktrace()
     local res='1'
     local pos=0
     while [ -n "$res" ]; do
-        local res=`caller "$pos"`
+        local res=$(caller "$pos")
         [ -n "$res" ] && echo "$pos: $res"
         ((pos++))
     done
@@ -127,9 +115,9 @@ function handleError()
     local pre='ERROR: '
     while read msg; do
         [ $BASHOR_ERROR_BACKTRACE == 1 ] \
-            && local trace=`getBacktrace | tail -n +2  | sed 's#^#    #'`
+            && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
         if [ $BASHOR_ERROR_OUTPUT == 1 ]; then
-            msgOut=`echo "$msg" | sed "s/^/$pre/g"`
+            msgOut=$(echo "$msg" | sed "s/^/$pre/g")
             [ $BASHOR_ERROR_BACKTRACE == 1 ] \
                 && local msgOut="$msgOut""$nl""$trace"
             echo "$msgOut" | class Bashor_Color fg '' 'red' 'bold'
@@ -170,10 +158,10 @@ function error()
     local pre='ERROR: '
     local msg="$1"
     [ $BASHOR_ERROR_BACKTRACE == 1 ] \
-        && local trace=`getBacktrace | tail -n +2  | sed 's#^#    #'`
+        && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
     if [ $BASHOR_ERROR_OUTPUT == 1 ]; then
         loadClassOnce "Bashor_Color"
-        msgOut=`echo "$msg" | sed "s/^/$pre/g"`
+        msgOut=$(echo "$msg" | sed "s/^/$pre/g")
         [ $BASHOR_ERROR_BACKTRACE == 1 ] \
             && local msgOut="$msgOut""$nl""$trace"
         echo "$msgOut" | class Bashor_Color fg '' 'red' 'bold' 1>&3
@@ -199,11 +187,11 @@ function warning()
     local pre='WARNING: '
     local msg="$1"
     [ $BASHOR_WARNING_BACKTRACE == 1 ] \
-        && local trace=`getBacktrace | tail -n +2  | sed 's#^#    #'`
+        && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
     if [ $BASHOR_WARNING_OUTPUT == 1 ]; then
         loadClassOnce "Bashor_Color"
         
-        msgOut=`echo "$msg" | sed "s/^/$pre/g"`
+        msgOut=$(echo "$msg" | sed "s/^/$pre/g")
         [ $BASHOR_WARNING_BACKTRACE == 1 ] \
             && local msgOut="$msgOut""$nl""$trace"
         echo "$msgOut" | class Bashor_Color fg '' 'yellow' 'bold' 1>&3
@@ -228,10 +216,10 @@ function debug()
     local pre='DEBUG: '
     local msg="$1"
     [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
-        && local trace=`getBacktrace | tail -n +2  | sed 's#^#    #'`
+        && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
     if [ $BASHOR_DEBUG_OUTPUT == 1 ]; then
         loadClassOnce "Bashor_Color"
-        msgOut=`echo "$msg" | sed "s/^/$pre/g"`
+        msgOut=$(echo "$msg" | sed "s/^/$pre/g")
         [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
             && local msgOut="$msgOut""$nl""$trace"
         echo "$msgOut" | class Bashor_Color fg '' 'white' 'bold' 1>&3
@@ -245,6 +233,11 @@ function debug()
     fi
 }
 
+##
+# Isset a var | function
+#
+# $1    type
+# $2    name
 function isset()
 {
     : ${1:?}
@@ -255,6 +248,11 @@ function isset()
             declare -p "$2" 2>/dev/null > /dev/null
             return $?
             ;;
+        function)
+            : ${2:?}
+            declare -f "$2" > /dev/null
+            return $?
+            ;;           
         *)
             error "\"$1\" is not a option of isset!"
             ;;
@@ -264,7 +262,7 @@ function isset()
 
 function bufferStream()
 {
-    local tmp=`cat -`
+    local tmp=$(cat -)
     echo -n "$tmp"
     return $?
 }

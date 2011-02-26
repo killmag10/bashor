@@ -27,7 +27,7 @@ function loadClass()
     local IFS=$'\n\r'
     local dn filename
     for dn in $BASHOR_PATHS_CLASS; do
-        filename="$dn/""`echo "$1" | tr '_' '/'`"'.sh'
+        filename="$dn/""$(echo "$1" | tr '_' '/')"'.sh'
         if [ -f "$filename" ]; then
             . "$filename"
             eval _BASHOR_CLASS_"$1"_LOADED=1
@@ -77,9 +77,9 @@ function addClass()
     
     local namespace='_BASHOR_CLASS_'"$1"  
     eval '[ -z "$'"$namespace"'_EXTENDS" ] && _addStdClass '"$1"   
-    eval "$namespace"="$1"
-    eval "$namespace"'_POINTER='"`_generatePointer`"    
-    local OBJECT_POINTER="`eval 'echo $'"$namespace"'_POINTER'`"
+    eval "$namespace"='"$1"'
+    eval "$namespace"'_POINTER='"$(_generatePointer)"    
+    local OBJECT_POINTER="$(eval 'echo $'"$namespace"'_POINTER')"
     unset -v namespace
     eval "$OBJECT_POINTER"_DATA=
     
@@ -117,14 +117,14 @@ function _createExtendedClassFunctions()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
-    local fList=`declare -F \
-        | sed -n 's#^declare -f CLASS_'"$2"'_\(.*\)$#\1#p'`
+    local fList=$(declare -F \
+        | sed -n 's#^declare -f CLASS_'"$2"'_\(.*\)$#\1#p')
     local IFS=$'\n\r'
     local f fNameParent fNameNew
     for f in $fList; do
         fNameParent=CLASS_"$2"_"$f"
         fNameNew=CLASS_"$1"_"$f"
-        if [ -z "$3" ] || ! functionExists "$fNameNew"; then
+        if [ -z "$3" ] || ! isset function "$fNameNew"; then
             eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return $?; }'
         fi
     done
@@ -164,12 +164,12 @@ function _objectLoadData()
     [ "$#" -lt 2 ] && error '2: Parameter not set'
     
     if [ -p /dev/stdin ]; then
-        local value=`cat -`
+        local value=$(cat -)
     else
         local value="$2"
     fi
     
-    value=`echo "$value" | tail -n +2 | base64 -d`    
+    value=$(echo "$value" | tail -n +2 | base64 -d)   
     eval "$1"'="$value"'
     return $?
 }
@@ -258,7 +258,7 @@ function new()
     [ -z "$2" ] && error '2: Parameter empty or not set'
     local CLASS_NAME="$1"
         
-    local OBJECT_POINTER="`_generatePointer`"
+    local OBJECT_POINTER="$(_generatePointer)"
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"    
     eval "$OBJECT_POINTER"=
     eval "$OBJECT_POINTER"_DATA=
@@ -306,7 +306,7 @@ function clone()
         
     local varname="$2"
     local pointer1="$1"
-    local pointer2="`_generatePointer`"
+    local pointer2="$(_generatePointer)"
     shift 2
         
     eval 'local class1="$'"$pointer1"'_CLASS"'
@@ -378,7 +378,7 @@ function _generatePointer()
 {
     local pointer
     while true; do
-        pointer="`date +_BASHOR_POINTER_%s%N_$RANDOM`"
+        pointer="$(date +_BASHOR_POINTER_%s%N_$RANDOM)"
         isset var "$pointer" || break
     done;
     echo "$pointer"
@@ -401,7 +401,7 @@ function this()
     if [ -n "$OBJECT" ]; then
         local dataVarName="$OBJECT_POINTER"_DATA
     else
-        local OBJECT_POINTER="`eval 'echo \$'"'_BASHOR_CLASS_'"$CLASS_NAME""'_POINTER'`"
+        local OBJECT_POINTER=$(eval 'echo $'"'_BASHOR_CLASS_'"$CLASS_NAME""'_POINTER')
         local dataVarName="$OBJECT_POINTER"_DATA
     fi
     
@@ -512,15 +512,15 @@ function _objectSet()
     [ -z "$2" ] && error '2: Parameter empty or not set'  
 
     if [ "$#" -lt 3 ] && [ -p /dev/stdin ]; then
-        local value=`cat - | base64 -w 0`
+        local value=$(cat - | base64 -w 0)
     else
-        local value=`echo "$3" | base64 -w 0`
+        local value=$(echo "$3" | base64 -w 0)
     fi
                 
-    local key=`echo "$2" | base64 -w 0`
+    local key=$(echo "$2" | base64 -w 0)
         
     eval 'local data="$'"$1"'"'
-    data=`echo "$key $value"; echo -n "$data" | grep -v "^${key}\s\+.*$"`
+    data=$(echo "$key $value"; echo -n "$data" | grep -v "^${key}\s\+.*$")
     eval "$1"'="$data"'
     
     return $?
@@ -538,8 +538,8 @@ function _objectUnset()
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
     eval 'local data="$'"$1"'"' 
-    local key=`echo "$2" | base64 -w 0`
-    data=`echo "$data" | grep -v "^${key}\s\+.*$"`
+    local key=$(echo "$2" | base64 -w 0)
+    data=$(echo "$data" | grep -v "^${key}\s\+.*$")
     eval "$1"'="$data"'
     
     return $?
@@ -558,8 +558,8 @@ function _objectGet()
     [ -z "$2" ] && error '2: Parameter empty or not set' 
     
     eval 'local data="$'"$1"'"' 
-    local key=`echo "$2" | base64`
-    data=`echo "$data" | grep "^$key "`    
+    local key=$(echo "$2" | base64)
+    data=$(echo "$data" | grep "^$key ")    
     if [ $? == 0 ]; then
         echo "$data" | sed 's#\S\+\s\+##' | base64 -d
         return 0
@@ -580,8 +580,8 @@ function _objectIsset()
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
     eval 'local data="$'"$1"'"'
-    local key=`echo "$2" | base64`
-    data="`echo "$data" | grep "^$key "`"
+    local key=$(echo "$2" | base64)
+    data=$(echo "$data" | grep "^$key ")
     return $?
 }
 
