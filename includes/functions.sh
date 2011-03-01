@@ -48,8 +48,8 @@ function loadFunctions()
 # $?    0:OK    1:ERROR
 function copyFunction()
 {
-    : ${1:?}
-    : ${2:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    [ -z "$2" ] && error '2: Parameter empty or not set'
     
     eval "$(echo "function $2"; declare -f "$1" | tail -n +2;)"
     return 0
@@ -63,8 +63,8 @@ function copyFunction()
 # $?    0:OK    1:ERROR
 function renameFunction()
 {
-    : ${1:?}
-    : ${2:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    [ -z "$2" ] && error '2: Parameter empty or not set'
     
     copyFunction "$1" "$2"
     unset -f "$1"
@@ -240,17 +240,17 @@ function debug()
 # $2    name
 function isset()
 {
-    : ${1:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
     
     case "$1" in
         var)
-            : ${2:?}
+            [ -z "$2" ] && error '2: Parameter empty or not set'
             declare -p "$2" 2>/dev/null > /dev/null
             return $?
             ;;
         function)
-            : ${2:?}
-            declare -f "$2" > /dev/null
+            [ -z "$2" ] && error '2: Parameter empty or not set'
+            declare -F "$2" > /dev/null
             return $?
             ;;           
         *)

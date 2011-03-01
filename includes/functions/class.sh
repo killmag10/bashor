@@ -24,16 +24,14 @@ function loadClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    local IFS=$'\n\r'
-    local dn filename
+    local dn filename IFS=$'\n\r'
     for dn in $BASHOR_PATHS_CLASS; do
-        filename="$dn/""$(echo "$1" | tr '_' '/')"'.sh'
-        if [ -f "$filename" ]; then
-            . "$filename"
-            eval _BASHOR_CLASS_"$1"_LOADED=1
-            addClass "$1"
-            return $?
-        fi
+        filename="$dn/""${1//_//}"'.sh'
+        [ -f "$filename" ] || continue
+        . "$filename"
+        eval _BASHOR_CLASS_"$1"_LOADED=1
+        addClass "$1"
+        return $?
     done
     
     return 1
@@ -83,7 +81,7 @@ function addClass()
     unset -v namespace
     eval "$OBJECT_POINTER"_DATA=
     
-    declare -F | grep '^declare -f CLASS_'"$1"'___load$' > /dev/null
+    declare -F CLASS_"$1"___load > /dev/null
     if [ "$?" == 0 ]; then
         class "$1" __load
         return $?
@@ -117,15 +115,13 @@ function _createExtendedClassFunctions()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
-    local fList=$(declare -F \
-        | sed -n 's#^declare -f CLASS_'"$2"'_\(.*\)$#\1#p')
-    local IFS=$'\n\r'
-    local f fNameParent fNameNew
+    local fList=$(declare -F | sed -n 's#^declare -f CLASS_'"$2"'_\(.*\)$#\1#p')
+    local f fNameParent fNameNew IFS=$'\n\r'
     for f in $fList; do
         fNameParent=CLASS_"$2"_"$f"
         fNameNew=CLASS_"$1"_"$f"
         if [ -z "$3" ] || ! isset function "$fNameNew"; then
-            eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return $?; }'
+            eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return $?;}'
         fi
     done
 }
@@ -141,14 +137,13 @@ function class()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
-    
-	local CLASS_NAME="$1"    
+        
+    local CLASS_NAME="$1"    
     local CLASS_TOP_NAME="$CLASS_NAME"
-    local STATIC=1
-    local OBJECT_NAME= OBJECT= OBJECT_POINTER=
-	
-	shift
-	_call "$@"
+    local OBJECT_NAME= OBJECT= OBJECT_POINTER= STATIC=1
+
+    shift
+    _call "$@"
     return $?
 }
 
@@ -201,8 +196,7 @@ function object()
     isset var "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
     
     local OBJECT_NAME="$2"
-    local STATIC=
-    local OBJECT=1
+    local STATIC= OBJECT=1
     eval 'local CLASS_NAME="$'"$1"'_CLASS"'
     local OBJECT_POINTER="$1"
     local CLASS_TOP_NAME="$CLASS_NAME"
@@ -263,11 +257,9 @@ function new()
     eval "$OBJECT_POINTER"=
     eval "$OBJECT_POINTER"_DATA=
     eval "$2"="$OBJECT_POINTER"
-    shift 2    
-    declare -F | grep '^declare -f CLASS_'"$CLASS_NAME"'___construct$' > /dev/null
-    if [ "$?" == 0 ]; then
+    if isset function CLASS_"$CLASS_NAME"___construct; then
+        shift 2
         object "$OBJECT_POINTER" __construct "$@"
-        return 0
     fi
 
     return 0
@@ -286,8 +278,7 @@ function extends()
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
     eval '_BASHOR_CLASS_'"$1"'_EXTENDS'"='$2'"
-    _createExtendedClassFunctions "$1" "$2"
-    
+    _createExtendedClassFunctions "$1" "$2"    
     return 0
 }
 
@@ -398,12 +389,19 @@ function this()
     [ -z "$1" ] && error '1: Parameter empty or not set' 
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
-    if [ -n "$OBJECT" ]; then
-        local dataVarName="$OBJECT_POINTER"_DATA
-    else
-        local OBJECT_POINTER=$(eval 'echo $'"'_BASHOR_CLASS_'"$CLASS_NAME""'_POINTER')
-        local dataVarName="$OBJECT_POINTER"_DATA
+    case "$1" in
+        call)
+        [ -z "$2" ] && error '2: Parameter empty or not set' 
+        shift
+        _call "$@"
+        return $?
+        ;;
+    esac
+    
+    if [ -z "$OBJECT" ]; then
+        eval 'local OBJECT_POINTER=$_BASHOR_CLASS_'"$CLASS_NAME"'_POINTER'
     fi
+    local dataVarName="$OBJECT_POINTER"_DATA
     
     case "$1" in
         get)
@@ -426,12 +424,6 @@ function this()
             [ -z "$2" ] && error '2: Parameter empty or not set' 
             _objectIsset "$dataVarName" "$2"
             return $?
-            ;;
-        call)
-            [ -z "$2" ] && error '2: Parameter empty or not set' 
-            shift
-			_call "$@"
-			return $?
             ;;
         save)
             _objectSaveData "$dataVarName"
@@ -463,8 +455,7 @@ function parent()
     [ -z "$1" ] && error '1: Parameter empty or not set' 
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
-    eval 'local CLASS_NAME="$''_BASHOR_CLASS_'"$CLASS_NAME"'_EXTENDS"'
-
+    eval 'local CLASS_NAME="$_BASHOR_CLASS_'"$CLASS_NAME"'_EXTENDS"'
     case "$1" in
         call)
             [ -z "$CLASS_NAME" ] && error 'parent: Parameter empty or not set' 
@@ -516,9 +507,8 @@ function _objectSet()
     else
         local value=$(echo "$3" | base64 -w 0)
     fi
-                
     local key=$(echo "$2" | base64 -w 0)
-        
+    
     eval 'local data="$'"$1"'"'
     data=$(echo "$key $value"; echo -n "$data" | grep -v "^${key}\s\+.*$")
     eval "$1"'="$data"'

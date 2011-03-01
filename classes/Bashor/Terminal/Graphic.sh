@@ -30,10 +30,9 @@ loadClassOnce Bashor_Terminal
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_Graphic_setPixel()
 {
-    : ${1:?}
-    : ${2:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    [ -z "$2" ] && error '2: Parameter empty or not set'
 
-    class Bashor_Terminal saveCurser
     class Bashor_Terminal moveCurserBy "$1" "$2"
     [ -n "$4" ] && class Bashor_Terminal setBackgroundColorAnsi "$4"
     [ -n "$5" ] && class Bashor_Terminal setFordergroundColorAnsi "$5"
@@ -46,7 +45,7 @@ function CLASS_Bashor_Terminal_Graphic_setPixel()
     echo -n "${char:0:1}"
     [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
     class Bashor_Terminal resetStyle
-    class Bashor_Terminal restoreCurser
+    class Bashor_Terminal moveCurserBy "$((-1+$1*-1))" "$(($2*-1))"
     
     return 0
 }
@@ -64,9 +63,9 @@ function CLASS_Bashor_Terminal_Graphic_setPixel()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_Graphic_printText()
 {
-    : ${1:?}
-    : ${2:?}
-    : ${3:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    [ -z "$2" ] && error '2: Parameter empty or not set'
+    [ -z "$3" ] && error '3: Parameter empty or not set'
 
     class Bashor_Terminal saveCurser
     class Bashor_Terminal moveCurserBy "$1" "$2"
@@ -97,10 +96,10 @@ function CLASS_Bashor_Terminal_Graphic_printText()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
 {
-    : ${1:?}
-    : ${2:?}
-    : ${3:?}
-    : ${4:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    [ -z "$2" ] && error '2: Parameter empty or not set'
+    [ -z "$3" ] && error '3: Parameter empty or not set'
+    [ -z "$4" ] && error '4: Parameter empty or not set'
     loadClassOnce Bashor_Escape
 
 	local char="${5:- }"
@@ -116,11 +115,10 @@ function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
 	class Bashor_Terminal moveCurserBy "$1" "$2"
 	local tmp=`
 		printf "%${3}s" | sed 's/ /'"$char"'/g'
-		class Bashor_Terminal moveCurserBackward "$3"
-		class Bashor_Terminal moveCurserDown 1
+        class Bashor_Terminal moveCurserReversedBy "$3" -1
 	`
 	local i out=
-	for i in `seq "$4"`; do out="${out}${tmp}"; done
+    for i in `seq "$4"`; do out="${out}${tmp}"; done
 	echo -n "$out"
 	[[ "$8" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
 	class Bashor_Terminal resetStyle
