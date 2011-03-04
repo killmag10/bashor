@@ -9,36 +9,11 @@
 #
 # @package      Bashor
 # @subpackage   Includes
-# @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
+# @copyright    Copyright (c) 2011 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
 # @version      $Id$
 ################################################################################
-
-##
-# Load function files.
-#
-# $1    string  namespace
-# $?    0:OK    1:ERROR
-function loadFunctions()
-{
-    : ${1:?}
-    
-    if [ -n "$1" ]; then
-        local nsFile=$(echo "$1" | tr '_' '/')
-        local IFS=$'\r\n'
-        local filename
-        for dn in $BASHOR_PATHS_FUNCTIONS; do
-            filename="$dn/""$nsFile"'.sh'
-            if [ -f "$filename" ]; then
-                . "$filename"
-                return $?
-            fi
-        done
-    fi
-    
-    return 1
-}
 
 ##
 # Copy a function
@@ -52,7 +27,7 @@ function copyFunction()
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
     eval "$(echo "function $2"; declare -f "$1" | tail -n +2;)"
-    return 0
+    return $?
 }
 
 ##
@@ -66,9 +41,8 @@ function renameFunction()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
-    copyFunction "$1" "$2"
-    unset -f "$1"
-    return 0
+    copyFunction "$1" "$2" && unset -f "$1"
+    return $?
 }
 
 ##
@@ -77,10 +51,9 @@ function renameFunction()
 # $1    string  prefix
 function prepareOutput()
 {
-    : ${1:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    local IFS=$'\n\r'
-    local msg
+    local msg IFS=$'\n\r'
     while read msg; do echo "$1$msg"; done
 }
 
@@ -92,7 +65,7 @@ function getBacktrace()
     local res='1'
     local pos=0
     while [ -n "$res" ]; do
-        local res=$(caller "$pos")
+        res=$(caller "$pos")
         [ -n "$res" ] && echo "$pos: $res"
         ((pos++))
     done
@@ -103,15 +76,15 @@ function getBacktrace()
 ##
 # Handle Errors
 #
-# exec 102>&1; (
+# exec 101>&1; (
 #       COMANDS
-# ) 2>&1 >&102 | handleError
+# ) 2>&1 >&101 | handleError
 #
 # &0    string  error stream
 function handleError()
 {    
-    [ $BASHOR_ERROR_OUTPUT == 1 ] && loadClass "Bashor_Color"
-    [ $BASHOR_ERROR_LOG == 1 ] && loadClass "Bashor_Log"
+    [ $BASHOR_ERROR_OUTPUT == 1 ] && loadClassOnce "Bashor_Color"
+    [ $BASHOR_ERROR_LOG == 1 ] && loadClassOnce "Bashor_Log"
     local pre='ERROR: '
     while read msg; do
         [ $BASHOR_ERROR_BACKTRACE == 1 ] \
@@ -119,13 +92,13 @@ function handleError()
         if [ $BASHOR_ERROR_OUTPUT == 1 ]; then
             msgOut=$(echo "$msg" | sed "s/^/$pre/g")
             [ $BASHOR_ERROR_BACKTRACE == 1 ] \
-                && local msgOut="$msgOut""$nl""$trace"
+                && local msgOut="$msgOut""$NL""$trace"
             echo "$msgOut" | class Bashor_Color fg '' 'red' 'bold'
         fi
         if [ $BASHOR_ERROR_LOG == 1 ]; then
             msgLog="$msg"
             [ $BASHOR_ERROR_BACKTRACE == 1 ] \
-                && local msgLog="$msgOut""$nl""$trace"
+                && local msgLog="$msgOut""$NL""$trace"
             echo "$msgLog" | class Bashor_Log error
         fi
         [ -n "$1" ] && exit "$1"
@@ -163,14 +136,14 @@ function error()
         loadClassOnce "Bashor_Color"
         msgOut=$(echo "$msg" | sed "s/^/$pre/g")
         [ $BASHOR_ERROR_BACKTRACE == 1 ] \
-            && local msgOut="$msgOut""$nl""$trace"
+            && local msgOut="$msgOut""$NL""$trace"
         echo "$msgOut" | class Bashor_Color fg '' 'red' 'bold' 1>&3
     fi
     if [ $BASHOR_ERROR_LOG == 1 ]; then
         loadClassOnce "Bashor_Log"
         msgLog="$msg"
         [ $BASHOR_ERROR_BACKTRACE == 1 ] \
-            && local msgLog="$msgOut""$nl""$trace"
+            && local msgLog="$msgOut""$NL""$trace"
         echo "$msgLog" | class Bashor_Log error
     fi
     exit ${2:-1}
@@ -193,14 +166,14 @@ function warning()
         
         msgOut=$(echo "$msg" | sed "s/^/$pre/g")
         [ $BASHOR_WARNING_BACKTRACE == 1 ] \
-            && local msgOut="$msgOut""$nl""$trace"
+            && local msgOut="$msgOut""$NL""$trace"
         echo "$msgOut" | class Bashor_Color fg '' 'yellow' 'bold' 1>&3
     fi
     if [ $BASHOR_WARNING_LOG == 1 ]; then
         loadClassOnce "Bashor_Log"
         msgLog="$msg"
         [ $BASHOR_WARNING_BACKTRACE == 1 ] \
-            && local msgLog="$msgOut""$nl""$trace"
+            && local msgLog="$msgOut""$NL""$trace"
         echo "$msgLog" | class Bashor_Log warning
     fi
 }
@@ -221,14 +194,14 @@ function debug()
         loadClassOnce "Bashor_Color"
         msgOut=$(echo "$msg" | sed "s/^/$pre/g")
         [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
-            && local msgOut="$msgOut""$nl""$trace"
+            && local msgOut="$msgOut""$NL""$trace"
         echo "$msgOut" | class Bashor_Color fg '' 'white' 'bold' 1>&3
     fi
     if [ $BASHOR_DEBUG_LOG == 1 ]; then
         loadClassOnce "Bashor_Log"
         msgLog="$msg"
         [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
-            && local msgLog="$msgOut""$nl""$trace"
+            && local msgLog="$msgOut""$NL""$trace"
         echo "$msgLog" | class Bashor_Log debug
     fi
 }
@@ -255,15 +228,14 @@ function isset()
             ;;           
         *)
             error "\"$1\" is not a option of isset!"
+            return 1
             ;;
-    esac
-    
+    esac    
 }
 
 function bufferStream()
 {
-    local tmp=$(cat -)
-    echo -n "$tmp"
+    echo -n "$(cat -)"
     return $?
 }
 

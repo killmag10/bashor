@@ -74,12 +74,13 @@ function addClass()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
     local namespace='_BASHOR_CLASS_'"$1"  
+    local pointer="$(_generatePointer)";
     eval '[ -z "$'"$namespace"'_EXTENDS" ] && _addStdClass '"$1"   
     eval "$namespace"='"$1"'
-    eval "$namespace"'_POINTER='"$(_generatePointer)"    
-    local OBJECT_POINTER="$(eval 'echo $'"$namespace"'_POINTER')"
-    unset -v namespace
+    eval "$namespace"'_POINTER='"$pointer"    
+    local OBJECT_POINTER="$pointer"
     eval "$OBJECT_POINTER"_DATA=
+    unset -v namespace pointer
     
     declare -F CLASS_"$1"___load > /dev/null
     if [ "$?" == 0 ]; then
@@ -253,8 +254,7 @@ function new()
     local CLASS_NAME="$1"
         
     local OBJECT_POINTER="$(_generatePointer)"
-    eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"    
-    eval "$OBJECT_POINTER"=
+    eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
     eval "$2"="$OBJECT_POINTER"
     if isset function CLASS_"$CLASS_NAME"___construct; then
@@ -301,7 +301,6 @@ function clone()
     shift 2
         
     eval 'local class1="$'"$pointer1"'_CLASS"'
-    eval "$pointer2"=
     eval "$pointer2"'_CLASS="$'"$pointer1"'_CLASS"'
     eval "$pointer2"'_DATA="$'"$pointer1"'_DATA"'
     eval "$varname"="$pointer2";
@@ -372,6 +371,7 @@ function _generatePointer()
         pointer="$(date +_BASHOR_POINTER_%s%N_$RANDOM)"
         isset var "$pointer" || break
     done;
+    eval "$pointer"=
     echo "$pointer"
     return 0
 }
@@ -391,11 +391,17 @@ function this()
     
     case "$1" in
         call)
-        [ -z "$2" ] && error '2: Parameter empty or not set' 
-        shift
-        _call "$@"
-        return $?
-        ;;
+            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            shift
+            _call "$@"
+            return $?
+            ;;
+        pointer)
+            [ -z "$OBJECT" ] && error 'Not a Object'
+            [ -z "$OBJECT_POINTER" ] && error 'No pointer found'
+            echo "$OBJECT_POINTER"
+            return 0
+            ;;
     esac
     
     if [ -z "$OBJECT" ]; then
