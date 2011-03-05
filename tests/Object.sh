@@ -42,8 +42,22 @@ local DataClone
 clone "$Data2" "DataClone";
 checkSimple "clone local" "$?" "0";
 
+local serializedObject
+serializedObject=`serialize "$Data"`;
+checkSimple "serialize object" "$?" "0";
+
 remove "$Data";
 checkSimple "remove object 1" "$?" "0";
+
+local serializedObject
+unserialize 'SData' "$serializedObject";
+checkSimple "unserialize object" "$?" "0";
+
+res=`object "$SData" get "test"`;
+checkSimple "serialized object get" "$res" "global";
+
+remove "$SData";
+checkSimple "remove serialized object" "$?" "0";
 
 res=`object "$Data2" get "test"`;
 checkSimple "object local 1 get" "$res" "local";
@@ -70,32 +84,3 @@ checkSimple "object local Include get" "$res" "abc123";
 
 res=`object "$Include" getInclude`;
 checkSimple "object local Include getInclude" "$res" "def456";
-
-
-loadClassOnce 'Dump';
-checkSimple "loadClassOnce Dump" "$?" "0";
-
-local Dump
-new Dump Dump;
-checkSimple "new Dump" "$?" "0";
-
-object "$Dump" set "test" "123 ABC";
-checkSimple "object Dump set" "$?" "0";
-
-res=`object "$Dump" get "test"`;
-checkSimple "object Dump get" "$res" "123 ABC";
-
-res=`object "$Dump" save`;
-checkSimple "object Dump save" "$?" "0";
-
-remove "$Dump"
-checkSimple "object remove Dump" "$?" "0";
-
-new Dump Dump2;
-checkSimple "new Dump2" "$?" "0";
-
-object "$Dump2" load "$res";
-checkSimple "object Dump2 load" "$?" "0";
-
-res=`object "$Dump2" get "test"`;
-checkSimple "object Dump2 get" "$res" "123 ABC";

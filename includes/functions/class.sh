@@ -148,7 +148,7 @@ function class()
 }
 
 ##
-# Save object data
+# Load object data
 #
 # $1    string  var name
 # $2    mixed   data
@@ -158,12 +158,7 @@ function _objectLoadData()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ "$#" -lt 2 ] && error '2: Parameter not set'
     
-    if [ -p /dev/stdin ]; then
-        local value=$(cat -)
-    else
-        local value="$2"
-    fi
-    
+    local value="$2"
     local dataLine=$(echo "$value" | grep '^DATA=' -n | sed 's/:.*$//')
     ((dataLine++))
     value=$(echo "$value" | tail -n +$dataLine | base64 -d)   
@@ -211,6 +206,66 @@ function object()
 }
 
 ##
+# Serialize a object.
+#
+# $1    string  pointer
+# &1    string  serialized data
+# $?    0:OK    1:ERROR
+function serialize()
+{    
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    isset var "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
+    
+    eval 'local CLASS_NAME="$'"$1"'_CLASS"'
+    local OBJECT_POINTER="$1"
+    
+    if isset function CLASS_"$CLASS_NAME"___sleep; then
+        object "$OBJECT_POINTER" __sleep
+    fi
+    
+    _objectSaveData "$OBJECT_POINTER"_DATA
+    return $?
+}
+
+##
+# Unserialize a object.
+#
+# $1    string  var name
+# $2    string  serialized data
+# $@?   mixed  params
+# $?    0:OK    1:ERROR
+function unserialize()
+{
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    [ -z "$2" ] && error '2: Parameter empty or not set'
+    
+    if [ "$#" -lt 2 ] && [ -p /dev/stdin ]; then
+        local data=$(cat -)
+    else
+        local data="$2"
+    fi
+    
+    local dataLine=$(echo "$data" | grep '^DATA=' -n | sed 's/:.*$//')
+    ((dataLine--))
+    local header="$(echo "$data" | head -n $dataLine)"
+    
+    local CLASS_NAME=$(echo "$header" | sed -n 's/^CLASS_NAME=//1p')
+    local OBJECT_POINTER="$(_generatePointer)"
+    eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
+    eval "$OBJECT_POINTER"_DATA=
+    eval "$1"="$OBJECT_POINTER"
+
+    _objectLoadData "$OBJECT_POINTER"_DATA "$data";
+    local res="$?"
+    
+    if isset function CLASS_"$CLASS_NAME"___wakeup; then
+        object "$OBJECT_POINTER" __wakeup
+    fi
+    
+    return $res
+}
+
+##
 # Call a object / static method
 #
 # $1    string  function name
@@ -246,8 +301,8 @@ function _call()
 ##
 # Create a new object from class.
 #
-# $1    string  var name
-# $2    string  class name
+# $1    string  class name
+# $2    string  var name
 # $@?   mixed  params
 # $?    0:OK    1:ERROR
 function new()
@@ -432,15 +487,6 @@ function this()
         isset)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
             _objectIsset "$dataVarName" "$2"
-            return $?
-            ;;
-        save)
-            _objectSaveData "$dataVarName"
-            return $?
-            ;;
-        load)
-            [ -z "$2" ] && error '2: Parameter empty or not set' 
-            _objectLoadData "$dataVarName" "$2"
             return $?
             ;;
         *)
