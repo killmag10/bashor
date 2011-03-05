@@ -29,7 +29,6 @@ function loadClass()
         filename="$dn/""${1//_//}"'.sh'
         [ -f "$filename" ] || continue
         . "$filename"
-        eval _BASHOR_CLASS_"$1"_LOADED=1
         addClass "$1"
         return $?
     done
@@ -73,8 +72,9 @@ function addClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
+    eval _BASHOR_CLASS_"$1"_LOADED=1
     local namespace='_BASHOR_CLASS_'"$1"  
-    local pointer="$(_generatePointer)";
+    local pointer="$(_generatePointer)"
     eval '[ -z "$'"$namespace"'_EXTENDS" ] && _addStdClass '"$1"   
     eval "$namespace"='"$1"'
     eval "$namespace"'_POINTER='"$pointer"    
@@ -179,7 +179,7 @@ function _objectSaveData()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     echo 'bashor dump 0.0.0 objectData'
-    eval 'echo "$'"$1"'"' | base64
+    echo "${!1}" | base64
     return $?
 }
 
@@ -300,7 +300,7 @@ function clone()
     local pointer2="$(_generatePointer)"
     shift 2
         
-    eval 'local class1="$'"$pointer1"'_CLASS"'
+    eval 'local CLASS_NAME="$'"$pointer1"'_CLASS"'
     eval "$pointer2"'_CLASS="$'"$pointer1"'_CLASS"'
     eval "$pointer2"'_DATA="$'"$pointer1"'_DATA"'
     eval "$varname"="$pointer2";
@@ -308,7 +308,7 @@ function clone()
     local OBJECT_POINTER="$pointer2"
     unset -v pointer1 pointer2 varname
         
-    declare -F | grep '^declare -f CLASS_'"$class1"'___clone$' > /dev/null
+    declare -F | grep '^declare -f CLASS_'"$CLASS_NAME"'___clone$' > /dev/null
     if [ "$?" == 0 ]; then
         object "$OBJECT_POINTER" __clone
         return $?
@@ -351,10 +351,10 @@ function _objectRemove()
         res=$?
     fi
     
-    eval 'unset -v '"$OBJECT_POINTER"_DATA    
-    eval 'unset -v '"$OBJECT_POINTER"_ID
-    eval 'unset -v '"$OBJECT_POINTER"_CLASS
-    eval 'unset -v '"$OBJECT_POINTER"
+    unset -v "$OBJECT_POINTER"_DATA    
+    unset -v "$OBJECT_POINTER"_ID
+    unset -v "$OBJECT_POINTER"_CLASS
+    unset -v "$OBJECT_POINTER"
     
     return "$res"
 }
@@ -515,7 +515,7 @@ function _objectSet()
     fi
     local key=$(echo "$2" | base64 -w 0)
     
-    eval 'local data="$'"$1"'"'
+    local data="${!1}"
     data=$(echo "$key $value"; echo -n "$data" | grep -v "^${key}\s\+.*$")
     eval "$1"'="$data"'
     
@@ -533,7 +533,7 @@ function _objectUnset()
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
-    eval 'local data="$'"$1"'"' 
+    local data="${!1}"
     local key=$(echo "$2" | base64 -w 0)
     data=$(echo "$data" | grep -v "^${key}\s\+.*$")
     eval "$1"'="$data"'
@@ -553,7 +553,7 @@ function _objectGet()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set' 
     
-    eval 'local data="$'"$1"'"' 
+    local data="${!1}"
     local key=$(echo "$2" | base64)
     data=$(echo "$data" | grep "^$key ")    
     if [ $? == 0 ]; then
@@ -575,7 +575,7 @@ function _objectIsset()
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
-    eval 'local data="$'"$1"'"'
+    local data="${!1}"
     local key=$(echo "$2" | base64)
     data=$(echo "$data" | grep "^$key ")
     return $?
