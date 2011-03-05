@@ -77,9 +77,8 @@ function addClass()
     local pointer="$(_generatePointer)"
     eval '[ -z "$'"$namespace"'_EXTENDS" ] && _addStdClass '"$1"   
     eval "$namespace"='"$1"'
-    eval "$namespace"'_POINTER='"$pointer"    
-    local OBJECT_POINTER="$pointer"
-    eval "$OBJECT_POINTER"_DATA=
+    eval "$namespace"'_POINTER='"$pointer"
+    eval "$pointer"_DATA=
     unset -v namespace pointer
     
     declare -F CLASS_"$1"___load > /dev/null
@@ -165,7 +164,9 @@ function _objectLoadData()
         local value="$2"
     fi
     
-    value=$(echo "$value" | tail -n +2 | base64 -d)   
+    local dataLine=$(echo "$value" | grep '^DATA=' -n | sed 's/:.*$//')
+    ((dataLine++))
+    value=$(echo "$value" | tail -n +$dataLine | base64 -d)   
     eval "$1"'="$value"'
     return $?
 }
@@ -178,7 +179,9 @@ function _objectLoadData()
 function _objectSaveData()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
-    echo 'bashor dump 0.0.0 objectData'
+    echo 'bashor dump 1.0.0 objectData'
+    echo "CLASS_NAME=$CLASS_NAME"
+    echo 'DATA='
     echo "${!1}" | base64
     return $?
 }
