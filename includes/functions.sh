@@ -233,6 +233,22 @@ function isset()
     esac    
 }
 
+##
+# Check if's a value is in the array.
+#
+# $1    mixed   search
+# $@    mixed   list of values
+# $?    boolean is in
+function inList()
+{
+    local value IFS=$'\n' search="$1"
+    shift
+    for value in "$@"; do
+        [ "$search" == "$value" ] && return 0
+    done
+    return 1
+}
+
 function bufferStream()
 {
     echo -n "$(cat -)"
