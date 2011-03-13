@@ -24,14 +24,15 @@ function CLASS_Bashor_Registry___construct()
     : ${1?}
     : ${OBJECT:?}
     
-    optSetOpts 'c'
-    optSetArgs "$@"
+    local Param
+    new Bashor_Param Param 'c'
+    object $Param set "$@"
     
     this set compress "0"
-    optIsset 'c' && this set compress "1"
+    object $Param isset '-c' && this set compress "1"
   
-    argIsNotEmpty "1" || error "registry file not set"
-    local registryFile=`argValue "1"`
+    object $Param notEmpty "1" || error "registry file not set"
+    local registryFile="`object $Param get "1"`"
     
     this set file "$registryFile"
     this set lockFile "$registryFile"'.lock'

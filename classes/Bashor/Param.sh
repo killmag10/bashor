@@ -90,6 +90,28 @@ function CLASS_Bashor_Param_issetArg()
 }
 
 ##
+# Is argument / option not empty
+#
+# $?    0:OK 1:ERROR
+function CLASS_Bashor_Param_notEmpty()
+{
+    : ${OBJECT:?};
+    : ${1:?};
+        
+    if [ "${1:0:1}" == '-' ]; then    
+        this call notEmptyOpt "$1";
+        return $?;
+    fi
+    
+    if [[ "$1" =~ ^[0-9]+$ ]]; then
+        this call notEmptyArg "$1";
+        return $?;    
+    fi
+    
+    return 1;
+}
+
+##
 # Is argument not empty
 #
 # $1    string  key

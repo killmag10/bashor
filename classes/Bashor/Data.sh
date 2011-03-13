@@ -24,15 +24,18 @@ function CLASS_Bashor_Data___construct()
 {    
     : ${OBJECT:?}
     
-    optSetOpts 'cs:'
-    optSetArgs "$@"
+    local Param
+    new Bashor_Param Param 'cs:'
+
+    object $Param set "$@"
     
     this set data ''
     this set maxSize "65536"; # Default: 64K
-    optIsset 's' && this set maxSize "`optValue 's'`"
+    object $Param isset '-s' && this set maxSize "`object $Param get '-s'`"
     
     this set compress "0"
-    optIsset 'c' && this set compress "1"
+    object $Param isset '-c' && this set compress "1"
+    remove $Param
     
     return 0
 }

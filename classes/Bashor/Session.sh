@@ -26,14 +26,15 @@ function CLASS_Bashor_Session___construct()
 {
     : ${OBJECT:?}
     
-    optSetOpts 'c'
-    optSetArgs "$@"
+    local Param
+    new Bashor_Param Param 'c'
+    object $Param set "$@"
     
-    argIsNotEmpty "1" || error "session dir not set"
-    local sessionDir=`argValue "1"`
+    object $Param notEmpty "1" || error "session dir not set"
+    local sessionDir="`object $Param get "1"`"
 
     local optionCompress=''
-    optIsset 'c' && local optionCompress='-c'
+    object $Param isset '-c' && local optionCompress='-c'
     
     parent call __construct $optionCompress -- "$sessionDir""$$"
 }
