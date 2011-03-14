@@ -30,7 +30,7 @@ function CLASS_Bashor_Data___construct()
     object $Param set "$@"
     
     this set data ''
-    this set maxSize "65536"; # Default: 64K
+    this set maxSize ''
     object $Param isset '-s' && this set maxSize "`object $Param get '-s'`"
     
     this set compress "0"
@@ -63,7 +63,8 @@ function CLASS_Bashor_Data_set()
     local data="`this get data`"
     local data=`echo "$data" | sed "s#^${key}\s\+.*##"`
     local data=`echo "$key $value"; echo -n "$data";`
-    if [ "${#data}" -gt "`this get maxSize`" ]; then
+    local maxSize="`this get maxSize`"
+    if [ -n "$maxSize" ] && [ "${#data}" -gt "$maxSize" ]; then
         warning "Max session memory overrun of `this get maxSize` with ${#data}"
         return 1
     fi
