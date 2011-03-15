@@ -310,7 +310,9 @@ function new()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     local CLASS_NAME="$1"
-        
+    
+    [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
+    
     local OBJECT_POINTER="$(_generatePointer)"
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
