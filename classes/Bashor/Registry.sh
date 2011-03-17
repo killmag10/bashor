@@ -73,8 +73,8 @@ function CLASS_Bashor_Registry_set()
     {
         flock 200
         
-        local key=`echo "$1" | base64 -w 0`
-        local value=`echo "$value" | base64 -w 0`
+        local key=`echo "$1" | encodeData`
+        local value=`echo "$value" | encodeData`
         [ ! -f "$file" ] \
             && echo "" | this call _compress 'c' > "$file"
         local data=`cat "$file" | this call _compress 'd'`
@@ -100,7 +100,7 @@ function CLASS_Bashor_Registry_remove()
     loadClassOnce Bashor_Lock
     local file=`this get file`
     local lockFile=`this get lockFile`
-    local key=`echo "$1" | base64 -w 0`
+    local key=`echo "$1" | encodeData`
     
     if [ -f "$file" ]; then
         {
@@ -136,11 +136,11 @@ function CLASS_Bashor_Registry_get()
         {
             flock -s 200
             
-            local key=`echo "$1" | base64`
+            local key=`echo "$1" | encodeData`
             local res=`cat "$file" \
                 | this call _compress 'd' | grep "^$key "`
             if [ -n "$res" ]; then
-                echo "$res" | sed 's#\S\+\s\+##' | base64 -d
+                echo "$res" | sed 's#\S\+\s\+##' | decodeData
                 return 0
             fi
         } 200>"$lockFile"
@@ -169,7 +169,7 @@ function CLASS_Bashor_Registry_isset()
         {
             flock -s 200
     
-            local key=`echo "$1" | base64`
+            local key=`echo "$1" | encodeData`
             local res=`cat "$file" \
                 | this call _compress 'd' | grep "^$key "`
             if [ -n "$res" ]; then
@@ -252,7 +252,7 @@ function CLASS_Bashor_Registry_getKeys()
                 local IFS=$'\n\r'
                 local line
                 for line in $res; do
-                    echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d
+                    echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | decodeData
                 done
                 return 0
             fi
@@ -285,8 +285,8 @@ function CLASS_Bashor_Registry_getValues()
                 local IFS=$'\n\r'
                 local line
                 for line in $res; do
-                    local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`
-                    local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d`
+                    local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | decodeData`
+                    local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | decodeData`
                     echo "$key : $value"
                 done
                 return 0

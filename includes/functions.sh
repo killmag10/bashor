@@ -249,6 +249,25 @@ function inList()
     return 1
 }
 
+function encodeData()
+{
+    if [ "$BASHOR_USE_PEAR_BASE64" == 1 ]; then
+        export DATAIN="`cat -`";
+        perl -MMIME::Base64 -e 'print encode_base64($ENV{"DATAIN"},"")'
+    else
+        base64 -w 0
+    fi
+}
+
+function decodeData()
+{
+    if [ "$BASHOR_USE_PEAR_BASE64" == 1 ]; then
+        perl -MMIME::Base64 -e 'print decode_base64(<stdin>)'
+    else
+        base64 -d
+    fi
+}
+
 function bufferStream()
 {
     echo -n "$(cat -)"

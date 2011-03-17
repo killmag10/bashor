@@ -58,8 +58,8 @@ function CLASS_Bashor_Data_set()
         local value="$2"
     fi
                 
-    local key=`echo "$1" | base64 -w 0`
-    local value=`echo "$value" | this call _compress 'c' | base64 -w 0`
+    local key=`echo "$1" | encodeData`
+    local value=`echo "$value" | this call _compress 'c' | encodeData`
     local data="`this get data`"
     local data=`echo "$data" | sed "s#^${key}\s\+.*##"`
     local data=`echo "$key $value"; echo -n "$data";`
@@ -84,7 +84,7 @@ function CLASS_Bashor_Data_remove()
     : ${OBJECT:?}
     : ${1:?}
     
-    local key=`echo "$1" | base64 -w 0`
+    local key=`echo "$1" | encodeData`
     local data=`this get data`
     data=`echo "$data" \
         | sed "s#^${key}\s\+.*##" \
@@ -105,11 +105,11 @@ function CLASS_Bashor_Data_get()
     : ${OBJECT:?}
     : ${1:?}
     
-    local key=`echo "$1" | base64`
+    local key=`echo "$1" | encodeData`
     local data=`this get data`
     local res=`echo "$data" | grep "^$key "`
     if [ -n "$res" ]; then
-        echo "$res" | sed 's#\S\+\s\+##' | base64 -d | this call _compress 'd'
+        echo "$res" | sed 's#\S\+\s\+##' | decodeData | this call _compress 'd'
         return 0
     fi
     
@@ -127,7 +127,7 @@ function CLASS_Bashor_Data_isset()
     : ${OBJECT:?}
     : ${1:?}
     
-    local key=`echo "$1" | base64`
+    local key=`echo "$1" | encodeData`
     local data=`this get data`
     local res=`echo "$data" | grep "^$key "`
     if [ -n "$res" ]; then
@@ -198,7 +198,7 @@ function CLASS_Bashor_Data_getKeys()
         local IFS=$'\n\r'
         local line
         for line in $data; do
-            echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | base64 -d
+            echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | decodeData
         done
         return 0
     fi
@@ -220,8 +220,8 @@ function CLASS_Bashor_Data_getValues()
         local IFS=$'\n\r'
         local line
         for line in $data; do
-            local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | base64 -d`
-            local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | base64 -d | this call _compress 'd'`
+            local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | decodeData`
+            local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | decodeData | this call _compress 'd'`
             echo "$key : $value"
         done
         return 0

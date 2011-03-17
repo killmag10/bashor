@@ -161,7 +161,7 @@ function _objectLoadData()
     local value="$2"
     local dataLine=$(echo "$value" | grep '^DATA=' -n | sed 's/:.*$//')
     ((dataLine++))
-    value=$(echo "$value" | tail -n +$dataLine | base64 -d)   
+    value=$(echo "$value" | tail -n +$dataLine | decodeData)   
     eval "$1"'="$value"'
     return $?
 }
@@ -177,7 +177,7 @@ function _objectSaveData()
     echo 'bashor dump 1.0.0 objectData'
     echo "CLASS_NAME=$CLASS_NAME"
     echo 'DATA='
-    echo "${!1}" | base64
+    echo "${!1}" | encodeData
     return $?
 }
 
@@ -560,11 +560,11 @@ function _objectSet()
     [ -z "$2" ] && error '2: Parameter empty or not set'  
 
     if [ "$#" -lt 3 ] && [ -p /dev/stdin ]; then
-        local value=$(cat - | base64 -w 0)
+        local value=$(cat - | encodeData)
     else
-        local value=$(echo "$3" | base64 -w 0)
+        local value=$(echo "$3" | encodeData)
     fi
-    local key=$(echo "$2" | base64 -w 0)
+    local key=$(echo "$2" | encodeData)
     
     local data="${!1}"
     data=$(echo "$key $value"; echo -n "$data" | grep -v "^${key}\s\+.*$")
@@ -585,7 +585,7 @@ function _objectUnset()
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
     local data="${!1}"
-    local key=$(echo "$2" | base64 -w 0)
+    local key=$(echo "$2" | encodeData)
     data=$(echo "$data" | grep -v "^${key}\s\+.*$")
     eval "$1"'="$data"'
     
@@ -605,10 +605,10 @@ function _objectGet()
     [ -z "$2" ] && error '2: Parameter empty or not set' 
     
     local data="${!1}"
-    local key=$(echo "$2" | base64)
+    local key=$(echo "$2" | encodeData)
     data=$(echo "$data" | grep "^$key ")    
     if [ $? == 0 ]; then
-        echo "$data" | sed 's#\S\+\s\+##' | base64 -d
+        echo "$data" | sed 's#\S\+\s\+##' | decodeData
         return 0
     fi
     
@@ -627,7 +627,7 @@ function _objectIsset()
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
     local data="${!1}"
-    local key=$(echo "$2" | base64)
+    local key=$(echo "$2" | encodeData)
     data=$(echo "$data" | grep "^$key ")
     return $?
 }
