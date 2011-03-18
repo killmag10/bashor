@@ -252,8 +252,14 @@ function inList()
 function encodeData()
 {
     if [ "$BASHOR_USE_PEAR_BASE64" == 1 ]; then
-        export DATAIN="`cat -`";
-        perl -MMIME::Base64 -e 'print encode_base64($ENV{"DATAIN"},"")'
+        local -x DATAIN
+        local IFS=
+        while read -d '' -r -n 300 DATAIN; do
+            perl -MMIME::Base64 -e 'print encode_base64($ENV{"DATAIN"},"")'
+        done
+        if [ -n "$DATAIN" ]; then
+            perl -MMIME::Base64 -e 'print encode_base64($ENV{"DATAIN"},"")'
+        fi
     else
         base64 -w 0
     fi
