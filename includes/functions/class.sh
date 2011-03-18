@@ -567,7 +567,7 @@ function _objectSet()
     local key=$(echo "$2" | encodeData)
     
     local data="${!1}"
-    data=$(echo "$key $value"; echo -n "$data" | grep -v "^${key}\s\+.*$")
+    data=$(echo "$key $value"; echo -n "$data" | grep -v "^${key}[[:space:]]\+.*$")
     eval "$1"'="$data"'
     
     return $?
@@ -586,7 +586,7 @@ function _objectUnset()
     
     local data="${!1}"
     local key=$(echo "$2" | encodeData)
-    data=$(echo "$data" | grep -v "^${key}\s\+.*$")
+    data=$(echo "$data" | grep -v "^${key}[[:space:]]\+.*$")
     eval "$1"'="$data"'
     
     return $?
@@ -608,7 +608,7 @@ function _objectGet()
     local key=$(echo "$2" | encodeData)
     data=$(echo "$data" | grep "^$key ")    
     if [ $? == 0 ]; then
-        echo "$data" | sed 's#\S\+\s\+##' | decodeData
+        echo "$data" | sed 's#[^[:space:]]\+[[:space:]]\+##' | decodeData
         return 0
     fi
     
