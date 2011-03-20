@@ -132,9 +132,9 @@ function optSetArgs()
             echo -n \""$v"\"" "
         done; echo;`
     OPT_PARAM_QUOTED=`
-        echo -n "$OPT_ARGS_QUOTED" | sed -n 's#\(\|\(.\)\s\)"-.*#\2#p'
+        echo -n "$OPT_ARGS_QUOTED" | sed -n 's#\(\|\(.\)[[:space:]]\)"-.*#\2#p'
         echo -n " "
-        echo "$OPT_ARGS_QUOTED" | grep -o -- '"--".*' | sed 's/"--"\s\?//'
+        echo "$OPT_ARGS_QUOTED" | grep -o -- '"--".*' | sed 's/"--"[[:space:]]\?//'
     `
     return "$?"
 }

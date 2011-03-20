@@ -61,7 +61,7 @@ function CLASS_Bashor_Data_set()
     local key=`echo "$1" | encodeData`
     local value=`echo "$value" | this call _compress 'c' | encodeData`
     local data="`this get data`"
-    local data=`echo "$data" | sed "s#^${key}\s\+.*##"`
+    local data=`echo "$data" | sed "s#^${key}[[:space:]]\+.*##"`
     local data=`echo "$key $value"; echo -n "$data";`
     local maxSize="`this get maxSize`"
     if [ -n "$maxSize" ] && [ "${#data}" -gt "$maxSize" ]; then
@@ -87,7 +87,7 @@ function CLASS_Bashor_Data_remove()
     local key=`echo "$1" | encodeData`
     local data=`this get data`
     data=`echo "$data" \
-        | sed "s#^${key}\s\+.*##" \
+        | sed "s#^${key}[[:space:]]\+.*##" \
         | sort -u`
     this set data "$data"
     
@@ -109,7 +109,7 @@ function CLASS_Bashor_Data_get()
     local data=`this get data`
     local res=`echo "$data" | grep "^$key "`
     if [ -n "$res" ]; then
-        echo "$res" | sed 's#\S\+\s\+##' | decodeData | this call _compress 'd'
+        echo "$res" | sed 's#[^[:space:]]\+[[:space:]]\+##' | decodeData | this call _compress 'd'
         return 0
     fi
     
@@ -198,7 +198,7 @@ function CLASS_Bashor_Data_getKeys()
         local IFS=$'\n\r'
         local line
         for line in $data; do
-            echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | decodeData
+            echo "$line" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
         done
         return 0
     fi
@@ -220,8 +220,8 @@ function CLASS_Bashor_Data_getValues()
         local IFS=$'\n\r'
         local line
         for line in $data; do
-            local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | decodeData`
-            local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | decodeData | this call _compress 'd'`
+            local key=`echo "$line" -n | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData`
+            local value=`echo -n "$line" | sed 's#^[^[:space:]]\+[[:space:]]\+##' | decodeData | this call _compress 'd'`
             echo "$key : $value"
         done
         return 0

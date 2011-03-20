@@ -78,7 +78,7 @@ function CLASS_Bashor_Registry_set()
         [ ! -f "$file" ] \
             && echo "" | this call _compress 'c' > "$file"
         local data=`cat "$file" | this call _compress 'd'`
-        data=`echo "$data" | sed "s#^${key}\s\+.*##"`
+        data=`echo "$data" | sed "s#^${key}[[:space:]]\+.*##"`
         data=`echo "$key $value"; echo -n "$data";`
         echo "$data" | sort -u | this call _compress 'c' > "$file"
     } 200>"$lockFile"
@@ -107,7 +107,7 @@ function CLASS_Bashor_Registry_remove()
             flock 200
             
             local data=`cat "$file" | this call _compress 'd'`
-            echo "$data" | sed "s#^${key}\s\+.*##" \
+            echo "$data" | sed "s#^${key}[[:space:]]\+.*##" \
                 | sort -u \
                 | this call _compress 'c' > "$file"
         } 200>"$lockFile"
@@ -140,7 +140,7 @@ function CLASS_Bashor_Registry_get()
             local res=`cat "$file" \
                 | this call _compress 'd' | grep "^$key "`
             if [ -n "$res" ]; then
-                echo "$res" | sed 's#\S\+\s\+##' | decodeData
+                echo "$res" | sed 's#[^[:space:]]\+[[:space:]]\+##' | decodeData
                 return 0
             fi
         } 200>"$lockFile"
@@ -252,7 +252,7 @@ function CLASS_Bashor_Registry_getKeys()
                 local IFS=$'\n\r'
                 local line
                 for line in $res; do
-                    echo "$line" | sed 's#^\(\S\+\).\+$#\1#' | decodeData
+                    echo "$line" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
                 done
                 return 0
             fi
@@ -285,8 +285,8 @@ function CLASS_Bashor_Registry_getValues()
                 local IFS=$'\n\r'
                 local line
                 for line in $res; do
-                    local key=`echo "$line" -n | sed 's#^\(\S\+\).\+$#\1#' | decodeData`
-                    local value=`echo -n "$line" | sed 's#^\S\+\s\+##' | decodeData`
+                    local key=`echo "$line" -n | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData`
+                    local value=`echo -n "$line" | sed 's#^[^[:space:]]\+[[:space:]]\+##' | decodeData`
                     echo "$key : $value"
                 done
                 return 0
