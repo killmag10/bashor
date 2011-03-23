@@ -1,0 +1,547 @@
+
+.\"
+.\" Man page for Bashor
+.\"
+.TH Bashor 7 "2011-03-20" "Lars Dietrich" "Bashor Coding Commands"
+.SH Bashor
+.B Bashor
+\- an pseudo object extension for bash
+
+.PD 0
+
+.SH GENERAL FUNCTIONS
+
+.TP
+.B copyFunction
+.RS
+Copy a function
+
+.HP
+.B $1
+.I string
+current function name
+.HP
+.B $2
+.I string
+new function name
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B renameFunction
+.RS
+Rename a function
+
+.HP
+.B $1
+.I string
+current function name
+.HP
+.B $2
+.I string
+new function name
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B prepareOutput
+.RS
+Add a prefix for each line.
+
+.HP
+.B $1
+.I string
+prefix
+.HP
+.B &0
+.I string
+input
+.HP
+.B &1
+.I string
+prepared input
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B getBacktrace
+.RS
+Get a baacktrace to the current file.
+
+.HP
+.B &1
+.I string
+files with line number per line
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B handleError
+.RS
+Handle Errors
+
+exec 101>&1; (
+COMANDS
+) 2>&1 >&101 | handleError
+
+.HP
+.B &0
+.I string
+error stream
+.RE
+
+.TP
+.B signalErrBacktrace
+.RS
+Backtrace for error signal
+.HP
+.B &1
+.I string
+files with line number per line
+.RE
+
+.TP
+.B error
+.RS
+error message
+
+.HP
+.B $1
+.I string
+message
+.HP
+.B $2
+.I integer|null
+return value for exit default=1
+.HP
+.B &3
+.I string
+error messages
+.RE
+
+.TP
+.B warning
+.RS
+warning message
+
+.HP
+.B $1
+.I string
+message
+.HP
+.B &3
+.I string
+warning messages
+.RE
+
+.TP
+.B debug
+.RS
+debug message
+
+.HP
+.B $1
+.I string
+message
+.HP
+.B &3
+.I string
+debug messages
+.RE
+
+.TP
+.B isset
+.RS
+Isset a var | function
+
+.HP
+.B $1
+.I string
+the type (var|function)
+.HP
+.B $2
+.I string
+name
+.HP
+.B $?
+.I 0
+set
+.HP
+.B $?
+.I 1
+not set
+.RE
+
+.TP
+.B inList
+.RS
+Check if's a value is in the array.
+
+.HP
+.B $1
+.I mixed
+search
+.HP
+.B $@
+.I mixed
+list of values
+.HP
+.B $?
+.I 0
+in list
+.HP
+.B $?
+.I 1
+not in list
+.RE
+
+.TP
+.B bufferStream
+.RS
+Buffer a stream completly,
+
+.HP
+.B &0
+.I mixed
+input
+.HP
+.B &1
+.I mixed
+output
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B getBashorVersion
+.RS
+Get the version number of Bashor.
+
+.HP
+.B &0
+.I string
+version number
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.SH CLASS / OBJECT FUNCTIONS
+.TP
+.B loadClass
+.RS
+Load class.
+
+.HP
+.B $1
+.I string
+namespace
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B loadClassOnce
+.RS
+Load class once.
+
+.HP
+.B $1
+.I string
+namespace
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B addClass
+.RS
+Add Class functions.
+
+.HP
+.B $1
+.I string
+class
+.HP
+.B $@
+.I mixed
+params
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B class
+.RS
+Call a class method
+
+.HP
+.B $1
+.I string
+class name
+.HP
+.B $2
+.I string
+function name
+.HP
+.B $@
+.I mixed
+method params
+.HP
+.B $?
+.I *
+all of class method
+.RE
+
+.TP
+.B object
+.RS
+Call a object method
+
+.HP
+.B $1
+.I string
+pointer
+.HP
+.B $2
+.I string
+function name
+.HP
+.B $@
+.I mixed
+method params
+.HP
+.B $?
+.I *
+all of class method
+.RE
+
+.TP
+.B serialize
+.RS
+Serialize a object.
+
+.HP
+.B $1
+.I string
+pointer
+.HP
+.B &1
+.I string
+serialized data
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B unserialize
+.RS
+Unserialize a object.
+
+.HP
+.B $1
+.I string
+var name
+.HP
+.B $2
+.I string
+serialized data
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B new
+.RS
+Create a new object from class.
+
+.HP
+.B $1
+.I string
+class name
+.HP
+.B $2
+.I string
+var name
+.HP
+.B $@
+.I mixed
+method params
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B extends
+.RS
+Extends a class.
+
+.HP
+.B $1
+.I string
+class name
+.HP
+.B $2
+.I string
+parent class name
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B clone
+.RS
+Clone object.
+
+.HP
+.B $1
+.I string
+object name
+.HP
+.B $2
+.I string
+object name
+.HP
+.B $?
+.I *
+all of class method __clone
+.RE
+
+.TP
+.B remove
+.RS
+Remove a object.
+
+.HP
+.B $1
+.I tring
+pointer
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B this
+.RS
+Access to the object.
+
+.HP
+.B $1
+.I string
+action (call,pointer,get,set,unset,isset)
+.HP
+.B $@
+.I mixed
+params
+.HP
+.B $?
+.I *
+all of class method
+.RE
+
+.TP
+.B parent
+.RS
+Access to the parent class.
+
+.HP
+.B $1
+.I string
+action (call,exists)
+.HP
+.B $@
+.I mixed
+params
+.HP
+.B $?
+.I *
+all of class method
+.RE
+

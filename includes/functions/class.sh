@@ -19,7 +19,8 @@
 # Load class.
 #
 # $1    string  namespace
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function loadClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -40,7 +41,8 @@ function loadClass()
 # Load class once.
 #
 # $1    string  namespace
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function loadClassOnce()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -54,7 +56,8 @@ function loadClassOnce()
 # Autoloader for Classes
 #
 # $1    string  class
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function __autoloadClass()
 {
     loadClassOnce "$1"
@@ -66,8 +69,9 @@ function __autoloadClass()
 # Add Class functions.
 #
 # $1    string  class
-# $@?   mixed  params
-# $?    0:OK    1:ERROR
+# $@    mixed  params
+# $?    0       OK
+# $?    1       ERROR
 function addClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -94,7 +98,8 @@ function addClass()
 # Add standart class.
 #
 # $1    string  class
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function _addStdClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -109,7 +114,8 @@ function _addStdClass()
 #
 # $1    string  new class
 # $2    string  parent class
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function _createExtendedClassFunctions()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -131,8 +137,8 @@ function _createExtendedClassFunctions()
 #
 # $1    string  class name
 # $2    string  function name
-# $@    params
-# $?    0:OK    1:ERROR
+# $@    mixed   method params
+# $?    *       all of class method
 function class()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -152,7 +158,8 @@ function class()
 #
 # $1    string  var name
 # $2    mixed   data
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function _objectLoadData()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -167,10 +174,11 @@ function _objectLoadData()
 }
 
 ##
-# load object data
+# save object data
 #
 # $1    string  var name
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function _objectSaveData()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -186,8 +194,8 @@ function _objectSaveData()
 #
 # $1    string  pointer
 # $2    string  function name
-# $@    params
-# $?    0:OK    1:ERROR
+# $@    mixed   method params
+# $?    *       all of class method
 function object()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -210,7 +218,8 @@ function object()
 #
 # $1    string  pointer
 # &1    string  serialized data
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function serialize()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -232,8 +241,8 @@ function serialize()
 #
 # $1    string  var name
 # $2    string  serialized data
-# $@?   mixed  params
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function unserialize()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -269,8 +278,9 @@ function unserialize()
 # Call a object / static method
 #
 # $1    string  function name
-# $@    params
-# $?    0:OK    1:ERROR
+# $@    mixed   method params
+# $?    0       OK
+# $?    1       ERROR
 function _call()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -303,8 +313,9 @@ function _call()
 #
 # $1    string  class name
 # $2    string  var name
-# $@?   mixed  params
-# $?    0:OK    1:ERROR
+# $@    mixed   method params
+# $?    0       OK
+# $?    1       ERROR
 function new()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -330,8 +341,8 @@ function new()
 #
 # $1    string  class name
 # $2    string  parent class name
-# $@?   mixed  params
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function extends()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -347,8 +358,7 @@ function extends()
 #
 # $1    string  object name
 # $2    string  object name
-# $@?   mixed  params
-# $?    0:OK    1:ERROR
+# $?    *       all of class method __clone
 function clone()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -381,8 +391,8 @@ function clone()
 # Remove a object.
 #
 # $1    tring  pointer
-# $@?   mixed  params
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function remove()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -395,8 +405,8 @@ function remove()
 # Remove a object.
 #
 # $1    string  pointer
-# $@?   mixed  params
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function _objectRemove()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set' 
@@ -422,8 +432,9 @@ function _objectRemove()
 ##
 # Generate a pointer id.
 #
-# &1    string  pointer id
-# $?    0:OK    1:ERROR
+# &1    pointer pointer id
+# $?    0       OK
+# $?    1       ERROR
 function _generatePointer()
 {
     local pointer
@@ -439,11 +450,9 @@ function _generatePointer()
 ##
 # Access to the object.
 #
-# $1    string  action
-# $CLASS_NAME   string  class name
-# $@?   mixed   params
-# &1    mixed
-# $?    0:OK    1:ERROR
+# $1    string  action (call,pointer,get,set,unset,isset)
+# $@    mixed   params
+# $?    *       all of class method
 function this()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set' 
@@ -500,13 +509,11 @@ function this()
 }
 
 ##
-# Access to the parent object.
+# Access to the parent class.
 #
-# $1    string  action
-# $CLASS_NAME   string  class name
-# $@?   mixed   params
-# &1    mixed
-# $?    0:OK    1:ERROR
+# $1    string  action (call,exists)
+# $@    mixed   params
+# $?    *       all of class method
 function parent()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set' 
@@ -534,25 +541,13 @@ function parent()
 }
 
 ##
-# Access to the object.
-#
-# $CLASS_NAME   string  class name
-# $OBJECT_NAME  string  object name
-# $?    0:OK    1:ERROR
-function isStatic()
-{   
-    [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set'
-    isset var 'OBJECT_NAME' || error 'OBJECT_NAME: Parameter not set' 
-    return $?
-}
-
-##
 # Save in object var.
 #
 # $1    string  var name
 # $2    string  key
 # $3    string  data
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 # &0    string  Data
 function _objectSet()
 {
@@ -578,7 +573,8 @@ function _objectSet()
 #
 # $1    string  var name
 # $2    string  key
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function _objectUnset()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   
@@ -597,7 +593,8 @@ function _objectUnset()
 #
 # $1    string  var name
 # $2    string  key
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 # &0    string  Data
 function _objectGet()
 {
@@ -620,7 +617,8 @@ function _objectGet()
 #
 # $1    string  var name
 # $2    string  key
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function _objectIsset()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   

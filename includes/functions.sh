@@ -20,7 +20,8 @@
 #
 # $1    string  current function name
 # $2    string  new function name
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function copyFunction()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -35,7 +36,8 @@ function copyFunction()
 #
 # $1    string  current function name
 # $2    string  new function name
-# $?    0:OK    1:ERROR
+# $?    0       OK
+# $?    1       ERROR
 function renameFunction()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -49,17 +51,25 @@ function renameFunction()
 # Add a prefix for each line.
 #
 # $1    string  prefix
+# &0    string  input
+# &1    string  prepared input
+# $?    0       OK
+# $?    1       ERROR
 function prepareOutput()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
     local msg IFS=$'\n\r'
     while read msg; do echo "$1$msg"; done
+    return 0
 }
 
 ##
-# Get the backtrace.
+# Get a baacktrace to the current file.
 #
+# &1    string  files with line number per line
+# $?    0       OK
+# $?    1       ERROR
 function getBacktrace()
 {    
     local res='1'
@@ -70,7 +80,7 @@ function getBacktrace()
         ((pos++))
     done
     [ -n "$res" ]
-    return $?
+    return 0
 }
 
 ##
@@ -107,6 +117,7 @@ function handleError()
 
 ##
 # Backtrace for error signal
+# &1    string  files with line number per line
 function signalErrBacktrace()
 {
     [ "$BASHOR_ERROR_BACKTRACE" == 1 ] && \
@@ -117,8 +128,9 @@ trap 'signalErrBacktrace' ERR
 ##
 # error message
 #
-# $1    message
-# $2?   status
+# $1    string  message
+# $2    integer|null return value for exit default=1
+# &3    string  error messages
 function error()
 {
     : ${1:?}
@@ -152,7 +164,8 @@ function error()
 ##
 # warning message
 #
-# $1    message
+# $1    string  message
+# &3    string  warning messages
 function warning()
 {
     : ${1:?}
@@ -181,7 +194,8 @@ function warning()
 ##
 # debug message
 #
-# $1    message
+# $1    string  message
+# &3    string  debug messages
 function debug()
 {
     : ${1:?}
@@ -209,8 +223,10 @@ function debug()
 ##
 # Isset a var | function
 #
-# $1    type
-# $2    name
+# $1    string  the type (var|function)
+# $2    string  name
+# $?    0       set
+# $?    1       not set
 function isset()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -238,7 +254,8 @@ function isset()
 #
 # $1    mixed   search
 # $@    mixed   list of values
-# $?    boolean is in
+# $?    0       in list
+# $?    1       not in list
 function inList()
 {
     local value IFS=$'\n' search="$1"
@@ -274,12 +291,25 @@ function decodeData()
     fi
 }
 
+##
+# Buffer a stream completly,
+#
+# &0    mixed   input
+# &1    mixed   output
+# $?    0       OK
+# $?    1       ERROR
 function bufferStream()
 {
     echo -n "$(cat -)"
     return $?
 }
 
+##
+# Get the version number of Bashor.
+#
+# &0    string  version number
+# $?    0       OK
+# $?    1       ERROR
 function getBashorVersion()
 {
     echo '1.0.0'

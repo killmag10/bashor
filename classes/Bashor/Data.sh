@@ -230,6 +230,17 @@ function CLASS_Bashor_Data_getValues()
     return 1
 }
 
+##
+# Get count of items
+#
+# $?    0:OK    1:ERROR
+function CLASS_Bashor_Data_count()
+{
+    : ${OBJECT:?}
+
+    this get data | wc -l    
+    return "$?"
+}
 
 ##
 # Clear data.
