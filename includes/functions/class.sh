@@ -500,6 +500,15 @@ function this()
             _objectIsset "$dataVarName" "$2"
             return $?
             ;;
+        count)
+            _objectCount "$dataVarName"
+            return $?
+            ;;
+        key)
+            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            _objectKey "$dataVarName" "$2"
+            return $?
+            ;;
         *)
             error "\"$1\" is not a option of this!"
             ;;
@@ -562,7 +571,7 @@ function _objectSet()
     local key=$(echo "$2" | encodeData)
     
     local data="${!1}"
-    data=$(echo "$key $value"; echo -n "$data" | grep -v "^${key}[[:space:]]\+.*$")
+    data=$(echo -n "$data" | grep -v "^${key}[[:space:]]\+.*$"; echo "$key $value";)
     eval "$1"'="$data"'
     
     return $?
@@ -610,6 +619,45 @@ function _objectGet()
     fi
     
     return 1
+}
+
+##
+# Get the count of the object vars.
+#
+# $1    string  var name
+# $?    0       OK
+# $?    1       ERROR
+# &0    integer count
+function _objectCount()
+{
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    
+    if [ -z "${!1}" ]; then
+        echo 0 
+        return 0
+    fi
+    
+    echo "${!1}" | wc -l    
+    return 0
+}
+
+##
+# Get the keys of the object vars.
+#
+# $1    string  var name
+# $?    0       OK
+# $?    1       ERROR
+# &0    integer count
+function _objectKey()
+{
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    [ -z "$2" ] && error '2: Parameter empty or not set'
+    
+    local IFS=$'\n'
+    local data=(`echo "${!1}"`);
+    [ "$2" -ge "${#data[@]}" ] && return 1;
+    echo "${data[$2]}" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
+    return $?
 }
 
 ##

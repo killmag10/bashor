@@ -88,6 +88,7 @@ function checkRegexLines()
 doTest 'Object';
 doTest 'Getopt';
 doTest 'Getopts';
+doTest 'List';
 doTest 'Param';
 doTest 'Cache/File';
 doTest 'Color';
