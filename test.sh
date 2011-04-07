@@ -89,6 +89,7 @@ doTest 'Object';
 doTest 'Getopt';
 doTest 'Getopts';
 doTest 'List';
+doTest 'List/Iterable';
 doTest 'Param';
 doTest 'Cache/File';
 doTest 'Color';
