@@ -234,12 +234,12 @@ function isset()
     case "$1" in
         var)
             [ -z "$2" ] && error '2: Parameter empty or not set'
-            declare -p "$2" 2>/dev/null > /dev/null
+            issetVar "$2"
             return $?
             ;;
         function)
             [ -z "$2" ] && error '2: Parameter empty or not set'
-            declare -F "$2" > /dev/null
+            issetFunction "$2"
             return $?
             ;;           
         *)
@@ -247,6 +247,30 @@ function isset()
             return 1
             ;;
     esac    
+}
+
+##
+# Isset a var
+#
+# $1    string  name
+# $?    0       set
+# $?    1       not set
+function issetVar()
+{   
+    declare -p "$1" &>/dev/null
+    return $? 
+}
+
+##
+# Isset a function
+#
+# $1    string  name
+# $?    0       set
+# $?    1       not set
+function issetFunction()
+{  
+    declare -F "$1" &> /dev/null
+    return $? 
 }
 
 ##

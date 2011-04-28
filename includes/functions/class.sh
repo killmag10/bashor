@@ -47,8 +47,7 @@ function loadClassOnce()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    eval '[ -n "$_BASHOR_CLASS_'"$1"'_LOADED" ] && return 0'
-    loadClass "$1"
+    eval '[ -n "$_BASHOR_CLASS_'"$1"'_LOADED" ]' || loadClass "$1"
     return $?
 }
 
@@ -85,7 +84,7 @@ function addClass()
     eval "$pointer"_DATA=
     unset -v namespace pointer
     
-    declare -F CLASS_"$1"___load > /dev/null
+    issetFunction CLASS_"$1"___load
     if [ "$?" == 0 ]; then
         class "$1" __load
         return $?
@@ -126,7 +125,7 @@ function _createExtendedClassFunctions()
     for f in $fList; do
         fNameParent=CLASS_"$2"_"$f"
         fNameNew=CLASS_"$1"_"$f"
-        if [ -z "$3" ] || ! isset function "$fNameNew"; then
+        if [ -z "$3" ] || ! issetFunction "$fNameNew"; then
             eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return $?;}'
         fi
     done
@@ -143,11 +142,10 @@ function class()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
-        
+    
     local CLASS_NAME="$1"    
     local CLASS_TOP_NAME="$CLASS_NAME"
     local OBJECT_NAME= OBJECT= OBJECT_POINTER= STATIC=1
-
     shift
     _call "$@"
     return $?
@@ -200,13 +198,13 @@ function object()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
-    isset var "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
+    issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
     
-    local OBJECT_NAME="$2"
-    local STATIC= OBJECT=1
-    eval 'local CLASS_NAME="$'"$1"'_CLASS"'
-    local OBJECT_POINTER="$1"
-    local CLASS_TOP_NAME="$CLASS_NAME"
+    local OBJECT_NAME OBJECT_POINTER CLASS_TOP_NAME CLASS_NAME STATIC= OBJECT=1
+    OBJECT_NAME="$2"
+    eval 'CLASS_NAME="$'"$1"'_CLASS"'
+    OBJECT_POINTER="$1"
+    CLASS_TOP_NAME="$CLASS_NAME"
     
     shift 1;
     _call "$@"
@@ -223,12 +221,12 @@ function object()
 function serialize()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
-    isset var "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
+    issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
     
     eval 'local CLASS_NAME="$'"$1"'_CLASS"'
     local OBJECT_POINTER="$1"
     
-    if isset function CLASS_"$CLASS_NAME"___sleep; then
+    if issetFunction CLASS_"$CLASS_NAME"___sleep; then
         object "$OBJECT_POINTER" __sleep
     fi
     
@@ -267,7 +265,7 @@ function unserialize()
     _objectLoadData "$OBJECT_POINTER"_DATA "$data";
     local res="$?"
     
-    if isset function CLASS_"$CLASS_NAME"___wakeup; then
+    if issetFunction CLASS_"$CLASS_NAME"___wakeup; then
         object "$OBJECT_POINTER" __wakeup
     fi
     
@@ -283,8 +281,7 @@ function unserialize()
 # $?    1       ERROR
 function _call()
 {    
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    
+    [ -z "$1" ] && error '1: Parameter empty or not set'    
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
       
     eval '[ -z "$_BASHOR_CLASS_'"$CLASS_NAME"'" ]' \
@@ -292,14 +289,14 @@ function _call()
     
     local FUNCTION_NAME="$1"
     local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
-    if declare -f "$fName" > /dev/null; then
+    if issetFunction "$fName"; then
         shift
         "$fName" "$@"
         return $?
     fi
 
     fName=CLASS_"$CLASS_NAME"___call
-    if declare -f "$fName" > /dev/null; then
+    if issetFunction "$fName"; then
         "$fName" "$@"
         return $?
     fi
@@ -328,7 +325,7 @@ function new()
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
     eval "$2"="$OBJECT_POINTER"
-    if isset function CLASS_"$CLASS_NAME"___construct; then
+    if issetFunction CLASS_"$CLASS_NAME"___construct; then
         shift 2
         object "$OBJECT_POINTER" __construct "$@"
     fi
@@ -363,7 +360,7 @@ function clone()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
-    isset var "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
+    issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
         
     local varname="$2"
     local pointer1="$1"
@@ -378,7 +375,7 @@ function clone()
     local OBJECT_POINTER="$pointer2"
     unset -v pointer1 pointer2 varname
         
-    declare -F | grep '^declare -f CLASS_'"$CLASS_NAME"'___clone$' > /dev/null
+    issetFunction CLASS_"$CLASS_NAME"___clone
     if [ "$?" == 0 ]; then
         object "$OBJECT_POINTER" __clone
         return $?
@@ -396,26 +393,13 @@ function clone()
 function remove()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
-    isset var "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
-    _objectRemove "$1"
-    return $?
-}
-
-##
-# Remove a object.
-#
-# $1    string  pointer
-# $?    0       OK
-# $?    1       ERROR
-function _objectRemove()
-{
-    [ -z "$1" ] && error '1: Parameter empty or not set' 
+    issetVar "$1"_CLASS || error 'Pointer "'"$1"'" is not a Object!'
 
     local res=0
     local OBJECT_POINTER="$1"
     eval 'local CLASS_NAME="$'"$OBJECT_POINTER"'_CLASS"'
         
-    declare -F | grep '^declare -f CLASS_'"$CLASS_NAME"'___destruct$' > /dev/null
+    issetFunction CLASS_"$CLASS_NAME"___destruct
     if [ "$?" == 0 ]; then
         object "$OBJECT_POINTER" __destruct
         res=$?
@@ -439,8 +423,8 @@ function _generatePointer()
 {
     local pointer
     while true; do
-        pointer="$(date +_BASHOR_POINTER_%s%N_$RANDOM)"
-        isset var "$pointer" || break
+        pointer="$(date +_BASHOR_POINTER_%s%N)"
+        issetVar "$pointer" || break
     done;
     eval "$pointer"=
     echo "$pointer"
