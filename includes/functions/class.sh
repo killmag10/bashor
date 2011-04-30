@@ -198,12 +198,12 @@ function object()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
-    issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
+    [ -z "$1"'_CLASS' ] && error 'Pointer "'"$1"'" is not a Object!'
     
     local OBJECT_NAME OBJECT_POINTER CLASS_TOP_NAME CLASS_NAME STATIC= OBJECT=1
     OBJECT_NAME="$2"
-    eval 'CLASS_NAME="$'"$1"'_CLASS"'
     OBJECT_POINTER="$1"
+    eval 'CLASS_NAME="$'"$1"'_CLASS"'
     CLASS_TOP_NAME="$CLASS_NAME"
     
     shift 1;
@@ -288,16 +288,14 @@ function _call()
          && error "No class $CLASS_NAME found!"
     
     local FUNCTION_NAME="$1"
-    local fName=CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"
-    if issetFunction "$fName"; then
+    if issetFunction CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"; then
         shift
-        "$fName" "$@"
+        CLASS_"$CLASS_NAME"_"$FUNCTION_NAME" "$@"
         return $?
     fi
 
-    fName=CLASS_"$CLASS_NAME"___call
-    if issetFunction "$fName"; then
-        "$fName" "$@"
+    if issetFunction CLASS_"$CLASS_NAME"___call; then
+        CLASS_"$CLASS_NAME"___call "$@"
         return $?
     fi
     
@@ -317,10 +315,9 @@ function new()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
+    
     local CLASS_NAME="$1"
-    
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
-    
     local OBJECT_POINTER="$(_generatePointer)"
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
@@ -393,22 +390,19 @@ function clone()
 function remove()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
-    issetVar "$1"_CLASS || error 'Pointer "'"$1"'" is not a Object!'
+    [ -z "$1"_CLASS ] && error 'Pointer "'"$1"'" is not a Object!'
 
-    local res=0
+    local CLASS_NAME res=0
     local OBJECT_POINTER="$1"
-    eval 'local CLASS_NAME="$'"$OBJECT_POINTER"'_CLASS"'
+    eval 'CLASS_NAME="$'"$OBJECT_POINTER"'_CLASS"'
         
-    issetFunction CLASS_"$CLASS_NAME"___destruct
-    if [ "$?" == 0 ]; then
+    if issetFunction CLASS_"$CLASS_NAME"___destruct; then
         object "$OBJECT_POINTER" __destruct
         res=$?
     fi
     
-    unset -v "$OBJECT_POINTER"_DATA    
-    unset -v "$OBJECT_POINTER"_ID
-    unset -v "$OBJECT_POINTER"_CLASS
-    unset -v "$OBJECT_POINTER"
+    unset -v "$OBJECT_POINTER"_DATA "$OBJECT_POINTER"_ID
+    unset -v "$OBJECT_POINTER"_CLASS "$OBJECT_POINTER"
     
     return "$res"
 }
@@ -519,11 +513,11 @@ function parent()
             [ -z "$2" ] && error '2: Parameter empty or not set' 
             shift
 			_call "$@"
-			return=$?
+			return $?
             ;;
         exists)
             [ -n "$CLASS_NAME" ]
-            return=$?
+            return $?
             ;;
         *)
             error "\"$1\" is not a option of parent!"
