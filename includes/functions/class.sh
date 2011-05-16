@@ -63,7 +63,6 @@ function __autoloadClass()
     return $?
 }
 
-
 ##
 # Add Class functions.
 #
@@ -77,8 +76,8 @@ function addClass()
     
     eval _BASHOR_CLASS_"$1"_LOADED=1
     local namespace='_BASHOR_CLASS_'"$1"  
-    local pointer="$(_generatePointer)"
-    eval '[ -z "$'"$namespace"'_EXTENDS" ] && _addStdClass '"$1"   
+    local pointer="$(_bashor_generatePointer)"
+    eval '[ -z "$'"$namespace"'_EXTENDS" ] && _bashor_addStdClass '"$1"   
     eval "$namespace"='"$1"'
     eval "$namespace"'_POINTER='"$pointer"
     eval "$pointer"_DATA=
@@ -99,11 +98,11 @@ function addClass()
 # $1    string  class
 # $?    0       OK
 # $?    1       ERROR
-function _addStdClass()
+function _bashor_addStdClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    _createExtendedClassFunctions "$1" Class 1
+    _bashor_createExtendedClassFunctions "$1" Class 1
     eval '_BASHOR_CLASS_'"$1"'_EXTENDS=Class'
     return 0
 }
@@ -115,7 +114,7 @@ function _addStdClass()
 # $2    string  parent class
 # $?    0       OK
 # $?    1       ERROR
-function _createExtendedClassFunctions()
+function _bashor_createExtendedClassFunctions()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -147,7 +146,7 @@ function class()
     local CLASS_TOP_NAME="$CLASS_NAME"
     local OBJECT_NAME= OBJECT= OBJECT_POINTER= STATIC=1
     shift
-    _call "$@"
+    _bashor_call "$@"
     return $?
 }
 
@@ -158,7 +157,7 @@ function class()
 # $2    mixed   data
 # $?    0       OK
 # $?    1       ERROR
-function _objectLoadData()
+function _bashor_objectLoadData()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ "$#" -lt 2 ] && error '2: Parameter not set'
@@ -177,7 +176,7 @@ function _objectLoadData()
 # $1    string  var name
 # $?    0       OK
 # $?    1       ERROR
-function _objectSaveData()
+function _bashor_objectSaveData()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     echo 'bashor dump 1.0.0 objectData'
@@ -207,7 +206,7 @@ function object()
     CLASS_TOP_NAME="$CLASS_NAME"
     
     shift 1;
-    _call "$@"
+    _bashor_call "$@"
     return $?
 }
 
@@ -230,7 +229,7 @@ function serialize()
         object "$OBJECT_POINTER" __sleep
     fi
     
-    _objectSaveData "$OBJECT_POINTER"_DATA
+    _bashor_objectSaveData "$OBJECT_POINTER"_DATA
     return $?
 }
 
@@ -257,12 +256,12 @@ function unserialize()
     local header="$(echo "$data" | head -n $dataLine)"
     
     local CLASS_NAME=$(echo "$header" | sed -n 's/^CLASS_NAME=//1p')
-    local OBJECT_POINTER="$(_generatePointer)"
+    local OBJECT_POINTER="$(_bashor_generatePointer)"
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
     eval "$1"="$OBJECT_POINTER"
 
-    _objectLoadData "$OBJECT_POINTER"_DATA "$data";
+    _bashor_objectLoadData "$OBJECT_POINTER"_DATA "$data";
     local res="$?"
     
     if issetFunction CLASS_"$CLASS_NAME"___wakeup; then
@@ -279,7 +278,7 @@ function unserialize()
 # $@    mixed   method params
 # $?    0       OK
 # $?    1       ERROR
-function _call()
+function _bashor_call()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'    
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
@@ -288,14 +287,15 @@ function _call()
          && error "No class $CLASS_NAME found!"
     
     local FUNCTION_NAME="$1"
+    
     if issetFunction CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"; then
         shift
         CLASS_"$CLASS_NAME"_"$FUNCTION_NAME" "$@"
         return $?
     fi
 
-    if issetFunction CLASS_"$CLASS_NAME"___call; then
-        CLASS_"$CLASS_NAME"___call "$@"
+    if issetFunction CLASS_"$CLASS_NAME"___bashor_call; then
+        CLASS_"$CLASS_NAME"___bashor_call "$@"
         return $?
     fi
     
@@ -318,7 +318,7 @@ function new()
     
     local CLASS_NAME="$1"
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
-    local OBJECT_POINTER="$(_generatePointer)"
+    local OBJECT_POINTER="$(_bashor_generatePointer)"
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
     eval "$2"="$OBJECT_POINTER"
@@ -343,7 +343,7 @@ function extends()
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
     eval '_BASHOR_CLASS_'"$1"'_EXTENDS'"='$2'"
-    _createExtendedClassFunctions "$1" "$2"    
+    _bashor_createExtendedClassFunctions "$1" "$2"    
     return 0
 }
 
@@ -361,7 +361,7 @@ function clone()
         
     local varname="$2"
     local pointer1="$1"
-    local pointer2="$(_generatePointer)"
+    local pointer2="$(_bashor_generatePointer)"
     shift 2
         
     eval 'local CLASS_NAME="$'"$pointer1"'_CLASS"'
@@ -413,7 +413,7 @@ function remove()
 # &1    pointer pointer id
 # $?    0       OK
 # $?    1       ERROR
-function _generatePointer()
+function _bashor_generatePointer()
 {
     local pointer
     while true; do
@@ -440,7 +440,7 @@ function this()
         call)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
             shift
-            _call "$@"
+            _bashor_call "$@"
             return $?
             ;;
         pointer)
@@ -459,32 +459,32 @@ function this()
     case "$1" in
         get)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
-            _objectGet "$dataVarName" "$2"
+            _bashor_objectGet "$dataVarName" "$2"
             return $?
             ;;
         set)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
             [ "$#" -lt 3 ] && error '3: Parameter not set'
-            _objectSet "$dataVarName" "$2" "$3"
+            _bashor_objectSet "$dataVarName" "$2" "$3"
             return $?
             ;;
         unset)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
-            _objectUnset "$dataVarName" "$2"
+            _bashor_objectUnset "$dataVarName" "$2"
             return $?
             ;;
         isset)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
-            _objectIsset "$dataVarName" "$2"
+            _bashor_objectIsset "$dataVarName" "$2"
             return $?
             ;;
         count)
-            _objectCount "$dataVarName"
+            _bashor_objectCount "$dataVarName"
             return $?
             ;;
         key)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
-            _objectKey "$dataVarName" "$2"
+            _bashor_objectKey "$dataVarName" "$2"
             return $?
             ;;
         *)
@@ -512,7 +512,7 @@ function parent()
             [ -z "$CLASS_NAME" ] && error 'parent: Parameter empty or not set' 
             [ -z "$2" ] && error '2: Parameter empty or not set' 
             shift
-			_call "$@"
+			_bashor_call "$@"
 			return $?
             ;;
         exists)
@@ -536,7 +536,7 @@ function parent()
 # $?    0       OK
 # $?    1       ERROR
 # &0    string  Data
-function _objectSet()
+function _bashor_objectSet()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
@@ -562,7 +562,7 @@ function _objectSet()
 # $2    string  key
 # $?    0       OK
 # $?    1       ERROR
-function _objectUnset()
+function _bashor_objectUnset()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
@@ -583,7 +583,7 @@ function _objectUnset()
 # $?    0       OK
 # $?    1       ERROR
 # &0    string  Data
-function _objectGet()
+function _bashor_objectGet()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set' 
@@ -606,7 +606,7 @@ function _objectGet()
 # $?    0       OK
 # $?    1       ERROR
 # &0    integer count
-function _objectCount()
+function _bashor_objectCount()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -626,7 +626,7 @@ function _objectCount()
 # $?    0       OK
 # $?    1       ERROR
 # &0    integer count
-function _objectKey()
+function _bashor_objectKey()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -645,7 +645,7 @@ function _objectKey()
 # $2    string  key
 # $?    0       OK
 # $?    1       ERROR
-function _objectIsset()
+function _bashor_objectIsset()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
