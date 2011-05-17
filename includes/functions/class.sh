@@ -64,6 +64,17 @@ function __autoloadClass()
 }
 
 ##
+# Hook for class routing.
+#
+# $CLASS_NAME   string  class name what will be call
+# $?    0       OK
+# $?    1       ERROR
+function __hookClassRouter()
+{    
+    return 0
+}
+
+##
 # Add Class functions.
 #
 # $1    string  class
@@ -143,6 +154,7 @@ function class()
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
     local CLASS_NAME="$1"    
+    __hookClassRouter || return 1
     local CLASS_TOP_NAME="$CLASS_NAME"
     local OBJECT_NAME= OBJECT= OBJECT_POINTER= STATIC=1
     shift
@@ -317,6 +329,7 @@ function new()
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
     local CLASS_NAME="$1"
+    __hookClassRouter || return 1
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
     local OBJECT_POINTER="$(_bashor_generatePointer)"
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
