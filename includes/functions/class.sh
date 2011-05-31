@@ -87,7 +87,8 @@ function addClass()
     
     eval _BASHOR_CLASS_"$1"_LOADED=1
     local namespace='_BASHOR_CLASS_'"$1"  
-    local pointer="$(_bashor_generatePointer)"
+    local pointer
+    _bashor_generatePointer pointer object
     eval '[ -z "$'"$namespace"'_EXTENDS" ] && _bashor_addStdClass '"$1"   
     eval "$namespace"='"$1"'
     eval "$namespace"'_POINTER='"$pointer"
@@ -208,8 +209,10 @@ function _bashor_objectSaveData()
 function object()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
-    [ -z "$1"'_CLASS' ] && error 'Pointer "'"$1"'" is not a Object!'
+    [ -z "$2" ] && error '2: Parameter empty or not set'   
+    if [ ! "${!1}" == 'object' ] || [[ ! "$1" =~ ^_BASHOR_POINTER_ ]]; then
+        error 'Pointer "'"$1"'" is not a Object!'
+    fi
     
     local OBJECT_NAME OBJECT_POINTER CLASS_TOP_NAME CLASS_NAME STATIC= OBJECT=1
     OBJECT_NAME="$2"
@@ -268,7 +271,8 @@ function unserialize()
     local header="$(echo "$data" | head -n $dataLine)"
     
     local CLASS_NAME=$(echo "$header" | sed -n 's/^CLASS_NAME=//1p')
-    local OBJECT_POINTER="$(_bashor_generatePointer)"
+    local OBJECT_POINTER
+    _bashor_generatePointer OBJECT_POINTER object
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
     eval "$1"="$OBJECT_POINTER"
@@ -331,7 +335,8 @@ function new()
     local CLASS_NAME="$1"
     __hookClassRouter || return 1
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
-    local OBJECT_POINTER="$(_bashor_generatePointer)"
+    local OBJECT_POINTER
+    _bashor_generatePointer OBJECT_POINTER object
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
     eval "$2"="$OBJECT_POINTER"
@@ -374,7 +379,8 @@ function clone()
         
     local varname="$2"
     local pointer1="$1"
-    local pointer2="$(_bashor_generatePointer)"
+    local pointer2
+    _bashor_generatePointer pointer2 object
     shift 2
         
     eval 'local CLASS_NAME="$'"$pointer1"'_CLASS"'
@@ -423,18 +429,22 @@ function remove()
 ##
 # Generate a pointer id.
 #
+# $1    string  output var name
+# $2    string  pointer type
 # &1    pointer pointer id
 # $?    0       OK
 # $?    1       ERROR
 function _bashor_generatePointer()
 {
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    
     local pointer
     while true; do
-        pointer="$(date +_BASHOR_POINTER_%s%N)"
+        pointer=_BASHOR_POINTER_"$(date +%s%N)"
         issetVar "$pointer" || break
     done;
-    eval "$pointer"=
-    echo "$pointer"
+    eval "$pointer"="$2"
+    eval "$1"="$pointer"
     return 0
 }
 
@@ -668,5 +678,20 @@ function _bashor_objectIsset()
     data=$(echo "$data" | grep "^$key ")
     return $?
 }
+
+##
+# Check if it is a Pointer of a object.
+#
+# $1    mixed   string to check
+# $?    0       OK
+# $?    1       ERROR
+function isObject()
+{
+    [ -z "$1" ] && error '1: Parameter empty or not set'   
+    
+    [ "${!1}" == 'object' ] && [[ "$1" =~ ^_BASHOR_POINTER_ ]]
+    return $?
+}
+
 
 . "$BASHOR_PATH_INCLUDES/Class.sh"
