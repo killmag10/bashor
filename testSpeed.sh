@@ -53,3 +53,57 @@ for i in `seq 1000`; do
 done
 echo $SECONDS;
 
+echo -n 'OBJ PARALLEL NEW: ';
+SECONDS=0;
+for i in `seq 100`; do
+    new Bashor_Data 'Data_'"$i"
+done
+echo $SECONDS;
+
+echo -n 'OBJ PARALLEL SET: ';
+SECONDS=0;
+for i in `seq 100`; do
+    p='Data_'"$i"
+    p="${!p}"
+    object "$p" set 'test' 't'"$i"
+done
+echo $SECONDS;
+
+echo -n 'OBJ PARALLEL GET: ';
+SECONDS=0;
+for i in `seq 100`; do
+    p='Data_'"$i"
+    p="${!p}"
+    out="`object "$p" get 'test' 't'"$i"`"
+    [ "$out" == 't'"$i" ] || echo 'ERROR ON t'"$i" >&2
+done
+echo $SECONDS;
+
+echo -n 'OBJ PARALLEL SERIALIZE: ';
+SECONDS=0;
+for i in `seq 100`; do
+    p='Data_'"$i"
+    p="${!p}"
+    tmp="`serialize "$p"`"
+    unserialize 'Data_'"$i" "$tmp"
+done
+echo $SECONDS;
+
+echo -n 'OBJ PARALLEL GET: ';
+SECONDS=0;
+for i in `seq 100`; do
+    p='Data_'"$i"
+    p="${!p}"
+    out="`object "$p" get 'test' 't'"$i"`"
+    [ "$out" == 't'"$i" ] || echo 'ERROR ON t'"$i" >&2
+done
+echo $SECONDS;
+
+echo -n 'OBJ PARALLEL REMOVE: ';
+SECONDS=0;
+for i in `seq 100`; do
+    p='Data_'"$i"
+    remove "${!p}"
+done
+echo $SECONDS;
+
