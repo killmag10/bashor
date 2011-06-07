@@ -438,13 +438,13 @@ function _bashor_generatePointer()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    local pointer
+    local _bashor_temp_pointer
     while true; do
-        pointer=_BASHOR_POINTER_"$(date +%s%N)"
-        issetVar "$pointer" || break
+        _bashor_temp_pointer=_BASHOR_POINTER_"$(date +%s%N)"
+        issetVar "$_bashor_temp_pointer" || break
     done;
-    eval "$pointer"="$2"
-    eval "$1"="$pointer"
+    eval "$_bashor_temp_pointer"="$2"
+    eval "$1"="$_bashor_temp_pointer"
     return 0
 }
 
