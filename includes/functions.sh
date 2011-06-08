@@ -292,27 +292,39 @@ function inList()
 
 function encodeData()
 {
-    if [ "$BASHOR_USE_PEAR_BASE64" == 1 ]; then
-        local -x DATAIN
-        local IFS=
-        while read -d '' -r -n 300 DATAIN; do
-            perl -MMIME::Base64 -e 'print encode_base64($ENV{"DATAIN"},"")'
-        done
-        if [ -n "$DATAIN" ]; then
-            perl -MMIME::Base64 -e 'print encode_base64($ENV{"DATAIN"},"")'
-        fi
-    else
-        base64 -w 0
-    fi
+    case "$BASHOR_BASE64_USE" in
+        openssl)
+            openssl enc -a -A
+            ;;
+        perl)
+            local -x DATAIN
+            local IFS=
+            while read -d '' -r -n 300 DATAIN; do
+                perl -MMIME::Base64 -e 'print encode_base64($ENV{"DATAIN"},"")'
+            done
+            if [ -n "$DATAIN" ]; then
+                perl -MMIME::Base64 -e 'print encode_base64($ENV{"DATAIN"},"")'
+            fi
+            ;;
+        *) #base64
+            base64 -w 0
+            ;;
+    esac
 }
 
 function decodeData()
 {
-    if [ "$BASHOR_USE_PEAR_BASE64" == 1 ]; then
-        perl -MMIME::Base64 -e 'print decode_base64(<stdin>)'
-    else
-        base64 -d
-    fi
+    case "$BASHOR_BASE64_USE" in
+        openssl)
+            openssl enc -a -A -d
+            ;;
+        perl)
+            perl -MMIME::Base64 -e 'print decode_base64(<stdin>)'
+            ;;
+        *) #base64
+            base64 -d
+            ;;
+    esac
 }
 
 ##

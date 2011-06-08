@@ -21,7 +21,7 @@
 export BASHOR_CLASS_AUTOLOAD="1";
 
 # Compatibility
-export BASHOR_USE_PEAR_BASE64="0"; # 0|1
+export BASHOR_BASE64_USE="base64"; # openssl|perl|base64
 export BASHOR_USE_GETOPT="1"; # 0|1
 export BASHOR_MODE_COMPATIBLE="0";
 
