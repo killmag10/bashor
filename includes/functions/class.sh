@@ -360,6 +360,7 @@ function extends()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
+    [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$2"
     eval '_BASHOR_CLASS_'"$1"'_EXTENDS'"='$2'"
     _bashor_createExtendedClassFunctions "$1" "$2"    
     return 0
