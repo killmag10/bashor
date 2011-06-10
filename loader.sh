@@ -35,7 +35,7 @@ export BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
 . "$BASHOR_PATH_CONFIG";
 
 # Add debuging channel
-exec 3>&1;
+exec 3>&2;
 
 # Load general functions
 . "${BASHOR_PATH_INCLUDES}/functions.sh";
