@@ -570,10 +570,10 @@ function _bashor_objectSet()
     else
         local value=$(echo "$3" | encodeData)
     fi
-    local key=$(echo "$2" | encodeData)
     
-    local data="${!1}"
-    data=$(echo -n "$data" | grep -v "^${key}[[:space:]]\+.*$"; echo "$key $value";)
+    local key=$(echo "$2" | encodeData)
+    local data=$(echo -n "${!1}" \
+        | grep -v "^${key}[[:space:]]\+.*$"; echo "$key $value";)
     eval "$1"'="$data"'
     
     return $?
@@ -591,9 +591,8 @@ function _bashor_objectUnset()
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
-    local data="${!1}"
     local key=$(echo "$2" | encodeData)
-    data=$(echo "$data" | grep -v "^${key}[[:space:]]\+.*$")
+    local data=$(echo "${!1}" | grep -v "^${key}[[:space:]]\+.*$")
     eval "$1"'="$data"'
     
     return $?
@@ -674,9 +673,8 @@ function _bashor_objectIsset()
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
-    local data="${!1}"
     local key=$(echo "$2" | encodeData)
-    data=$(echo "$data" | grep "^$key ")
+    data=$(echo "${!1}" | grep "^$key ")
     return $?
 }
 

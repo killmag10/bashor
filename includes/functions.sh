@@ -123,7 +123,7 @@ function signalErrBacktrace()
     [ "$BASHOR_ERROR_BACKTRACE" == 1 ] && \
         getBacktrace | tail -n +2  | sed 's#^#    #'
 }
-trap 'signalErrBacktrace' ERR
+#trap 'signalErrBacktrace' ERR
 
 ##
 # error message

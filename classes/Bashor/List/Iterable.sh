@@ -50,8 +50,7 @@ function CLASS_Bashor_List_Iterable_next()
     : ${OBJECT:?}
     
     local iterator=`this get iterator`
-    ((iterator++))
-    this set iterator $iterator
+    this set iterator $((++iterator))
 }
 
 ##
@@ -70,9 +69,7 @@ function CLASS_Bashor_List_Iterable_valid()
 {
     : ${OBJECT:?}
     
-    local iterator=`this get iterator`
-    local data="`this get 'data'`"
-    [ "$iterator" -lt "`object "$data" count`" ]
+    [ "`this get iterator`" -lt "`parent call count`" ]
     return $?
 }
 
@@ -82,13 +79,11 @@ function CLASS_Bashor_List_Iterable_key()
 {
     : ${OBJECT:?}
     
-    local data="`this get 'data'`"
     if [ "$#" -gt 0 ]; then
-        object "$data" key "$1"
+        parent call key "$1"
         return $?
     fi    
     
-    local iterator=`this get iterator`
-    object "$data" key $iterator
+    object "`this get 'data'`" key "`this get iterator`"
     return $?
 }

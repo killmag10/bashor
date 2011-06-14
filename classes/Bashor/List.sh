@@ -24,10 +24,9 @@ function CLASS_Bashor_List___construct()
 {    
     : ${OBJECT:?}
     
-    local data;
+    local data
     new Bashor_List_Data data
-    this set 'data' "$data"
-    this set 'iterator' 0
+    this set data "$data"
     
     return 0
 }
@@ -45,8 +44,7 @@ function CLASS_Bashor_List_set()
     : ${1:?}
     : ${2?}
 
-    local data="`this get 'data'`"
-    object "$data" set "$1" "$2"
+    object "`this get 'data'`" set "$1" "$2"
     return $?
 }
 
@@ -60,8 +58,7 @@ function CLASS_Bashor_List_unset()
     : ${OBJECT:?}
     : ${1:?}
     
-    local data="`this get 'data'`"
-    object "$data" unset "$1"
+    object "`this get 'data'`" unset "$1"
     return $?
 }
 
@@ -76,8 +73,7 @@ function CLASS_Bashor_List_get()
     : ${OBJECT:?}
     : ${1:?}
     
-    local data="`this get 'data'`"
-    object "$data" get "$1"
+    object "`this get 'data'`" get "$1"
     return $?
 }
 
@@ -92,8 +88,7 @@ function CLASS_Bashor_List_isset()
     : ${OBJECT:?}
     : ${1:?}
     
-    local data="`this get 'data'`"
-    object "$data" isset "$1"
+    object "`this get 'data'`" isset "$1"
     return $?
 }
 
@@ -108,8 +103,7 @@ function CLASS_Bashor_List_key()
     : ${OBJECT:?}
     : ${1:?}
     
-    local data="`this get 'data'`"
-    object "$data" key "$1"
+    object "`this get 'data'`" key "$1"
     return $?
 }
 
@@ -121,21 +115,34 @@ function CLASS_Bashor_List_count()
 {
     : ${OBJECT:?}
 
-    local data="`this get 'data'`"
-    object "$data" count
+    object "`this get 'data'`" count
     return $?
 }
 
 ##
-# Get count of items
+# On sleep
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_List_current()
+function CLASS_Bashor_List___sleep()
 {
     : ${OBJECT:?}
 
-    local data="`this get 'data'`"
-    local key="`this get 'iterator'`"
-    object "$data" get "`object "$data" key 'iterator'`"
+    local data="`this get data`"
+    this set serializedData "`serialize $data`"
     return $?
 }
+
+##
+# On wakeup
+#
+# $?    0:OK    1:ERROR
+function CLASS_Bashor_List___wakeup()
+{
+    : ${OBJECT:?}
+
+    local data
+    unserialize data "`this get serializedData`"
+    this set data "$data"
+    return $?
+}
+
