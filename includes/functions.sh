@@ -340,18 +340,6 @@ function bufferStream()
     return $?
 }
 
-##
-# Get the version number of Bashor.
-#
-# &0    string  version number
-# $?    0       OK
-# $?    1       ERROR
-function getBashorVersion()
-{
-    echo '1.0.0'
-    return 0
-}
-
 . "$BASHOR_PATH_INCLUDES/functions/class.sh"
 
 # load opt function

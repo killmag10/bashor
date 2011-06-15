@@ -16,6 +16,19 @@
 ################################################################################
 
 ##
+# Create a file lock
+#
+# @see flock
+# $?    0:OK    1:LOCKED    2:ERROR
+function CLASS_Bashor_Lock_lock()
+{
+    : ${1:?}
+    
+    flock "$@"
+    return "$?"
+}
+
+##
 # Get lock filename.
 #
 # $1    string  Id

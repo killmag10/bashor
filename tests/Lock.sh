@@ -22,7 +22,7 @@ checkSimple "filename" "$res" "abc.lock";
 
 lockfile="$TEST_TEMP_DIR/$res";
 {
-    flock 200;
+    class Bashor_Lock lock 200;
     
     class Bashor_Lock checkRead "$lockfile";
     checkSimple "checkRead locked" "$?" "1";

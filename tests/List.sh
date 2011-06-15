@@ -27,6 +27,9 @@ checkSimple "set 1" "$?" "0";
 object "$Data" set "bli" "`dd if=\"$TEST_RESOURCE_DIR/random.dat\" bs=32K count=1 2>/dev/null`";
 checkSimple "set 2" "$?" "0";
 
+SData="`serialize $Data`";
+checkSimple "serialize" "$?" "0";
+
 res=`object "$Data" get "test"`;
 checkSimple "get 1" "$res" "blub 123blub";
 
@@ -64,6 +67,37 @@ object "$Data" unset "bli";
 
 res=`object "$Data" count`;
 checkSimple "count 0" "$res" "0";
+
+remove "$Data";
+checkSimple "remove object" "$?" "0";
+
+
+unserialize Data "$SData";
+checkSimple "unserialize" "$?" "0";
+
+res=`object "$Data" get "test"`;
+checkSimple "get 1" "$res" "blub 123blub";
+
+res=`object "$Data" get "bli"`;
+checkSimple "get 2" "$res" "`dd if=\"$TEST_RESOURCE_DIR/random.dat\" bs=32K count=1 2>/dev/null`";
+
+object "$Data" isset "test";
+checkSimple "isset isset 1" "$?" "0";
+
+res=`object "$Data" key 0`;
+checkSimple "key 0 return 2" "$?" "0";
+checkSimple "key 0" "$res" "test";
+
+res=`object "$Data" key 1`;
+checkSimple "key 1 return 2" "$?" "0";
+checkSimple "key 1" "$res" "bli";
+
+res=`object "$Data" key 2`;
+checkSimple "key 2 return 2" "$?" "1";
+checkSimple "key 2" "$res" "";
+
+res=`object "$Data" count`;
+checkSimple "count 2" "$res" "2";
 
 remove "$Data";
 checkSimple "remove object" "$?" "0";

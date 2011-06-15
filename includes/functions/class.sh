@@ -234,15 +234,18 @@ function object()
 # $?    1       ERROR
 function serialize()
 {    
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
-    
-    eval 'local CLASS_NAME="$'"$1"'_CLASS"'
-    local OBJECT_POINTER="$1"
-    
-    if issetFunction CLASS_"$CLASS_NAME"___sleep; then
-        object "$OBJECT_POINTER" __sleep
-    fi
+    {
+        [ -z "$1" ] && error '1: Parameter empty or not set'
+        issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
+        
+        local OBJECT_POINTER
+        clone "$1" OBJECT_POINTER
+        eval 'local CLASS_NAME="$'"$OBJECT_POINTER"'_CLASS"'
+        
+        if issetFunction CLASS_"$CLASS_NAME"___sleep; then
+            object "$OBJECT_POINTER" __sleep
+        fi
+    } 1>/dev/null
     
     _bashor_objectSaveData "$OBJECT_POINTER"_DATA
     return $?
@@ -258,30 +261,31 @@ function serialize()
 function unserialize()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
     
     if [ "$#" -lt 2 ] && [ -p /dev/stdin ]; then
-        local data=$(cat -)
+        local _bashor_temp_data=$(cat -)
     else
-        local data="$2"
+        local _bashor_temp_data="$2"
     fi
     
-    local dataLine=$(echo "$data" | grep '^DATA=' -n | sed 's/:.*$//')
-    ((dataLine--))
-    local header="$(echo "$data" | head -n $dataLine)"
+    local _bashor_temp_dataLine=$(
+        echo "$_bashor_temp_data" | grep '^DATA=' -n | sed 's/:.*$//'
+    )
+    ((_bashor_temp_dataLine--))
+    local _bashor_temp_header="$(echo "$_bashor_temp_data" | head -n $_bashor_temp_dataLine)"
     
-    local CLASS_NAME=$(echo "$header" | sed -n 's/^CLASS_NAME=//1p')
+    local CLASS_NAME=$(echo "$_bashor_temp_header" | sed -n 's/^CLASS_NAME=//1p')
     local OBJECT_POINTER
     _bashor_generatePointer OBJECT_POINTER object
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
     eval "$1"="$OBJECT_POINTER"
 
-    _bashor_objectLoadData "$OBJECT_POINTER"_DATA "$data";
+    _bashor_objectLoadData "$OBJECT_POINTER"_DATA "$_bashor_temp_data";
     local res="$?"
     
     if issetFunction CLASS_"$CLASS_NAME"___wakeup; then
-        object "$OBJECT_POINTER" __wakeup
+        object "$OBJECT_POINTER" __wakeup 1>/dev/null
     fi
     
     return $res
@@ -691,6 +695,5 @@ function isObject()
     [ "${!1}" == 'object' ] && [[ "$1" =~ ^_BASHOR_POINTER_ ]]
     return $?
 }
-
 
 . "$BASHOR_PATH_INCLUDES/Class.sh"
