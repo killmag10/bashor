@@ -15,28 +15,28 @@
 ################################################################################
 
 # Directorys
-[ -z "$BASHOR_LOG_FILE" ] && export BASHOR_LOG_FILE="./error.log";
+[ -z "$BASHOR_LOG_FILE" ] && BASHOR_LOG_FILE="./error.log";
 
 # Performance
-export BASHOR_CLASS_AUTOLOAD="1";
+BASHOR_CLASS_AUTOLOAD="1";
 
 # Compatibility
-export BASHOR_BASE64_USE="base64"; # openssl|perl|base64
-export BASHOR_USE_GETOPT="1"; # 0|1
-export BASHOR_MODE_COMPATIBLE="0";
+BASHOR_BASE64_USE="base64"; # openssl|perl|base64
+BASHOR_USE_GETOPT="1"; # 0|1
+BASHOR_MODE_COMPATIBLE="0";
 
 # Options
-export BASHOR_ERROR_LOG="1";
-export BASHOR_ERROR_OUTPUT="1";
-export BASHOR_ERROR_BACKTRACE="1";
+BASHOR_ERROR_LOG="1";
+BASHOR_ERROR_OUTPUT="1";
+BASHOR_ERROR_BACKTRACE="1";
 
-export BASHOR_WARNING_LOG="1";
-export BASHOR_WARNING_OUTPUT="1";
-export BASHOR_WARNING_BACKTRACE="1";
+BASHOR_WARNING_LOG="1";
+BASHOR_WARNING_OUTPUT="1";
+BASHOR_WARNING_BACKTRACE="1";
 
-export BASHOR_DEBUG_LOG="1";
-export BASHOR_DEBUG_OUTPUT="1";
-export BASHOR_DEBUG_BACKTRACE="1";
+BASHOR_DEBUG_LOG="1";
+BASHOR_DEBUG_OUTPUT="1";
+BASHOR_DEBUG_BACKTRACE="1";
 
 # Bash options
 set -B # enable brace expansion;

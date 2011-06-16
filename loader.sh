@@ -23,13 +23,13 @@ fi
 export NL=$'\n';
 
 # Set paths
-export BASHOR_PATH;
-export BASHOR_PATH_INCLUDES="${BASHOR_PATH}/includes";
-export BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
+BASHOR_PATH_INCLUDES="${BASHOR_PATH}/includes";
+BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
 
 # Defaults
-[ -z "BASHOR_LOG_FILE" ] && export BASHOR_LOG_FILE="./error.log";
-[ -z "$BASHOR_PATH_CONFIG" ] && export BASHOR_PATH_CONFIG="${BASHOR_PATH}/config.sh";
+[ -z "BASHOR_LOG_FILE" ] && BASHOR_LOG_FILE="./error.log";
+[ -z "$BASHOR_PATH_CONFIG" ] && BASHOR_PATH_CONFIG="${BASHOR_PATH}/config.sh";
+BASHOR_BACKTRACE_REMOVE=0;
 
 # Load Config
 . "$BASHOR_PATH_CONFIG";

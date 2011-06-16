@@ -126,6 +126,105 @@ function signalErrBacktrace()
 #trap 'signalErrBacktrace' ERR
 
 ##
+# Error handler call
+#
+# $1    string  message
+# $2    integer|null return value for exit default=1
+# &3    string  error messages
+# $?    0       OK
+# $?    1       Use internal error handler
+function __handleError()
+{
+    return 1
+}
+
+
+##
+# Internal error handler
+#
+# $1    string  message
+# $2    integer|null return value for exit default=1
+# &3    string  error messages
+function _bashor_handleError()
+{
+    : ${1:?}
+    if [ -n "$BASHOR_ERROR" ]; then
+        echo 'Error in error handling!' >&2
+        exit 1
+    fi
+    local BASHOR_ERROR=ERROR;
+    local BASHOR_BACKTRACE_REMOVE=$((BASHOR_BACKTRACE_REMOVE+2))
+    
+    __handleError "$@"
+    [ "$?" = 0 ] && return 0
+    
+    local type="$1"
+    local message="$2"
+    local exit="${3-1}"
+    local prefix=
+    local backtrace=
+    local showBacktrace=
+    local showOutput=
+    local doLog=
+    local colorFG='red'
+    local colorFGStyle='bold'
+    
+    case "$type" in
+        error)
+            prefix='ERROR: '
+            showOutput="$BASHOR_ERROR_OUTPUT"
+            showBacktrace="$BASHOR_ERROR_BACKTRACE"
+            doLog="$BASHOR_ERROR_LOG"
+            ;;
+        warning)
+            prefix='WARNING: '
+            showOutput="$BASHOR_WARNING_OUTPUT"
+            showBacktrace="$BASHOR_WARNING_BACKTRACE"
+            doLog="$BASHOR_WARNING_LOG"
+            colorFG='yellow'
+            exit=
+            ;;
+        debug)
+            prefix='DEBUG: '
+            showOutput="$BASHOR_DEBUG_OUTPUT"
+            showBacktrace="$BASHOR_DEBUG_BACKTRACE"
+            doLog="$BASHOR_DEBUG_LOG"
+            colorFG='white'
+            exit=
+            ;;
+        *)
+            prefix='ERROR: '
+            showOutput="$BASHOR_ERROR_OUTPUT"
+            showBacktrace="$BASHOR_ERROR_BACKTRACE"
+            doLog="$BASHOR_ERROR_LOG"
+            ;;
+    esac
+        
+    [ "$showBacktrace" = 1 ] && backtrace=$(
+        getBacktrace | tail -n +"$BASHOR_BACKTRACE_REMOVE"  | sed 's#^#    #'
+    )
+    
+    if [ "$showOutput" = 1 ]; then
+        loadClassOnce 'Bashor_Color'
+        {
+            echo "$message" | sed "s/^/$prefix/g"
+            [ -n "$backtrace" ] && echo "$backtrace"
+        } | class Bashor_Color fg '' "$colorFG" "$colorFGStyle" 1>&3
+    fi
+    
+    if [ "$doLog" = 1 ]; then
+        loadClassOnce "Bashor_Log"
+        {
+            echo "$message" | sed "s/^/$prefix/g"
+            [ -n "$backtrace" ] && echo "$backtrace"
+        } | class Bashor_Log error
+    fi
+    
+    [ -n "$exit" ] && exit "$exit"
+    return 0
+}
+
+##
 # error message
 #
 # $1    string  message
@@ -134,31 +233,10 @@ function signalErrBacktrace()
 function error()
 {
     : ${1:?}
-    if [ -n "$BASHOR_ERROR" ]; then
-        echo 'Error in error handling!' >&2
-        exit 1
-    fi
-    local BASHOR_ERROR=ERROR;
     
-    local pre='ERROR: '
-    local msg="$1"
-    [ $BASHOR_ERROR_BACKTRACE == 1 ] \
-        && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
-    if [ $BASHOR_ERROR_OUTPUT == 1 ]; then
-        loadClassOnce "Bashor_Color"
-        msgOut=$(echo "$msg" | sed "s/^/$pre/g")
-        [ $BASHOR_ERROR_BACKTRACE == 1 ] \
-            && local msgOut="$msgOut""$NL""$trace"
-        echo "$msgOut" | class Bashor_Color fg '' 'red' 'bold' 1>&3
-    fi
-    if [ $BASHOR_ERROR_LOG == 1 ]; then
-        loadClassOnce "Bashor_Log"
-        msgLog="$msg"
-        [ $BASHOR_ERROR_BACKTRACE == 1 ] \
-            && local msgLog="$msgOut""$NL""$trace"
-        echo "$msgLog" | class Bashor_Log error
-    fi
-    exit ${2:-1}
+    local BASHOR_BACKTRACE_REMOVE
+    ((BASHOR_BACKTRACE_REMOVE++))
+    _bashor_handleError error "$@"
 }
 
 ##
@@ -170,25 +248,9 @@ function warning()
 {
     : ${1:?}
     
-    local pre='WARNING: '
-    local msg="$1"
-    [ $BASHOR_WARNING_BACKTRACE == 1 ] \
-        && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
-    if [ $BASHOR_WARNING_OUTPUT == 1 ]; then
-        loadClassOnce "Bashor_Color"
-        
-        msgOut=$(echo "$msg" | sed "s/^/$pre/g")
-        [ $BASHOR_WARNING_BACKTRACE == 1 ] \
-            && local msgOut="$msgOut""$NL""$trace"
-        echo "$msgOut" | class Bashor_Color fg '' 'yellow' 'bold' 1>&3
-    fi
-    if [ $BASHOR_WARNING_LOG == 1 ]; then
-        loadClassOnce "Bashor_Log"
-        msgLog="$msg"
-        [ $BASHOR_WARNING_BACKTRACE == 1 ] \
-            && local msgLog="$msgOut""$NL""$trace"
-        echo "$msgLog" | class Bashor_Log warning
-    fi
+    local BASHOR_BACKTRACE_REMOVE
+    ((BASHOR_BACKTRACE_REMOVE++))
+    _bashor_handleError warning "$@"
 }
 
 ##
@@ -200,24 +262,9 @@ function debug()
 {
     : ${1:?}
     
-    local pre='DEBUG: '
-    local msg="$1"
-    [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
-        && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
-    if [ $BASHOR_DEBUG_OUTPUT == 1 ]; then
-        loadClassOnce "Bashor_Color"
-        msgOut=$(echo "$msg" | sed "s/^/$pre/g")
-        [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
-            && local msgOut="$msgOut""$NL""$trace"
-        echo "$msgOut" | class Bashor_Color fg '' 'white' 'bold' 1>&3
-    fi
-    if [ $BASHOR_DEBUG_LOG == 1 ]; then
-        loadClassOnce "Bashor_Log"
-        msgLog="$msg"
-        [ $BASHOR_DEBUG_BACKTRACE == 1 ] \
-            && local msgLog="$msgOut""$NL""$trace"
-        echo "$msgLog" | class Bashor_Log debug
-    fi
+    local BASHOR_BACKTRACE_REMOVE
+    ((BASHOR_BACKTRACE_REMOVE++))
+    _bashor_handleError debug "$@"
 }
 
 ##
