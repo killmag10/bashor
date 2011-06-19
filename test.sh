@@ -85,23 +85,23 @@ function checkRegexLines()
     printResult "$1" "$?";
 }
 
-doTest 'Object';
-doTest 'Getopt';
-doTest 'Getopts';
-doTest 'List';
-doTest 'List/Iterable';
-doTest 'Param';
-doTest 'Cache/File';
-doTest 'Color';
-doTest 'Lock';
-doTest 'Hash';
-doTest 'Registry';
-doTest 'Data';
-doTest 'Session';
-doTest 'String';
-doTest 'Log';
-doTest 'Escape';
-doTest 'Temp';
-doTest 'Terminal';
+doTest 'classes/Object';
+doTest 'classes/Getopt';
+doTest 'classes/Getopts';
+doTest 'classes/List';
+doTest 'classes/List/Iterable';
+doTest 'classes/Param';
+doTest 'classes/Cache/File';
+doTest 'classes/Color';
+doTest 'classes/Lock';
+doTest 'classes/Hash';
+doTest 'classes/Registry';
+doTest 'classes/Data';
+doTest 'classes/Session';
+doTest 'classes/String';
+doTest 'classes/Log';
+doTest 'classes/Escape';
+doTest 'classes/Temp';
+doTest 'classes/Terminal';
 
 printFinalResult;
