@@ -102,7 +102,7 @@ function CLASS_Bashor_List_Data_key()
 }
 
 ##
-# Get count of items
+# Get count of items.
 #
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_List_Data_count()
@@ -112,3 +112,16 @@ function CLASS_Bashor_List_Data_count()
     this count
     return "$?"
 }
+
+##
+# Remove all items.
+#
+# $?    0:OK    1:ERROR
+function CLASS_Bashor_List_Data_clear()
+{
+    : ${OBJECT:?}
+
+    this clear
+    return "$?"
+}
+

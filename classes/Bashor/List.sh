@@ -32,6 +32,58 @@ function CLASS_Bashor_List___construct()
 }
 
 ##
+# Add item to list.
+#
+# $1    string  data
+# $?    0:OK    1:ERROR
+# &0    string  Data
+function CLASS_Bashor_List_add()
+{
+    : ${OBJECT:?}
+    : ${1?}
+
+    local data="`this get data`"    
+    local count="`object "$data" count`"
+    while object "$data" isset "$count"; do
+        ((count++))
+    done
+
+    object "$data" set "$count" "$1"
+    return $?
+}
+
+##
+# Get the list in Lines.
+#
+# $?    0:EXISTS    1:NOT FOUND
+# &1    string Data 
+function CLASS_Bashor_List_asLines()
+{
+    : ${OBJECT:?}
+    
+    this call rewind
+    while this call valid; do
+        this call current        
+        this call next
+    done
+    return 0
+}
+
+
+##
+# Clear the list.
+#
+# $?    0:OK    1:ERROR
+function CLASS_Bashor_List_clear()
+{
+    : ${OBJECT:?}
+
+    object "`this get 'data'`" clear
+    return $?
+}
+
+
+##
 # Set item in list.
 #
 # $1    string  key
