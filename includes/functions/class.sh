@@ -21,7 +21,7 @@
 # $1    string  namespace
 # $?    0       OK
 # $?    1       ERROR
-function loadClass()
+loadClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -43,7 +43,7 @@ function loadClass()
 # $1    string  namespace
 # $?    0       OK
 # $?    1       ERROR
-function loadClassOnce()
+loadClassOnce()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -57,7 +57,7 @@ function loadClassOnce()
 # $1    string  class
 # $?    0       OK
 # $?    1       ERROR
-function __autoloadClass()
+__autoloadClass()
 {
     loadClassOnce "$1"
     return $?
@@ -69,7 +69,7 @@ function __autoloadClass()
 # $CLASS_NAME   string  class name what will be call
 # $?    0       OK
 # $?    1       ERROR
-function __hookClassRouter()
+__hookClassRouter()
 {    
     return 0
 }
@@ -81,7 +81,7 @@ function __hookClassRouter()
 # $@    mixed  params
 # $?    0       OK
 # $?    1       ERROR
-function addClass()
+addClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -110,7 +110,7 @@ function addClass()
 # $1    string  class
 # $?    0       OK
 # $?    1       ERROR
-function _bashor_addStdClass()
+_bashor_addStdClass()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -126,7 +126,7 @@ function _bashor_addStdClass()
 # $2    string  parent class
 # $?    0       OK
 # $?    1       ERROR
-function _bashor_createExtendedClassFunctions()
+_bashor_createExtendedClassFunctions()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -149,7 +149,7 @@ function _bashor_createExtendedClassFunctions()
 # $2    string  function name
 # $@    mixed   method params
 # $?    *       all of class method
-function class()
+class()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -164,13 +164,28 @@ function class()
 }
 
 ##
+# Check if a class exists.
+#
+# $1    string  class name
+# $?    0       FOUND
+# $?    1       NOT FOUND
+classExists()
+{
+    [ -z "$1" ] && error '1: Parameter empty or not set'
+    
+    local classVarName=_BASHOR_CLASS_"$1"
+    [ -n "${!classVarName}" ]
+    return $?
+}
+
+##
 # Load object data
 #
 # $1    string  var name
 # $2    mixed   data
 # $?    0       OK
 # $?    1       ERROR
-function _bashor_objectLoadData()
+_bashor_objectLoadData()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ "$#" -lt 2 ] && error '2: Parameter not set'
@@ -189,7 +204,7 @@ function _bashor_objectLoadData()
 # $1    string  var name
 # $?    0       OK
 # $?    1       ERROR
-function _bashor_objectSaveData()
+_bashor_objectSaveData()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     echo 'bashor dump 1.0.0 objectData'
@@ -206,7 +221,7 @@ function _bashor_objectSaveData()
 # $2    string  function name
 # $@    mixed   method params
 # $?    *       all of class method
-function object()
+object()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'   
@@ -232,7 +247,7 @@ function object()
 # &1    string  serialized data
 # $?    0       OK
 # $?    1       ERROR
-function serialize()
+serialize()
 {    
     {
         [ -z "$1" ] && error '1: Parameter empty or not set'
@@ -258,7 +273,7 @@ function serialize()
 # $2    string  serialized data
 # $?    0       OK
 # $?    1       ERROR
-function unserialize()
+unserialize()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -298,7 +313,7 @@ function unserialize()
 # $@    mixed   method params
 # $?    0       OK
 # $?    1       ERROR
-function _bashor_call()
+_bashor_call()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'    
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
@@ -331,7 +346,7 @@ function _bashor_call()
 # $@    mixed   method params
 # $?    0       OK
 # $?    1       ERROR
-function new()
+new()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -359,7 +374,7 @@ function new()
 # $2    string  parent class name
 # $?    0       OK
 # $?    1       ERROR
-function extends()
+extends()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -376,11 +391,11 @@ function extends()
 # $1    string  object name
 # $2    string  object name
 # $?    *       all of class method __clone
-function clone()
+clone()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
-    issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
+    isObject "$1" || error 'Pointer "'"$1"'" is not a Object!'
         
     local varname="$2"
     local pointer1="$1"
@@ -411,7 +426,7 @@ function clone()
 # $1    tring  pointer
 # $?    0       OK
 # $?    1       ERROR
-function remove()
+remove()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$1"_CLASS ] && error 'Pointer "'"$1"'" is not a Object!'
@@ -439,7 +454,7 @@ function remove()
 # &1    pointer pointer id
 # $?    0       OK
 # $?    1       ERROR
-function _bashor_generatePointer()
+_bashor_generatePointer()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -456,10 +471,20 @@ function _bashor_generatePointer()
 ##
 # Access to the object.
 #
+# call [method]:    call a method of the current class/object
+# pointer:          get the pointer of the object
+# get [key]:        get the contend of a var from the object/class
+# set [key]:        set the contend of a var from the object/class
+# unset [key]:      remove a var from the object/class
+# isset [key]:      check if a var from the object/class is set
+# count:            get the count of vars from the object/class
+# key:              get the key of a var from the object/class var list
+# clear:            remove all vars from a object/class
+#
 # $1    string  action (call,pointer,get,set,unset,isset)
 # $@    mixed   params
 # $?    *       all of class method
-function this()
+this()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set' 
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
@@ -515,6 +540,10 @@ function this()
             _bashor_objectKey "$dataVarName" "$2"
             return $?
             ;;
+        clear)
+             _bashor_objectClear "$dataVarName"
+            return $?
+            ;;
         *)
             error "\"$1\" is not a option of this!"
             ;;
@@ -529,7 +558,7 @@ function this()
 # $1    string  action (call,exists)
 # $@    mixed   params
 # $?    *       all of class method
-function parent()
+parent()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set' 
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
@@ -564,7 +593,7 @@ function parent()
 # $?    0       OK
 # $?    1       ERROR
 # &0    string  Data
-function _bashor_objectSet()
+_bashor_objectSet()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
@@ -590,7 +619,7 @@ function _bashor_objectSet()
 # $2    string  key
 # $?    0       OK
 # $?    1       ERROR
-function _bashor_objectUnset()
+_bashor_objectUnset()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
@@ -610,7 +639,7 @@ function _bashor_objectUnset()
 # $?    0       OK
 # $?    1       ERROR
 # &0    string  Data
-function _bashor_objectGet()
+_bashor_objectGet()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set' 
@@ -633,7 +662,7 @@ function _bashor_objectGet()
 # $?    0       OK
 # $?    1       ERROR
 # &0    integer count
-function _bashor_objectCount()
+_bashor_objectCount()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -647,13 +676,25 @@ function _bashor_objectCount()
 }
 
 ##
+# Remove all vars of the object.
+#
+# $1    string  var name
+# $?    0       OK
+# $?    1       ERROR
+_bashor_objectClear()
+{
+    eval "$1"'='  
+    return 0
+}
+
+##
 # Get the keys of the object vars.
 #
 # $1    string  var name
 # $?    0       OK
 # $?    1       ERROR
 # &0    integer count
-function _bashor_objectKey()
+_bashor_objectKey()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -672,13 +713,13 @@ function _bashor_objectKey()
 # $2    string  key
 # $?    0       OK
 # $?    1       ERROR
-function _bashor_objectIsset()
+_bashor_objectIsset()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     [ -z "$2" ] && error '2: Parameter empty or not set'  
     
     local key=$(echo "$2" | encodeData)
-    data=$(echo "${!1}" | grep "^$key ")
+    echo "${!1}" | grep "^$key " >/dev/null
     return $?
 }
 
@@ -688,7 +729,7 @@ function _bashor_objectIsset()
 # $1    mixed   string to check
 # $?    0       OK
 # $?    1       ERROR
-function isObject()
+isObject()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     

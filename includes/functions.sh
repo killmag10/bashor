@@ -22,7 +22,7 @@
 # $2    string  new function name
 # $?    0       OK
 # $?    1       ERROR
-function copyFunction()
+copyFunction()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -38,7 +38,7 @@ function copyFunction()
 # $2    string  new function name
 # $?    0       OK
 # $?    1       ERROR
-function renameFunction()
+renameFunction()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
@@ -55,7 +55,7 @@ function renameFunction()
 # &1    string  prepared input
 # $?    0       OK
 # $?    1       ERROR
-function prepareOutput()
+prepareOutput()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -70,7 +70,7 @@ function prepareOutput()
 # &1    string  files with line number per line
 # $?    0       OK
 # $?    1       ERROR
-function getBacktrace()
+getBacktrace()
 {    
     local res='1'
     local pos=0
@@ -91,7 +91,7 @@ function getBacktrace()
 # ) 2>&1 >&101 | handleError
 #
 # &0    string  error stream
-function handleError()
+handleError()
 {    
     [ $BASHOR_ERROR_OUTPUT == 1 ] && loadClassOnce "Bashor_Color"
     [ $BASHOR_ERROR_LOG == 1 ] && loadClassOnce "Bashor_Log"
@@ -118,7 +118,7 @@ function handleError()
 ##
 # Backtrace for error signal
 # &1    string  files with line number per line
-function signalErrBacktrace()
+signalErrBacktrace()
 {
     [ "$BASHOR_ERROR_BACKTRACE" == 1 ] && \
         getBacktrace | tail -n +2  | sed 's#^#    #'
@@ -133,7 +133,7 @@ function signalErrBacktrace()
 # &3    string  error messages
 # $?    0       OK
 # $?    1       Use internal error handler
-function __handleError()
+__handleError()
 {
     return 1
 }
@@ -145,7 +145,7 @@ function __handleError()
 # $1    string  message
 # $2    integer|null return value for exit default=1
 # &3    string  error messages
-function _bashor_handleError()
+_bashor_handleError()
 {
     : ${1:?}
     if [ -n "$BASHOR_ERROR" ]; then
@@ -230,7 +230,7 @@ function _bashor_handleError()
 # $1    string  message
 # $2    integer|null return value for exit default=1
 # &3    string  error messages
-function error()
+error()
 {
     : ${1:?}
     
@@ -244,7 +244,7 @@ function error()
 #
 # $1    string  message
 # &3    string  warning messages
-function warning()
+warning()
 {
     : ${1:?}
     
@@ -258,7 +258,7 @@ function warning()
 #
 # $1    string  message
 # &3    string  debug messages
-function debug()
+debug()
 {
     : ${1:?}
     
@@ -274,7 +274,7 @@ function debug()
 # $2    string  name
 # $?    0       set
 # $?    1       not set
-function isset()
+isset()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
@@ -302,7 +302,7 @@ function isset()
 # $1    string  name
 # $?    0       set
 # $?    1       not set
-function issetVar()
+issetVar()
 {   
     declare -p "$1" &>/dev/null
     return $? 
@@ -314,7 +314,7 @@ function issetVar()
 # $1    string  name
 # $?    0       set
 # $?    1       not set
-function issetFunction()
+issetFunction()
 {  
     declare -F "$1" &> /dev/null
     return $? 
@@ -327,7 +327,7 @@ function issetFunction()
 # $@    mixed   list of values
 # $?    0       in list
 # $?    1       not in list
-function inList()
+inList()
 {
     local value IFS=$'\n' search="$1"
     shift
@@ -337,7 +337,7 @@ function inList()
     return 1
 }
 
-function encodeData()
+encodeData()
 {
     case "$BASHOR_BASE64_USE" in
         openssl)
@@ -359,7 +359,7 @@ function encodeData()
     esac
 }
 
-function decodeData()
+decodeData()
 {
     case "$BASHOR_BASE64_USE" in
         openssl)
@@ -381,7 +381,7 @@ function decodeData()
 # &1    mixed   output
 # $?    0       OK
 # $?    1       ERROR
-function bufferStream()
+bufferStream()
 {
     echo -n "$(cat -)"
     return $?
