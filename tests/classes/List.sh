@@ -99,5 +99,19 @@ checkSimple "key 2" "$res" "";
 res=`object "$Data" count`;
 checkSimple "count 2" "$res" "2";
 
+object "$Data" add 'a add';
+checkSimple "add" "$?" "0";
+
+res=`object "$Data" count`;
+checkSimple "count 3" "$res" "3";
+
+res=`object "$Data" key 2`;
+checkSimple "key 2 return" "$?" "0";
+checkSimple "key 2" "$res" '2';
+
+res=`object "$Data" get 2`;
+checkSimple "key 2 return" "$?" "0";
+checkSimple "key 2" "$res" 'a add';
+
 remove "$Data";
 checkSimple "remove object" "$?" "0";
