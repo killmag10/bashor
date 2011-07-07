@@ -329,8 +329,8 @@ _bashor_call()
         return $?
     fi
 
-    if issetFunction CLASS_"$CLASS_NAME"___bashor_call; then
-        CLASS_"$CLASS_NAME"___bashor_call "$@"
+    if issetFunction CLASS_"$CLASS_NAME"___call; then
+        CLASS_"$CLASS_NAME"___call "$@"
         return $?
     fi
     
