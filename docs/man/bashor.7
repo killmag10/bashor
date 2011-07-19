@@ -7,541 +7,577 @@
 .B Bashor
 \- an pseudo object extension for bash
 
-.PD 0
+.PD 1
+
 
 .SH GENERAL FUNCTIONS
-
 .TP
-.B copyFunction
+.B bufferStream()
 .RS
-Copy a function
-
 .HP
-.B $1
-.I string
-current function name
-.HP
-.B $2
-.I string
-new function name
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
-
-.TP
-.B renameFunction
-.RS
-Rename a function
-
-.HP
-.B $1
-.I string
-current function name
-.HP
-.B $2
-.I string
-new function name
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
-
-.TP
-.B prepareOutput
-.RS
-Add a prefix for each line.
-
-.HP
-.B $1
-.I string
-prefix
-.HP
+Buffer a stream completly,
 .B &0
-.I string
+.I mixed
 input
-.HP
 .B &1
-.I string
-prepared input
-.HP
+.I mixed
+output
 .B $?
 .I 0
 OK
-.HP
 .B $?
 .I 1
 ERROR
 .RE
 
 .TP
-.B getBacktrace
+.B copyFunction()
 .RS
-Get a baacktrace to the current file.
-
 .HP
-.B &1
-.I string
-files with line number per line
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
-
-.TP
-.B handleError
-.RS
-Handle Errors
-
-exec 101>&1; (
-COMANDS
-) 2>&1 >&101 | handleError
-
-.HP
-.B &0
-.I string
-error stream
-.RE
-
-.TP
-.B signalErrBacktrace
-.RS
-Backtrace for error signal
-.HP
-.B &1
-.I string
-files with line number per line
-.RE
-
-.TP
-.B error
-.RS
-error message
-
-.HP
+Copy a function
 .B $1
 .I string
-message
-.HP
+current function name
 .B $2
-.I integer|null
-return value for exit default=1
-.HP
-.B &3
 .I string
-error messages
+new function name
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
 .RE
 
 .TP
-.B warning
+.B debug()
 .RS
-warning message
-
 .HP
-.B $1
-.I string
-message
-.HP
-.B &3
-.I string
-warning messages
-.RE
-
-.TP
-.B debug
-.RS
 debug message
-
-.HP
 .B $1
 .I string
 message
-.HP
 .B &3
 .I string
 debug messages
 .RE
 
 .TP
-.B isset
+.B error()
 .RS
-Isset a var | function
-
 .HP
+error message
 .B $1
 .I string
-the type (var|function)
-.HP
+message
 .B $2
+.I integer|null
+return value for exit default=1
+.B &3
 .I string
-name
-.HP
-.B $?
-.I 0
-set
-.HP
-.B $?
-.I 1
-not set
+error messages
 .RE
 
 .TP
-.B inList
+.B getBacktrace()
 .RS
-Check if's a value is in the array.
-
 .HP
+Get a baacktrace to the current file.
+.B &1
+.I string
+files with line number per line
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B handleError()
+.RS
+.HP
+Handle Errors
+.HP
+exec 101>&1; (
+.HP
+COMANDS
+.HP
+) 2>&1 >&101 | handleError
+.B &0
+.I string
+error stream
+.RE
+
+.TP
+.B __handleError()
+.RS
+.HP
+Error handler call
+.B $1
+.I string
+message
+.B $2
+.I integer|null
+return value for exit default=1
+.B &3
+.I string
+error messages
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+Use internal error handler
+.RE
+
+.TP
+.B inList()
+.RS
+.HP
+Check if's a value is in the array.
 .B $1
 .I mixed
 search
-.HP
 .B $@
 .I mixed
 list of values
-.HP
 .B $?
 .I 0
 in list
-.HP
 .B $?
 .I 1
 not in list
 .RE
 
 .TP
-.B bufferStream
+.B isset()
 .RS
-Buffer a stream completly,
+.HP
+Isset a var | function
+.B $1
+.I string
+the type (var|function)
+.B $2
+.I string
+name
+.B $?
+.I 0
+set
+.B $?
+.I 1
+not set
+.RE
 
+.TP
+.B issetFunction()
+.RS
 .HP
+Isset a function
+.B $1
+.I string
+name
+.B $?
+.I 0
+set
+.B $?
+.I 1
+not set
+.RE
+
+.TP
+.B issetVar()
+.RS
+.HP
+Isset a var
+.B $1
+.I string
+name
+.B $?
+.I 0
+set
+.B $?
+.I 1
+not set
+.RE
+
+.TP
+.B prepareOutput()
+.RS
+.HP
+Add a prefix for each line.
+.B $1
+.I string
+prefix
 .B &0
-.I mixed
+.I string
 input
-.HP
 .B &1
-.I mixed
-output
-.HP
+.I string
+prepared input
 .B $?
 .I 0
 OK
-.HP
 .B $?
 .I 1
 ERROR
 .RE
 
 .TP
-.B getBashorVersion
+.B renameFunction()
 .RS
-Get the version number of Bashor.
-
 .HP
-.B &0
+Rename a function
+.B $1
 .I string
-version number
-.HP
+current function name
+.B $2
+.I string
+new function name
 .B $?
 .I 0
 OK
-.HP
 .B $?
 .I 1
 ERROR
+.RE
+
+.TP
+.B signalErrBacktrace()
+.RS
+.HP
+Backtrace for error signal
+.B &1
+.I string
+files with line number per line
+.RE
+
+.TP
+.B warning()
+.RS
+.HP
+warning message
+.B $1
+.I string
+message
+.B &3
+.I string
+warning messages
 .RE
 
 .SH CLASS / OBJECT FUNCTIONS
 .TP
-.B loadClass
+.B addClass()
 .RS
-Load class.
-
 .HP
-.B $1
-.I string
-namespace
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
-
-.TP
-.B loadClassOnce
-.RS
-Load class once.
-
-.HP
-.B $1
-.I string
-namespace
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
-
-.TP
-.B addClass
-.RS
 Add Class functions.
-
-.HP
 .B $1
 .I string
 class
-.HP
 .B $@
 .I mixed
 params
-.HP
 .B $?
 .I 0
 OK
-.HP
 .B $?
 .I 1
 ERROR
 .RE
 
 .TP
-.B class
+.B __autoloadClass()
 .RS
+.HP
+Autoloader for Classes
+.B $1
+.I string
+class
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B class()
+.RS
+.HP
 Call a class method
-
-.HP
 .B $1
 .I string
 class name
-.HP
 .B $2
 .I string
 function name
-.HP
 .B $@
 .I mixed
 method params
-.HP
 .B $?
 .I *
 all of class method
 .RE
 
 .TP
-.B object
+.B classExists()
 .RS
-Call a object method
-
 .HP
-.B $1
-.I string
-pointer
-.HP
-.B $2
-.I string
-function name
-.HP
-.B $@
-.I mixed
-method params
-.HP
-.B $?
-.I *
-all of class method
-.RE
-
-.TP
-.B serialize
-.RS
-Serialize a object.
-
-.HP
-.B $1
-.I string
-pointer
-.HP
-.B &1
-.I string
-serialized data
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
-
-.TP
-.B unserialize
-.RS
-Unserialize a object.
-
-.HP
-.B $1
-.I string
-var name
-.HP
-.B $2
-.I string
-serialized data
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
-
-.TP
-.B new
-.RS
-Create a new object from class.
-
-.HP
+Check if a class exists.
 .B $1
 .I string
 class name
-.HP
-.B $2
-.I string
-var name
-.HP
-.B $@
-.I mixed
-method params
-.HP
 .B $?
 .I 0
-OK
-.HP
+FOUND
 .B $?
 .I 1
-ERROR
+NOT FOUND
 .RE
 
 .TP
-.B extends
+.B clone()
 .RS
-Extends a class.
-
 .HP
-.B $1
-.I string
-class name
-.HP
-.B $2
-.I string
-parent class name
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
-
-.TP
-.B clone
-.RS
 Clone object.
-
-.HP
 .B $1
 .I string
 object name
-.HP
 .B $2
 .I string
 object name
-.HP
 .B $?
 .I *
 all of class method __clone
 .RE
 
 .TP
-.B remove
+.B extends()
 .RS
-Remove a object.
-
 .HP
+Extends a class.
 .B $1
-.I tring
-pointer
-.HP
+.I string
+class name
+.B $2
+.I string
+parent class name
 .B $?
 .I 0
 OK
-.HP
 .B $?
 .I 1
 ERROR
 .RE
 
 .TP
-.B this
+.B __hookClassRouter()
 .RS
-Access to the object.
-
 .HP
+Hook for class routing.
+.B $CLASS_NAME
+.I string
+class name what will be call
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B isObject()
+.RS
+.HP
+Check if it is a Pointer of a object.
+.B $1
+.I mixed
+string to check
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B loadClass()
+.RS
+.HP
+Load class.
 .B $1
 .I string
-action (call,pointer,get,set,unset,isset)
+namespace
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B loadClassOnce()
+.RS
 .HP
+Load class once.
+.B $1
+.I string
+namespace
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B new()
+.RS
+.HP
+Create a new object from class.
+.B $1
+.I string
+class name
+.B $2
+.I string
+var name
 .B $@
 .I mixed
-params
+method params
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B object()
+.RS
 .HP
+Call a object method
+.B $1
+.I string
+pointer
+.B $2
+.I string
+function name
+.B $@
+.I mixed
+method params
 .B $?
 .I *
 all of class method
 .RE
 
 .TP
-.B parent
+.B parent()
 .RS
-Access to the parent class.
-
 .HP
+Access to the parent class.
 .B $1
 .I string
 action (call,exists)
-.HP
 .B $@
 .I mixed
 params
-.HP
 .B $?
 .I *
 all of class method
+.RE
+
+.TP
+.B remove()
+.RS
+.HP
+Remove a object.
+.B $1
+.I tring
+pointer
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B serialize()
+.RS
+.HP
+Serialize a object.
+.B $1
+.I string
+pointer
+.B &1
+.I string
+serialized data
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B this()
+.RS
+.HP
+Access to the object.
+.HP
+call [method]:    call a method of the current class/object
+.HP
+pointer:          get the pointer of the object
+.HP
+get [key]:        get the contend of a var from the object/class
+.HP
+set [key]:        set the contend of a var from the object/class
+.HP
+unset [key]:      remove a var from the object/class
+.HP
+isset [key]:      check if a var from the object/class is set
+.HP
+count:            get the count of vars from the object/class
+.HP
+key:              get the key of a var from the object/class var list
+.HP
+clear:            remove all vars from a object/class
+.B $1
+.I string
+action (call,pointer,get,set,unset,isset)
+.B $@
+.I mixed
+params
+.B $?
+.I *
+all of class method
+.RE
+
+.TP
+.B unserialize()
+.RS
+.HP
+Unserialize a object.
+.B $1
+.I string
+var name
+.B $2
+.I string
+serialized data
+.B $?
+.I 0
+OK
+.B $?
+.I 1
+ERROR
 .RE
 
