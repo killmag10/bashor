@@ -88,7 +88,7 @@ addClass()
     eval _BASHOR_CLASS_"$1"_LOADED=1
     local namespace='_BASHOR_CLASS_'"$1"  
     local pointer
-    _bashor_generatePointer pointer object
+    _bashor_generatePointer pointer "$BASHOR_TYPE_OBJECT"
     eval '[ -z "$'"$namespace"'_EXTENDS" ] && _bashor_addStdClass '"$1"   
     eval "$namespace"='"$1"'
     eval "$namespace"'_POINTER='"$pointer"
@@ -225,7 +225,7 @@ object()
 {    
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'   
-    if [ ! "${!1}" == 'object' ] || [[ ! "$1" =~ ^_BASHOR_POINTER_ ]]; then
+    if [ ! "${!1}" == "$BASHOR_TYPE_OBJECT" ] || [[ ! "$1" =~ ^_BASHOR_POINTER_ ]]; then
         error 'Pointer "'"$1"'" is not a Object!'
     fi
     
@@ -291,7 +291,7 @@ unserialize()
     
     local CLASS_NAME=$(echo "$_bashor_temp_header" | sed -n 's/^CLASS_NAME=//1p')
     local OBJECT_POINTER
-    _bashor_generatePointer OBJECT_POINTER object
+    _bashor_generatePointer OBJECT_POINTER "$BASHOR_TYPE_OBJECT"
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
     eval "$1"="$OBJECT_POINTER"
@@ -355,7 +355,7 @@ new()
     __hookClassRouter || return 1
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
     local OBJECT_POINTER
-    _bashor_generatePointer OBJECT_POINTER object
+    _bashor_generatePointer OBJECT_POINTER "$BASHOR_TYPE_OBJECT"
     eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
     eval "$OBJECT_POINTER"_DATA=
     eval "$2"="$OBJECT_POINTER"
@@ -396,24 +396,18 @@ clone()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     isObject "$1" || error 'Pointer "'"$1"'" is not a Object!'
-        
-    local varname="$2"
-    local pointer1="$1"
-    local pointer2
-    _bashor_generatePointer pointer2 object
-    shift 2
-        
-    eval 'local CLASS_NAME="$'"$pointer1"'_CLASS"'
-    eval "$pointer2"'_CLASS="$'"$pointer1"'_CLASS"'
-    eval "$pointer2"'_DATA="$'"$pointer1"'_DATA"'
-    eval "$varname"="$pointer2";
     
-    local OBJECT_POINTER="$pointer2"
-    unset -v pointer1 pointer2 varname
+    local _bashor_temp_newPointer
+    _bashor_generatePointer _bashor_temp_newPointer "$BASHOR_TYPE_OBJECT"
+        
+    eval 'local CLASS_NAME="$'"$1"'_CLASS"'
+    eval "$_bashor_temp_newPointer"'_CLASS="$'"$1"'_CLASS"'
+    eval "$_bashor_temp_newPointer"'_DATA="$'"$1"'_DATA"'
+    eval "$2"="$_bashor_temp_newPointer";
         
     issetFunction CLASS_"$CLASS_NAME"___clone
     if [ "$?" == 0 ]; then
-        object "$OBJECT_POINTER" __clone
+        object "${!2}" __clone
         return $?
     fi
     
@@ -644,11 +638,9 @@ _bashor_objectGet()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set' 
     
-    local data="${!1}"
-    local key=$(echo "$2" | encodeData)
-    data=$(echo "$data" | grep "^$key ")    
+    data=$(echo "${!1}" | grep "$(echo "$2" | encodeData)")    
     if [ $? == 0 ]; then
-        echo "$data" | sed 's#[^[:space:]]\+[[:space:]]\+##' | decodeData
+        echo "$data" | cut -d ' ' -f 2 | decodeData
         return 0
     fi
     
@@ -733,7 +725,7 @@ isObject()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'   
     
-    [ "${!1}" == 'object' ] && [[ "$1" =~ ^_BASHOR_POINTER_ ]]
+    [ "${!1}" == "$BASHOR_TYPE_OBJECT" ] && [[ "$1" =~ ^_BASHOR_POINTER_ ]]
     return $?
 }
 

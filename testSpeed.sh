@@ -55,14 +55,14 @@ echo $SECONDS;
 
 echo -n 'OBJ PARALLEL NEW: ';
 SECONDS=0;
-for i in `seq 100`; do
-    new Bashor_Data 'Data_'"$i"
+for i in `seq 500`; do
+    new Bashor_List_Data 'Data_'"$i"
 done
 echo $SECONDS;
 
 echo -n 'OBJ PARALLEL SET: ';
 SECONDS=0;
-for i in `seq 100`; do
+for i in `seq 500`; do
     p='Data_'"$i"
     p="${!p}"
     object "$p" set 'test' 't'"$i"
@@ -71,7 +71,7 @@ echo $SECONDS;
 
 echo -n 'OBJ PARALLEL GET: ';
 SECONDS=0;
-for i in `seq 100`; do
+for i in `seq 500`; do
     p='Data_'"$i"
     p="${!p}"
     out="`object "$p" get 'test' 't'"$i"`"
@@ -81,7 +81,7 @@ echo $SECONDS;
 
 echo -n 'OBJ PARALLEL SERIALIZE: ';
 SECONDS=0;
-for i in `seq 100`; do
+for i in `seq 500`; do
     p='Data_'"$i"
     p="${!p}"
     tmp="`serialize "$p"`"
@@ -91,7 +91,7 @@ echo $SECONDS;
 
 echo -n 'OBJ PARALLEL GET: ';
 SECONDS=0;
-for i in `seq 100`; do
+for i in `seq 500`; do
     p='Data_'"$i"
     p="${!p}"
     out="`object "$p" get 'test' 't'"$i"`"
@@ -101,7 +101,7 @@ echo $SECONDS;
 
 echo -n 'OBJ PARALLEL REMOVE: ';
 SECONDS=0;
-for i in `seq 100`; do
+for i in `seq 500`; do
     p='Data_'"$i"
     remove "${!p}"
 done

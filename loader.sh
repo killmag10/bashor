@@ -26,6 +26,9 @@ export NL=$'\n';
 BASHOR_PATH_INCLUDES="${BASHOR_PATH}/includes";
 BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
 
+# Add Constants
+. "${BASHOR_PATH_INCLUDES}/constants.sh";
+
 # Defaults
 [ -z "BASHOR_LOG_FILE" ] && BASHOR_LOG_FILE="./error.log";
 [ -z "$BASHOR_PATH_CONFIG" ] && BASHOR_PATH_CONFIG="${BASHOR_PATH}/config.sh";
