@@ -24,6 +24,6 @@
 # $?    1       ERROR
 function CLASS_Bashor_Version_getCurrent()
 {
-    echo '1.1.0'
+    echo '1.2.0'
     return 0
 }

@@ -190,10 +190,8 @@ _bashor_objectLoadData()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ "$#" -lt 2 ] && error '2: Parameter not set'
     
-    local value="$2"
-    local dataLine=$(echo "$value" | grep '^DATA=' -n | sed 's/:.*$//')
-    ((dataLine++))
-    value=$(echo "$value" | tail -n +$dataLine | decodeData)   
+    local dataLine="$(echo "$2" | grep '^DATA=' -n | sed 's/:.*$//')"
+    local value="$(echo "$2" | tail -n +$((++dataLine)) | decodeData)"
     eval "$1"'="$value"'
     return $?
 }
@@ -253,9 +251,10 @@ serialize()
         [ -z "$1" ] && error '1: Parameter empty or not set'
         issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
         
-        local OBJECT_POINTER
+        local OBJECT_POINTER CLASS_NAME
         clone "$1" OBJECT_POINTER
-        eval 'local CLASS_NAME="$'"$OBJECT_POINTER"'_CLASS"'
+        CLASS_NAME="$OBJECT_POINTER"_CLASS
+        CLASS_NAME="${!CLASS_NAME}"
         
         if issetFunction CLASS_"$CLASS_NAME"___sleep; then
             object "$OBJECT_POINTER" __sleep
@@ -276,6 +275,7 @@ serialize()
 unserialize()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
+    local _bashor_temp_dataLine _bashor_temp_header CLASS_NAME
     
     if [ "$#" -lt 2 ] && [ -p /dev/stdin ]; then
         local _bashor_temp_data=$(cat -)
@@ -283,27 +283,25 @@ unserialize()
         local _bashor_temp_data="$2"
     fi
     
-    local _bashor_temp_dataLine=$(
+    _bashor_temp_dataLine=$(
         echo "$_bashor_temp_data" | grep '^DATA=' -n | sed 's/:.*$//'
     )
     ((_bashor_temp_dataLine--))
-    local _bashor_temp_header="$(echo "$_bashor_temp_data" | head -n $_bashor_temp_dataLine)"
+    _bashor_temp_header="$(echo "$_bashor_temp_data" | head -n $_bashor_temp_dataLine)"
     
-    local CLASS_NAME=$(echo "$_bashor_temp_header" | sed -n 's/^CLASS_NAME=//1p')
-    local OBJECT_POINTER
-    _bashor_generatePointer OBJECT_POINTER "$BASHOR_TYPE_OBJECT"
-    eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
-    eval "$OBJECT_POINTER"_DATA=
-    eval "$1"="$OBJECT_POINTER"
+    CLASS_NAME=$(echo "$_bashor_temp_header" | sed -n 's/^CLASS_NAME=//1p')
+    _bashor_generatePointer "${1}" "$BASHOR_TYPE_OBJECT"
+    eval "${!1}"'_CLASS='"$CLASS_NAME"
+    eval "${!1}"_DATA=
 
-    _bashor_objectLoadData "$OBJECT_POINTER"_DATA "$_bashor_temp_data";
-    local res="$?"
+    _bashor_objectLoadData "${!1}"_DATA "$_bashor_temp_data";
+    local _bashor_temp_res="$?"
     
     if issetFunction CLASS_"$CLASS_NAME"___wakeup; then
-        object "$OBJECT_POINTER" __wakeup 1>/dev/null
+        object "${!1}" __wakeup 1>/dev/null
     fi
     
-    return $res
+    return $_bashor_temp_res
 }
 
 ##
@@ -356,9 +354,9 @@ new()
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
     local OBJECT_POINTER
     _bashor_generatePointer OBJECT_POINTER "$BASHOR_TYPE_OBJECT"
-    eval "$OBJECT_POINTER"'_CLASS='"$CLASS_NAME"
+    eval "$OBJECT_POINTER"'_CLASS="$CLASS_NAME"'
     eval "$OBJECT_POINTER"_DATA=
-    eval "$2"="$OBJECT_POINTER"
+    eval "$2"'="$OBJECT_POINTER"'
     if issetFunction CLASS_"$CLASS_NAME"___construct; then
         shift 2
         object "$OBJECT_POINTER" __construct "$@"
@@ -397,16 +395,12 @@ clone()
     [ -z "$2" ] && error '2: Parameter empty or not set'
     isObject "$1" || error 'Pointer "'"$1"'" is not a Object!'
     
-    local _bashor_temp_newPointer
-    _bashor_generatePointer _bashor_temp_newPointer "$BASHOR_TYPE_OBJECT"
-        
+    _bashor_generatePointer "$2" "$BASHOR_TYPE_OBJECT"        
     eval 'local CLASS_NAME="$'"$1"'_CLASS"'
-    eval "$_bashor_temp_newPointer"'_CLASS="$'"$1"'_CLASS"'
-    eval "$_bashor_temp_newPointer"'_DATA="$'"$1"'_DATA"'
-    eval "$2"="$_bashor_temp_newPointer";
-        
-    issetFunction CLASS_"$CLASS_NAME"___clone
-    if [ "$?" == 0 ]; then
+    eval "${!2}"'_CLASS="$'"$1"'_CLASS"'
+    eval "${!2}"'_DATA="$'"$1"'_DATA"'
+    
+    if issetFunction CLASS_"$CLASS_NAME"___clone; then
         object "${!2}" __clone
         return $?
     fi
@@ -639,12 +633,10 @@ _bashor_objectGet()
     [ -z "$2" ] && error '2: Parameter empty or not set' 
     
     data=$(echo "${!1}" | grep "$(echo "$2" | encodeData)")    
-    if [ $? == 0 ]; then
-        echo "$data" | cut -d ' ' -f 2 | decodeData
-        return 0
-    fi
+    [ $? == 0 ] || return 1
     
-    return 1
+    echo "$data" | cut -d ' ' -f 2 | decodeData
+    return 0
 }
 
 ##
@@ -727,6 +719,26 @@ isObject()
     
     [ "${!1}" == "$BASHOR_TYPE_OBJECT" ] && [[ "$1" =~ ^_BASHOR_POINTER_ ]]
     return $?
+}
+
+##
+# Check if you are in a object call otherwise it will trow a error.
+#
+# $?    0       OK
+# $?    1       ERROR
+requireObject()
+{
+    [ -z "$OBJECT" ] && error 'Not a object call!'
+}
+
+##
+# Check if you are in a static call otherwise it will trow a error.
+#
+# $?    0       OK
+# $?    1       ERROR
+requireStatic()
+{
+    [ -z "$Static" ] && error 'Not a static call!'
 }
 
 . "$BASHOR_PATH_INCLUDES/Class.sh"

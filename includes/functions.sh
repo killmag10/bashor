@@ -27,7 +27,7 @@ copyFunction()
     [ -z "$1" ] && error '1: Parameter empty or not set'
     [ -z "$2" ] && error '2: Parameter empty or not set'
     
-    eval "$(echo "function $2"; declare -f "$1" | tail -n +2;)"
+    eval "$(echo "$2"(); declare -f "$1" | tail -n +2;)"
     return $?
 }
 
@@ -59,7 +59,7 @@ prepareOutput()
 {
     [ -z "$1" ] && error '1: Parameter empty or not set'
     
-    local msg IFS=$'\n\r'
+    local msg
     while read msg; do echo "$1$msg"; done
     return 0
 }
@@ -79,7 +79,6 @@ getBacktrace()
         [ -n "$res" ] && echo "$pos: $res"
         ((pos++))
     done
-    [ -n "$res" ]
     return 0
 }
 
@@ -232,7 +231,7 @@ _bashor_handleError()
 # &3    string  error messages
 error()
 {
-    : ${1:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
     
     local BASHOR_BACKTRACE_REMOVE
     ((BASHOR_BACKTRACE_REMOVE++))
@@ -246,7 +245,7 @@ error()
 # &3    string  warning messages
 warning()
 {
-    : ${1:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
     
     local BASHOR_BACKTRACE_REMOVE
     ((BASHOR_BACKTRACE_REMOVE++))
@@ -260,7 +259,7 @@ warning()
 # &3    string  debug messages
 debug()
 {
-    : ${1:?}
+    [ -z "$1" ] && error '1: Parameter empty or not set'
     
     local BASHOR_BACKTRACE_REMOVE
     ((BASHOR_BACKTRACE_REMOVE++))
@@ -375,7 +374,7 @@ decodeData()
 }
 
 ##
-# Buffer a stream completly,
+# Buffer a stream completly otherwise it will trow a error.
 #
 # &0    mixed   input
 # &1    mixed   output
@@ -385,6 +384,47 @@ bufferStream()
 {
     echo -n "$(cat -)"
     return $?
+}
+
+##
+# Check if the Params are correct otherwise it will trow a error.
+#
+# Config String:
+# R     Is set and not empty
+# S     Is set
+#
+# Example: needParamCount 4 $#
+#
+# $1    string  Config String
+# $@    mixed   All Params
+# $?    0       OK
+# $?    1       ERROR
+requireParams()
+{
+    local config="$1"    
+    if [ "$#" -le "${#config}" ]; then
+        local paramCount="$#"
+        error "$((++paramCount)): Parameter not set"
+    fi
+    
+    local current=0
+    while shift; do
+        case "${config:$current:1}" in
+            R)
+                if [ -z "$1" ]; then
+                    error "$((current+1)): Parameter empty but required"
+                fi
+                ;;
+            S)
+                ;;
+            '')
+                ;;
+            *)
+                error "${config:$current:1} = $current not allowd in config \"${config}\""
+                ;;
+        esac
+        ((current++))
+    done
 }
 
 . "$BASHOR_PATH_INCLUDES/functions/class.sh"

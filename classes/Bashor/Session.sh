@@ -24,7 +24,7 @@ extends Bashor_Session Bashor_Registry
 # $1    string  session dir
 function CLASS_Bashor_Session___construct()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local Param
     new Bashor_Param Param 'c'

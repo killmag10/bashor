@@ -22,7 +22,7 @@
 # $?    0:OK    1:LOCKED    2:ERROR
 function CLASS_Bashor_Lock_lock()
 {
-    : ${1:?}
+    requireParams R "$@"
     
     flock "$@"
     return "$?"
@@ -35,7 +35,7 @@ function CLASS_Bashor_Lock_lock()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Lock_filename()
 {
-    : ${1:?}
+    requireParams R "$@"
     
     echo "$1"".lock"
     return 0
@@ -48,7 +48,7 @@ function CLASS_Bashor_Lock_filename()
 # $?    0:OK    1:LOCKED    2:ERROR
 function CLASS_Bashor_Lock_delete()
 {
-    : ${1:?}
+    requireParams R "$@"
     
     if [ -f "$1" ]; then
         flock --nonblock "$1" rm "$1"
@@ -65,7 +65,7 @@ function CLASS_Bashor_Lock_delete()
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
 function CLASS_Bashor_Lock_checkRead()
 {
-    : ${1:?}
+    requireParams R "$@"
     
     if [ -f "$1" ]; then
         flock -s --nonblock "$1" "true"
@@ -82,7 +82,7 @@ function CLASS_Bashor_Lock_checkRead()
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
 function CLASS_Bashor_Lock_checkWrite()
 {
-    : ${1:?}
+    requireParams R "$@"
     
     if [ -f "$1" ]; then
         flock --nonblock "$1" "true"

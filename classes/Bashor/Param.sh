@@ -20,7 +20,7 @@ function CLASS_Bashor_Param___construct()
     : ${OBJECT:?};
     
     this call setOpts "$1" "$2"
-    return $?;
+    return $?
 }
 
 ##
@@ -33,29 +33,25 @@ function CLASS_Bashor_Param_issetOpt()
     : ${OBJECT:?};
     : ${1:?};
     
-    local key="$1";
-    eval set -- "`this get optsArgs`";    
+    local key="$1"
+    eval set -- "`this get optsArgs`"  
 
-    local first=0;
+    local first=0
     while shift "$first"; do
-        local first=1;
-        [ "$1" == "--" ] && break;        
-        [ "${1:0:1}" = '-' ] || continue;
+        local first=1
+        [ "$1" == "--" ] && break        
+        [ "${1:0:1}" = '-' ] || continue
         
         if [ "${1:0:2}" = '--' ]; then
-            local opt=`this call getOptLongExtension "${1:2}"`;
+            local opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`;
+            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
-        if [ "$1" == "$key" ]; then
-            return 0;
-        fi
-        if [ ":" == "$opt" ]; then
-            shift;
-        fi    
+        [ "$1" == "$key" ] && return 0
+        [ ":" == "$opt" ] && shift    
     done
         
-    return 1;
+    return 1
 }
 
 ##
@@ -65,12 +61,13 @@ function CLASS_Bashor_Param_issetOpt()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_notEmptyOpt()
 {
-    : ${OBJECT:?};
-    : ${1:?};
-    this call issetOpt "$1" || return 1;
-    local tmp=`this call getOpt "$@"`;
-    [ "$tmp" != '' ];
-    return "$?";
+    : ${OBJECT:?}
+    : ${1:?}
+    
+    this call issetOpt "$1" || return 1
+    local tmp=`this call getOpt "$@"`
+    [ "$tmp" != '' ]
+    return "$?"
 }
 
 ##
@@ -80,13 +77,14 @@ function CLASS_Bashor_Param_notEmptyOpt()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_issetArg()
 {
-    : ${OBJECT:?};
-    : ${1:?};    
-    local key="$1";
-    eval set -- "`this get optsArgs`";    
-    while [ "$1" != "--" ]; do shift 1; done;
-    [ "$#" -gt "$key" ] && [ "0" -lt "$key" ];
-    return "$?";
+    : ${OBJECT:?}
+    : ${1:?}
+    
+    local key="$1"
+    eval set -- "`this get optsArgs`"
+    while [ "$1" != "--" ]; do shift 1; done
+    [ "$#" -gt "$key" ] && [ "0" -lt "$key" ]
+    return "$?"
 }
 
 ##
@@ -95,20 +93,20 @@ function CLASS_Bashor_Param_issetArg()
 # $?    0:OK 1:ERROR
 function CLASS_Bashor_Param_notEmpty()
 {
-    : ${OBJECT:?};
-    : ${1:?};
-        
+    : ${OBJECT:?}
+    : ${1:?}
+    
     if [ "${1:0:1}" == '-' ]; then    
-        this call notEmptyOpt "$1";
-        return $?;
+        this call notEmptyOpt "$1"
+        return $?
     fi
     
     if [[ "$1" =~ ^[0-9]+$ ]]; then
-        this call notEmptyArg "$1";
-        return $?;    
+        this call notEmptyArg "$1"
+        return $?
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -118,12 +116,13 @@ function CLASS_Bashor_Param_notEmpty()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_notEmptyArg()
 {
-    : ${OBJECT:?};
-    : ${1:?};    
-    this call issetArg "$1" || return 1;
-    local tmp=`this call getArg "$1"`;
-    [ "$tmp" != '' ];
-    return "$?";
+    : ${OBJECT:?}
+    : ${1:?}
+    
+    this call issetArg "$1" || return 1
+    local tmp=`this call getArg "$1"`
+    [ "$tmp" != '' ]
+    return "$?"
 }
 
 ##
@@ -133,32 +132,33 @@ function CLASS_Bashor_Param_notEmptyArg()
 # $?    0:FOUND 1:NOT FOUND
 function CLASS_Bashor_Param_getOpt()
 {
-    : ${OBJECT:?};
-    : ${1:?};
-    local key="$1";
-    eval set -- "`this get optsArgs`";    
+    : ${OBJECT:?}
+    : ${1:?}
+    
+    local key="$1"
+    eval set -- "`this get optsArgs`" 
 
-    local first=0;
+    local first=0
     while shift "$first"; do
-        local first=1;
-        [ "$1" == "--" ] && break;
-        [ "${1:0:1}" = '-' ] || continue;
+        local first=1
+        [ "$1" == "--" ] && break
+        [ "${1:0:1}" = '-' ] || continue
         
         if [ "${1:0:2}" = '--' ]; then
-            local opt=`this call getOptLongExtension "${1:2}"`;
+            local opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`;
+            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
         if [ ":" == "$opt" ]; then
             if [ "$1" == "$key" ]; then
                 echo "$2"
                 return 0;
             fi
-            shift;
-        fi    
+            shift
+        fi
     done
-        
-    return 1;
+    
+    return 1
 }
 
 ##
@@ -168,19 +168,19 @@ function CLASS_Bashor_Param_getOpt()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_getArg()
 {
-    : ${OBJECT:?};
-    : ${1:?};    
+    : ${OBJECT:?}
+    : ${1:?}
+    
+    local key="$1"
+    eval set -- "`this get optsArgs`"
+    while [ "$1" != "--" ]; do shift 1; done
 
-    local key="$1";
-    eval set -- "`this get optsArgs`";
-    while [ "$1" != "--" ]; do shift 1; done;
-
-    shift $key;
+    shift $key
     if [ "$?" = 0 ]; then
-        echo "$1";
-        return 0;
+        echo "$1"
+        return 0
     fi    
-    return "1";
+    return "1"
 }
 
 ##
@@ -189,30 +189,30 @@ function CLASS_Bashor_Param_getArg()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_getOptKeys()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local return=1;
-    eval set -- "`this get optsArgs`";    
+    local return=1
+    eval set -- "`this get optsArgs`"
 
-    local first=0;
+    local first=0
     while shift "$first"; do
-        local first=1;
-        [ "$1" == "--" ] && break;
-        [ "${1:0:1}" = '-' ] || continue;
+        local first=1
+        [ "$1" == "--" ] && break
+        [ "${1:0:1}" = '-' ] || continue
         
         if [ "${1:0:2}" = '--' ]; then
-            local opt=`this call getOptLongExtension "${1:2}"`;
+            local opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`;
+            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
-        echo "$1";
-        local return=0;
+        echo "$1"
+        local return=0
         if [ ":" == "$opt" ]; then
-            shift;
+            shift
         fi    
     done
         
-    return "$return";
+    return "$return"
 }
 
 ##
@@ -221,32 +221,32 @@ function CLASS_Bashor_Param_getOptKeys()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_listOpt()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local return=1;
-    eval set -- "`this get optsArgs`";    
-
-    local first=0;
+    local return=1
+    eval set -- "`this get optsArgs`" 
+    
+    local first=0
     while shift "$first"; do
-        local first=1;
-        [ "$1" == "--" ] && break;
-        [ "${1:0:1}" = '-' ] || continue;
+        local first=1
+        [ "$1" == "--" ] && break
+        [ "${1:0:1}" = '-' ] || continue
         
         if [ "${1:0:2}" = '--' ]; then
-            local opt=`this call getOptLongExtension "${1:2}"`;
+            local opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`;
+            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
-        echo -n "$1";
-        local return=0;
+        echo -n "$1"
+        local return=0
         if [ ":" == "$opt" ]; then
-            echo -n " $2";
-            shift;
+            echo -n " $2"
+            shift
         fi
-        echo "";  
+        echo ""
     done
         
-    return "$return";
+    return "$return"
 }
 
 ##
@@ -255,27 +255,25 @@ function CLASS_Bashor_Param_listOpt()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_listArg()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
     (
-        local return=1;
-        eval set -- "`this get optsArgs`";    
+        eval set -- "`this get optsArgs`"
 
         local first=0;
         while shift "$first"; do
-            local first=1;
-            [ "$1" == "--" ] && break;
+            first=1
+            [ "$1" == "--" ] && break
         done
 
         while shift "$first"; do
-            echo "$1";
-            local return=0;
+            echo "$1"
         done;
         
-        return "$return";
-    ) | head -n -1;
+        return 0
+    ) | head -n -1
 
-    return "$?";
+    return $?
 }
 
 ##
@@ -286,11 +284,11 @@ function CLASS_Bashor_Param_listArg()
 # $?    0:FOUND 1:NOT FOUND
 function CLASS_Bashor_Param_setOpts()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    this set opts "$1";
-    this set optsLong "$2";
-    return 0;
+    this set opts "$1"
+    this set optsLong "$2"
+    return 0
 }
 
 ##
@@ -300,13 +298,13 @@ function CLASS_Bashor_Param_setOpts()
 # $?    0:FOUND 1:NOT FOUND
 function CLASS_Bashor_Param_set()
 {    
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local opts="`this get opts`";
-    local optsLong="`this get optsLong`";
+    local opts="`this get opts`"
+    local optsLong="`this get optsLong`"
     
-    this set optsArgs "`getopt -q -o "$opts" --long "$optsLong" -- "$@"`";
-    return "$?";
+    this set optsArgs "`getopt -q -o "$opts" --long "$optsLong" -- "$@"`"
+    return "$?"
 }
 
 ##
@@ -317,11 +315,11 @@ function CLASS_Bashor_Param_set()
 # $?    0:OK 1:ERROR
 function CLASS_Bashor_Param_getOpts()
 {    
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    this get opts;
-    this get optsLong;
-    return 0;
+    this get opts
+    this get optsLong
+    return 0
 }
 
 ##
@@ -330,24 +328,24 @@ function CLASS_Bashor_Param_getOpts()
 # $?    0:OK 1:ERROR
 function CLASS_Bashor_Param_get()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
     if [ -z "$1" ]; then    
-        this get optsArgs;
-        return $?;
+        this get optsArgs
+        return $?
     fi
     
     if [ "${1:0:1}" == '-' ]; then    
-        this call getOpt "$1";
-        return $?;
+        this call getOpt "$1"
+        return $?
     fi
     
     if [[ "$1" =~ ^[0-9]+$ ]]; then
-        this call getArg "$1";
-        return $?;    
+        this call getArg "$1"
+        return $?
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -356,20 +354,20 @@ function CLASS_Bashor_Param_get()
 # $?    0:OK 1:ERROR
 function CLASS_Bashor_Param_isset()
 {
-    : ${OBJECT:?};
-    : ${1:?};
+    : ${OBJECT:?}
+    : ${1:?}
         
     if [ "${1:0:1}" == '-' ]; then    
-        this call issetOpt "$1";
-        return $?;
+        this call issetOpt "$1"
+        return $?
     fi
     
     if [[ "$1" =~ ^[0-9]+$ ]]; then
-        this call issetArg "$1";
-        return $?;    
+        this call issetArg "$1"
+        return $?
     fi
     
-    return 1;
+    return 1
 }
 
 ##
@@ -379,16 +377,16 @@ function CLASS_Bashor_Param_isset()
 # $?    0:FOUND 1:NOT FOUND
 function CLASS_Bashor_Param_getOptLongExtension()
 {
-    : ${OBJECT:?};
+    : ${OBJECT:?}
     
-    local IFS=",";
-    local value;
+    local IFS=","
+    local value
     for value in `this get optsLong`; do
-        local key=`echo "$value" | sed 's#:##g'`;
+        local key=`echo "$value" | sed 's#:##g'`
         if [ "$key" == "$1" ]; then
-            echo "$value" | sed 's#[^:]##g';
-            return 0;
+            echo "$value" | sed 's#[^:]##g'
+            return 0
         fi
-    done;
-    return 1;
+    done
+    return 1
 }

@@ -85,6 +85,8 @@ function checkRegexLines()
     printResult "$1" "$?";
 }
 
+doTest 'includes/functions/class';
+
 doTest 'classes/Object';
 doTest 'classes/Getopt';
 doTest 'classes/Getopts';
