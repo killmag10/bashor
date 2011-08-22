@@ -23,7 +23,7 @@
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Hash_md5()
 {
-    : ${1?}
+    requireParams S "$@"
     
     echo "$1" | md5sum | sed 's/^\(\S\+\).*/\1/'
     return $?

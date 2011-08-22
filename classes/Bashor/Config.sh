@@ -19,7 +19,7 @@
 # Constructor
 function CLASS_Bashor_Config___construct()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local Data
     new Bashor_Data Data
@@ -35,9 +35,8 @@ function CLASS_Bashor_Config___construct()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Config_set()
 {
-    : ${OBJECT:?}
-    : ${1:?}
-    : ${2?}
+    requireObject
+    requireParams RS "$@"
     
     if [ -n "`this get readonly`" ]; then
         warning 'is set readonly'
@@ -59,8 +58,8 @@ function CLASS_Bashor_Config_set()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Config_get()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
         
     local Data   
     Data=`this get data`
@@ -77,8 +76,8 @@ function CLASS_Bashor_Config_get()
 # &1    string Data 
 function CLASS_Bashor_Config_isset()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local Data   
     Data=`this get data`
@@ -94,8 +93,8 @@ function CLASS_Bashor_Config_isset()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Config_remove()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     if [ -n "`this get readonly`" ]; then
         warning 'is set readonly'
@@ -115,7 +114,7 @@ function CLASS_Bashor_Config_remove()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Config_setReadonly()
 {
-    : ${OBJECT:?}
+    requireObject
     
     this set 'readonly' '1'
     return 0

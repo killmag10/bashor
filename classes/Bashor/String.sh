@@ -24,8 +24,7 @@
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_String_repeat()
 {
-    : ${1:?}
-    : ${2:?}
+    requireParams RR "$@"
     
     local replacement=`echo "'" | sed 's#/#\\\\/#g'`
 
@@ -47,8 +46,7 @@ function CLASS_Bashor_String_repeat()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_String_replace()
 {
-    : ${1?}
-    : ${2?}
+    requireParams RR "$@"
     
     loadClassOnce Bashor_Escape
     local find="`class Bashor_Escape regEx "$1" '/'`"

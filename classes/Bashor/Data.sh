@@ -22,7 +22,7 @@
 # -c   compress
 function CLASS_Bashor_Data___construct()
 {    
-    : ${OBJECT:?}
+    requireObject
     
     local Param
     new Bashor_Param Param 'cs:'
@@ -49,8 +49,8 @@ function CLASS_Bashor_Data___construct()
 # &0    string  Data
 function CLASS_Bashor_Data_set()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     if [ -p /dev/stdin ]; then
         local value=`cat -`
@@ -81,8 +81,8 @@ function CLASS_Bashor_Data_set()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Data_remove()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local key=`echo "$1" | encodeData`
     local data=`this get data`
@@ -102,8 +102,8 @@ function CLASS_Bashor_Data_remove()
 # &1    string Data 
 function CLASS_Bashor_Data_get()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local key=`echo "$1" | encodeData`
     local data=`this get data`
@@ -124,8 +124,8 @@ function CLASS_Bashor_Data_get()
 # &1    string Data 
 function CLASS_Bashor_Data_isset()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local key=`echo "$1" | encodeData`
     local data=`this get data`
@@ -146,8 +146,8 @@ function CLASS_Bashor_Data_isset()
 # &1    string Data 
 function CLASS_Bashor_Data__compress()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local compress=`this get compress`
     
@@ -165,7 +165,7 @@ function CLASS_Bashor_Data__compress()
 # $?    0:YES   1:NO
 function CLASS_Bashor_Data_isCompressed()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local compress=`this get compress`
     [ "$compress" == 1 ]
@@ -178,7 +178,7 @@ function CLASS_Bashor_Data_isCompressed()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Data_size()
 {
-    : ${OBJECT:?}
+    requireObject
     
     this get data | wc -c
     return "$?"
@@ -191,7 +191,7 @@ function CLASS_Bashor_Data_size()
 # &1    string Data 
 function CLASS_Bashor_Data_getKeys()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local data=`this get data`
     if [ -n "$data" ]; then
@@ -213,7 +213,7 @@ function CLASS_Bashor_Data_getKeys()
 # &1    string Data 
 function CLASS_Bashor_Data_getValues()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local data=`this get data`
     if [ -n "$data" ]; then
@@ -236,8 +236,8 @@ function CLASS_Bashor_Data_getValues()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Data_count()
 {
-    : ${OBJECT:?}
-
+    requireObject
+    
     this get data | wc -l    
     return "$?"
 }
@@ -248,7 +248,7 @@ function CLASS_Bashor_Data_count()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Data_clear()
 {
-    : ${OBJECT:?}
+    requireObject
 
     this set data ''
     

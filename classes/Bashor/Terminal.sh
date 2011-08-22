@@ -31,7 +31,7 @@
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setBackgroundColor()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     tput setb "$1"
     return $?
 }
@@ -52,7 +52,7 @@ function CLASS_Bashor_Terminal_setBackgroundColor()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setBackgroundColorAnsi()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     [ "$1" -lt 0 ] && return 1
     [ "$1" -gt 7 ] && return 1
     echo -en '\033[4'"$1"'m'
@@ -75,7 +75,7 @@ function CLASS_Bashor_Terminal_setBackgroundColorAnsi()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setFordergroundColor()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     tput setf "$1"
     return $?
 }
@@ -96,7 +96,7 @@ function CLASS_Bashor_Terminal_setFordergroundColor()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setFordergroundColorAnsi()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     [ "$1" -lt 0 ] && return 1
     [ "$1" -gt 7 ] && return 1
     echo -en '\033[3'"$1"'m'
@@ -113,7 +113,7 @@ function CLASS_Bashor_Terminal_setFordergroundColorAnsi()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setStyleBold()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     [ "$1" == 1 ] && echo -en '\033[1m' || tput dim
     return $?
 }
@@ -128,7 +128,7 @@ function CLASS_Bashor_Terminal_setStyleBold()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setExtendedCharacters()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     [ "$1" == 1 ] && echo -en '\033(0' || echo -en '\033(B'
     return $?
 }
@@ -143,7 +143,7 @@ function CLASS_Bashor_Terminal_setExtendedCharacters()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_setStyleUnderline()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     [ "$1" == 1 ] && tput smul || tput rmul
     return $?
 }
@@ -216,7 +216,7 @@ function CLASS_Bashor_Terminal_saveCurser()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserUp()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     echo -en '\033['"$1"'A'
     return $?
 }
@@ -228,7 +228,7 @@ function CLASS_Bashor_Terminal_moveCurserUp()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserDown()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     echo -en '\033['"$1"'B'
     return $?
 }
@@ -240,7 +240,7 @@ function CLASS_Bashor_Terminal_moveCurserDown()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserForward()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     echo -en '\033['"$1"'C'
     return $?
 }
@@ -252,7 +252,7 @@ function CLASS_Bashor_Terminal_moveCurserForward()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserBackward()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     echo -en '\033['"$1"'D'
     return $?
 }
@@ -265,8 +265,7 @@ function CLASS_Bashor_Terminal_moveCurserBackward()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserBy()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     [ "$1" -gt 0 ] && this call moveCurserForward "$1"
     [ "$1" -lt 0 ] && this call moveCurserBackward "${1:1}"
     [ "$2" -gt 0 ] && this call moveCurserDown "$2"
@@ -282,8 +281,7 @@ function CLASS_Bashor_Terminal_moveCurserBy()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserReversedBy()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     [ "$1" -lt 0 ] && this call moveCurserForward "${1:1}"
     [ "$1" -gt 0 ] && this call moveCurserBackward "$1"
     [ "$2" -lt 0 ] && this call moveCurserDown "${2:1}"
@@ -299,8 +297,7 @@ function CLASS_Bashor_Terminal_moveCurserReversedBy()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_moveCurserTo()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     echo -en '\033['"$2"';'"$1"'H'
     return $?
 }

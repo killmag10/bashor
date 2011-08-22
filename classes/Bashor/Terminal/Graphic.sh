@@ -30,8 +30,7 @@ loadClassOnce Bashor_Terminal
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_Graphic_setPixel()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
 
     class Bashor_Terminal moveCurserBy "$1" "$2"
     [ -n "$4" ] && class Bashor_Terminal setBackgroundColorAnsi "$4"
@@ -63,9 +62,7 @@ function CLASS_Bashor_Terminal_Graphic_setPixel()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_Graphic_printText()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
-    [ -z "$3" ] && error '3: Parameter empty or not set'
+    requireParams RRR "$@"
 
     class Bashor_Terminal saveCurser
     class Bashor_Terminal moveCurserBy "$1" "$2"
@@ -96,10 +93,7 @@ function CLASS_Bashor_Terminal_Graphic_printText()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
-    [ -z "$3" ] && error '3: Parameter empty or not set'
-    [ -z "$4" ] && error '4: Parameter empty or not set'
+    requireParams RRRR "$@"
     loadClassOnce Bashor_Escape
 
 	local char="${5:- }"

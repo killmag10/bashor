@@ -45,9 +45,8 @@ function CLASS_Bashor_Doc_Block___construct()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_setOption()
 {
-    : ${OBJECT:?}
-    : ${1:?}
-    : ${2?}
+    requireObject
+    requireParams RS "$@"
     
     case "$1" in
         showPrivateFunctions)
@@ -66,8 +65,8 @@ function CLASS_Bashor_Doc_Block_setOption()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_parseFile()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
         
     this call parseString "`cat "$1"`";
     return 0
@@ -81,8 +80,8 @@ function CLASS_Bashor_Doc_Block_parseFile()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_parseString()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local NL=$'\n';
     local content="$1";
@@ -122,9 +121,8 @@ function CLASS_Bashor_Doc_Block_parseString()
 
 function CLASS_Bashor_Doc_Block_parseDocBlock()
 {
-    : ${OBJECT:?}
-    : ${1?}
-    : ${2?}
+    requireObject
+    requireParams SS "$@"
     
     local Item
     new Bashor_Doc_Block_Item Item
@@ -151,7 +149,7 @@ function CLASS_Bashor_Doc_Block_parseDocBlock()
 
 function CLASS_Bashor_Doc_Block_getItems()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local items="`this get items`"
     object "$items" asLines
@@ -159,8 +157,8 @@ function CLASS_Bashor_Doc_Block_getItems()
 
 function CLASS_Bashor_Doc_Block_getItemsByType()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local Current
     for Current in `this call getItems`; do        
@@ -172,7 +170,7 @@ function CLASS_Bashor_Doc_Block_getItemsByType()
 
 function CLASS_Bashor_Doc_Block_sortByName()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local IFS=$'\n'
     local Items="`this get items`"

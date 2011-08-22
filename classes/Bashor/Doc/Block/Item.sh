@@ -22,7 +22,7 @@
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Item___construct()
 {
-    : ${OBJECT:?}
+    requireObject
     
     return 0
 }
@@ -35,8 +35,8 @@ function CLASS_Bashor_Doc_Block_Item___construct()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Item_setDoc()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     this set docBlock "$1";
     return 0
@@ -50,8 +50,8 @@ function CLASS_Bashor_Doc_Block_Item_setDoc()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Item_setLineAfter()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     this set lineAfter "$1";
     return 0
@@ -65,8 +65,8 @@ function CLASS_Bashor_Doc_Block_Item_setLineAfter()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Item_setType()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     this set type "$1";
     return 0
@@ -80,7 +80,7 @@ function CLASS_Bashor_Doc_Block_Item_setType()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Item_getLineAfter()
 {
-    : ${OBJECT:?}
+    requireObject
     
     this get lineAfter;
     return 0
@@ -94,7 +94,7 @@ function CLASS_Bashor_Doc_Block_Item_getLineAfter()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Item_getType()
 {
-    : ${OBJECT:?}
+    requireObject
     
     this get type;
     return 0
@@ -108,7 +108,7 @@ function CLASS_Bashor_Doc_Block_Item_getType()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Item_getDoc()
 {
-    : ${OBJECT:?}
+    requireObject
     
     this get docBlock;
     return 0
@@ -122,7 +122,7 @@ function CLASS_Bashor_Doc_Block_Item_getDoc()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Item_getName()
 {
-    : ${OBJECT:?}
+    requireObject
     
     case "`this call getType`" in
         function)

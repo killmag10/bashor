@@ -24,8 +24,8 @@ extends Bashor_Cache_File Bashor_Cache
 # $1    string  cache dir
 function CLASS_Bashor_Cache_File___construct()
 {
-    : ${1?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams R "$@"
     
     parent call __construct
     
@@ -41,8 +41,8 @@ function CLASS_Bashor_Cache_File___construct()
 # &1    string filename 
 function CLASS_Bashor_Cache_File_filename()
 {
-    : ${1?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams S "$@"
     
     loadClassOnce Bashor_Hash
     
@@ -62,9 +62,8 @@ function CLASS_Bashor_Cache_File_filename()
 # &0    string  Data
 function CLASS_Bashor_Cache_File_set()
 {
-    : ${1:?}
-    : ${2:?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams RR "$@"
     
     local filename=`this call filename "$1"`
     local time=`date +%s`
@@ -90,8 +89,8 @@ function CLASS_Bashor_Cache_File_set()
 # &1    string Data 
 function CLASS_Bashor_Cache_File_get()
 {
-    : ${1:?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams R "$@"
     
     local filename=`this call filename "$1"`
     local curTime=`date +%s`
@@ -113,8 +112,8 @@ function CLASS_Bashor_Cache_File_get()
 # $?    0:CACHED    1:NOT CACHED
 function CLASS_Bashor_Cache_File_check()
 {
-    : ${1:?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams R "$@"
     
     local filename=`this call filename "$1"`
     local curTime=`date +%s`
@@ -134,7 +133,7 @@ function CLASS_Bashor_Cache_File_check()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Cache_File_removeOutdated()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local dir="`this get dir`"
     local files="`ls -1 "$dir"`"

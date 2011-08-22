@@ -17,7 +17,7 @@
 
 function CLASS_Bashor_Param___construct()
 {
-    : ${OBJECT:?};
+    requireObject
     
     this call setOpts "$1" "$2"
     return $?
@@ -30,8 +30,8 @@ function CLASS_Bashor_Param___construct()
 # $?    0:FOUND 1:NOT FOUND
 function CLASS_Bashor_Param_issetOpt()
 {
-    : ${OBJECT:?};
-    : ${1:?};
+    requireObject
+    requireParams R "$@"
     
     local key="$1"
     eval set -- "`this get optsArgs`"  
@@ -61,8 +61,8 @@ function CLASS_Bashor_Param_issetOpt()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_notEmptyOpt()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     this call issetOpt "$1" || return 1
     local tmp=`this call getOpt "$@"`
@@ -77,8 +77,8 @@ function CLASS_Bashor_Param_notEmptyOpt()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_issetArg()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local key="$1"
     eval set -- "`this get optsArgs`"
@@ -93,8 +93,8 @@ function CLASS_Bashor_Param_issetArg()
 # $?    0:OK 1:ERROR
 function CLASS_Bashor_Param_notEmpty()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     if [ "${1:0:1}" == '-' ]; then    
         this call notEmptyOpt "$1"
@@ -116,8 +116,8 @@ function CLASS_Bashor_Param_notEmpty()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_notEmptyArg()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     this call issetArg "$1" || return 1
     local tmp=`this call getArg "$1"`
@@ -132,8 +132,8 @@ function CLASS_Bashor_Param_notEmptyArg()
 # $?    0:FOUND 1:NOT FOUND
 function CLASS_Bashor_Param_getOpt()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local key="$1"
     eval set -- "`this get optsArgs`" 
@@ -168,8 +168,8 @@ function CLASS_Bashor_Param_getOpt()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_getArg()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     local key="$1"
     eval set -- "`this get optsArgs`"
@@ -189,7 +189,7 @@ function CLASS_Bashor_Param_getArg()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_getOptKeys()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local return=1
     eval set -- "`this get optsArgs`"
@@ -221,7 +221,7 @@ function CLASS_Bashor_Param_getOptKeys()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_listOpt()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local return=1
     eval set -- "`this get optsArgs`" 
@@ -255,7 +255,7 @@ function CLASS_Bashor_Param_listOpt()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Param_listArg()
 {
-    : ${OBJECT:?}
+    requireObject
     
     (
         eval set -- "`this get optsArgs`"
@@ -284,7 +284,7 @@ function CLASS_Bashor_Param_listArg()
 # $?    0:FOUND 1:NOT FOUND
 function CLASS_Bashor_Param_setOpts()
 {
-    : ${OBJECT:?}
+    requireObject
     
     this set opts "$1"
     this set optsLong "$2"
@@ -298,7 +298,7 @@ function CLASS_Bashor_Param_setOpts()
 # $?    0:FOUND 1:NOT FOUND
 function CLASS_Bashor_Param_set()
 {    
-    : ${OBJECT:?}
+    requireObject
     
     local opts="`this get opts`"
     local optsLong="`this get optsLong`"
@@ -315,8 +315,8 @@ function CLASS_Bashor_Param_set()
 # $?    0:OK 1:ERROR
 function CLASS_Bashor_Param_getOpts()
 {    
-    : ${OBJECT:?}
-    
+    requireObject
+
     this get opts
     this get optsLong
     return 0
@@ -328,7 +328,7 @@ function CLASS_Bashor_Param_getOpts()
 # $?    0:OK 1:ERROR
 function CLASS_Bashor_Param_get()
 {
-    : ${OBJECT:?}
+    requireObject
     
     if [ -z "$1" ]; then    
         this get optsArgs
@@ -354,8 +354,8 @@ function CLASS_Bashor_Param_get()
 # $?    0:OK 1:ERROR
 function CLASS_Bashor_Param_isset()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
         
     if [ "${1:0:1}" == '-' ]; then    
         this call issetOpt "$1"
@@ -377,7 +377,7 @@ function CLASS_Bashor_Param_isset()
 # $?    0:FOUND 1:NOT FOUND
 function CLASS_Bashor_Param_getOptLongExtension()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local IFS=","
     local value

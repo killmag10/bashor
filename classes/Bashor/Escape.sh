@@ -19,11 +19,11 @@
 # escape string for regex
 #
 # $1    string  To escape
-# -d    string  Expression limiter
+# $2    string  Expression limiter
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Escape_regEx()
 {
-    : ${1?}
+    requireParams S "$@"
     local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`
 
     echo "$1" \
@@ -38,11 +38,11 @@ function CLASS_Bashor_Escape_regEx()
 # escape string for regex replacement
 #
 # $1    string  To escape
-# -d    string  Expression limiter
+# $2    string  Expression limiter
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Escape_regExReplacement()
 {
-    : ${1?}
+    requireParams S "$@"
     local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`
 
     echo "$1" \

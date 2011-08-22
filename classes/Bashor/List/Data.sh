@@ -20,7 +20,7 @@
 #
 function CLASS_Bashor_List_Data___construct()
 {    
-    : ${OBJECT:?}
+    requireObject
     
     return 0
 }
@@ -34,9 +34,8 @@ function CLASS_Bashor_List_Data___construct()
 # &0    string  Data
 function CLASS_Bashor_List_Data_set()
 {
-    : ${OBJECT:?}
-    : ${1:?}
-    : ${2?}
+    requireObject
+    requireParams RS "$@"
 
     this set "$1" "$2"
     return $?
@@ -49,8 +48,8 @@ function CLASS_Bashor_List_Data_set()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_List_Data_unset()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     this unset "$1"
     return $?
@@ -64,8 +63,8 @@ function CLASS_Bashor_List_Data_unset()
 # &1    string Data 
 function CLASS_Bashor_List_Data_get()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     this get "$1"
     return $?
@@ -79,8 +78,8 @@ function CLASS_Bashor_List_Data_get()
 # &1    string Data 
 function CLASS_Bashor_List_Data_isset()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     this isset "$1"
     return $?
@@ -94,8 +93,8 @@ function CLASS_Bashor_List_Data_isset()
 # &1    string Data 
 function CLASS_Bashor_List_Data_key()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     this key "$1"
     return $?
@@ -107,7 +106,7 @@ function CLASS_Bashor_List_Data_key()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_List_Data_count()
 {
-    : ${OBJECT:?}
+    requireObject
 
     this count
     return "$?"
@@ -119,7 +118,7 @@ function CLASS_Bashor_List_Data_count()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_List_Data_clear()
 {
-    : ${OBJECT:?}
+    requireObject
 
     this clear
     return "$?"

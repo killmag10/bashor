@@ -30,7 +30,8 @@ function CLASS_Bashor_Log___load()
 # $1    string  cache dir
 function CLASS_Bashor_Log___construct()
 {
-    : ${1?}
+    requireObject
+    requireParams R "$@"
     
     this set file "$1"
 }
@@ -44,7 +45,7 @@ function CLASS_Bashor_Log_log()
 {
     local logFile=`this get file`
     
-    if [ -p "/dev/stdin" ]; then
+    if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         cat - >> "$logFile"
     else
         echo "$1" >> "$logFile"
@@ -70,9 +71,6 @@ function CLASS_Bashor_Log_get()
 
 ##
 # Remove the log.
-#
-# $1    string  Text
-# &0    string  Text
 function CLASS_Bashor_Log_remove()
 {
     local logFile=`this get file`
@@ -91,9 +89,9 @@ function CLASS_Bashor_Log_remove()
 # $1    string  Text
 # &0    string  Text
 function CLASS_Bashor_Log_error()
-{
+{    
     datestring=`date +'%Y-%m-%d %H:%M:%S'`
-    if [ -p "/dev/stdin" ]; then
+    if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring ERROR: #" | this call log
     else
         echo "$1" | nl | sed "s#^#$datestring ERROR: #" | this call log
@@ -106,9 +104,9 @@ function CLASS_Bashor_Log_error()
 # $1    string  Text
 # &0    string  Text
 function CLASS_Bashor_Log_warning()
-{
+{    
     datestring=`date +'%Y-%m-%d %H:%M:%S'`
-    if [ -p "/dev/stdin" ]; then
+    if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring WARNING: #" | this call log
     else
         echo "$1" | nl | sed "s#^#$datestring WARNING: #" | this call log
@@ -121,9 +119,9 @@ function CLASS_Bashor_Log_warning()
 # $1    string  Text
 # &0    string  Text
 function CLASS_Bashor_Log_debug()
-{
+{   
     datestring=`date +'%Y-%m-%d %H:%M:%S'`
-    if [ -p "/dev/stdin" ]; then
+    if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring DEBUG: #" | this call log
     else
         echo "$1" | nl | sed "s#^#$datestring DEBUG: #" | this call log

@@ -22,7 +22,7 @@ extends Bashor_List_Iterable Bashor_List
 # Constructor
 function CLASS_Bashor_List_Iterable___construct()
 {
-    : ${OBJECT:?}
+    requireObject
     
     parent call __construct "$@"
     local return=$?
@@ -35,7 +35,7 @@ function CLASS_Bashor_List_Iterable___construct()
 # Return the current element.
 function CLASS_Bashor_List_Iterable_current()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local iterator=`this get iterator`
     local data="`this get 'data'`"
@@ -47,8 +47,8 @@ function CLASS_Bashor_List_Iterable_current()
 # Move forward to next element
 function CLASS_Bashor_List_Iterable_next()
 {
-    : ${OBJECT:?}
-    
+    requireObject
+
     local iterator=`this get iterator`
     this set iterator $((++iterator))
 }
@@ -57,7 +57,7 @@ function CLASS_Bashor_List_Iterable_next()
 # Rewind the Iterator to the first element
 function CLASS_Bashor_List_Iterable_rewind()
 {
-    : ${OBJECT:?}
+    requireObject
     
     this set iterator 0
 }
@@ -67,7 +67,7 @@ function CLASS_Bashor_List_Iterable_rewind()
 # Checks if current position is valid
 function CLASS_Bashor_List_Iterable_valid()
 {
-    : ${OBJECT:?}
+    requireObject
     
     [ "`this get iterator`" -lt "`parent call count`" ]
     return $?
@@ -77,7 +77,7 @@ function CLASS_Bashor_List_Iterable_valid()
 # Return the key of the current element
 function CLASS_Bashor_List_Iterable_key()
 {
-    : ${OBJECT:?}
+    requireObject
     
     if [ "$#" -gt 0 ]; then
         parent call key "$1"

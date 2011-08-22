@@ -21,8 +21,8 @@
 # $1    string  temp dir
 function CLASS_Bashor_Temp___construct()
 {
-    : ${1?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams R "$@"
     
     this set dir "$1"
 }
@@ -36,8 +36,8 @@ function CLASS_Bashor_Temp___construct()
 # &0    string  path
 function CLASS_Bashor_Temp_dir()
 {
-    : ${1:?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams R "$@"
     
     local dir=`this get dir`
     mkdir -p "$dir/"
@@ -53,8 +53,8 @@ function CLASS_Bashor_Temp_dir()
 # &0    string  path
 function CLASS_Bashor_Temp_file()
 {
-    : ${1:?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams R "$@"
 
     echo "`this call dir \"$1\"`"'.tmp'
     return "$?"
@@ -68,7 +68,7 @@ function CLASS_Bashor_Temp_file()
 # &0    string  name
 function CLASS_Bashor_Temp_generateFilename()
 {
-    : ${1?}
+    requireParams R "$@"
 
     echo 'temp_'`date +'%Y%m%dT%H%M%S'`"_""$$""_""$1""_""$RANDOM"
     return 0
@@ -80,7 +80,7 @@ function CLASS_Bashor_Temp_generateFilename()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Temp_clear()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local dir=`this get dir`
     if [ -n "$dir" ] && [ -d "$dir" ]; then

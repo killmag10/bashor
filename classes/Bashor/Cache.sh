@@ -19,7 +19,7 @@
 # Constructor
 function CLASS_Bashor_Cache___construct()
 {
-    : ${OBJECT:?}
+    requireObject
     return 0
 }
 
@@ -33,9 +33,8 @@ function CLASS_Bashor_Cache___construct()
 # &0    string  Data
 function CLASS_Bashor_Cache_set()
 {
-    : ${1:?}
-    : ${2:?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams RR "$@"
     
     return 0
 }
@@ -48,8 +47,8 @@ function CLASS_Bashor_Cache_set()
 # &1    string Data 
 function CLASS_Bashor_Cache_get()
 {
-    : ${1:?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams R "$@"
     
     return 1
 }
@@ -61,8 +60,8 @@ function CLASS_Bashor_Cache_get()
 # $?    0:CACHED    1:NOT CACHED
 function CLASS_Bashor_Cache_check()
 {
-    : ${1:?}
-    : ${OBJECT:?}
+    requireObject
+    requireParams R "$@"
     
     return 1
 }
@@ -73,7 +72,7 @@ function CLASS_Bashor_Cache_check()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_Cache_removeOutdated()
 {
-    : ${OBJECT:?}
+    requireObject
     
     return 1
 }

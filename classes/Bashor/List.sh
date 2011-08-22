@@ -22,7 +22,7 @@ loadClassOnce Bashor_List_Data
 #
 function CLASS_Bashor_List___construct()
 {    
-    : ${OBJECT:?}
+    requireObject
     
     local data
     new Bashor_List_Data data
@@ -39,8 +39,8 @@ function CLASS_Bashor_List___construct()
 # &0    string  Data
 function CLASS_Bashor_List_add()
 {
-    : ${OBJECT:?}
-    : ${1?}
+    requireObject
+    requireParams R "$@"
 
     local data="`this get data`"    
     local count="`object "$data" count`"
@@ -59,7 +59,7 @@ function CLASS_Bashor_List_add()
 # &1    string Data 
 function CLASS_Bashor_List_asLines()
 {
-    : ${OBJECT:?}
+    requireObject
     
     this call rewind
     while this call valid; do
@@ -76,7 +76,7 @@ function CLASS_Bashor_List_asLines()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_List_clear()
 {
-    : ${OBJECT:?}
+    requireObject
 
     object "`this get 'data'`" clear
     return $?
@@ -92,9 +92,8 @@ function CLASS_Bashor_List_clear()
 # &0    string  Data
 function CLASS_Bashor_List_set()
 {
-    : ${OBJECT:?}
-    : ${1:?}
-    : ${2?}
+    requireObject
+    requireParams RS "$@"
 
     object "`this get 'data'`" set "$1" "$2"
     return $?
@@ -107,8 +106,8 @@ function CLASS_Bashor_List_set()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_List_unset()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     object "`this get 'data'`" unset "$1"
     return $?
@@ -122,8 +121,8 @@ function CLASS_Bashor_List_unset()
 # &1    string Data 
 function CLASS_Bashor_List_get()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     object "`this get 'data'`" get "$1"
     return $?
@@ -137,8 +136,8 @@ function CLASS_Bashor_List_get()
 # &1    string Data 
 function CLASS_Bashor_List_isset()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     object "`this get 'data'`" isset "$1"
     return $?
@@ -152,8 +151,8 @@ function CLASS_Bashor_List_isset()
 # &1    string Data 
 function CLASS_Bashor_List_key()
 {
-    : ${OBJECT:?}
-    : ${1:?}
+    requireObject
+    requireParams R "$@"
     
     object "`this get 'data'`" key "$1"
     return $?
@@ -165,7 +164,7 @@ function CLASS_Bashor_List_key()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_List_count()
 {
-    : ${OBJECT:?}
+    requireObject
 
     object "`this get 'data'`" count
     return $?
@@ -177,7 +176,7 @@ function CLASS_Bashor_List_count()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_List___sleep()
 {
-    : ${OBJECT:?}
+    requireObject
 
     local data="`this get data`"
     this set serializedData "`serialize $data`"
@@ -190,7 +189,7 @@ function CLASS_Bashor_List___sleep()
 # $?    0:OK    1:ERROR
 function CLASS_Bashor_List___wakeup()
 {
-    : ${OBJECT:?}
+    requireObject
 
     local data
     unserialize data "`this get serializedData`"

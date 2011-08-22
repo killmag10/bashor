@@ -25,10 +25,9 @@
 # &1    string Text
 function CLASS_Bashor_Color_fg()
 {
-    : ${1?}
-    : ${2:?}
+    requireParams SR "$@"
         
-    if [ -p /dev/stdin ] && [ -z "$1" ]; then
+    if [ -p /dev/stdin ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         local IFS=$'\n\r'
         while read msg; do this call fg "$msg" "$2" "$3"; echo; done
         return 0
@@ -49,11 +48,10 @@ function CLASS_Bashor_Color_fg()
 # $?    0:OK    1:ERROR
 # &1    string Text
 function CLASS_Bashor_Color_bg()
-{    
-    : ${1?}
-    : ${2:?}
+{
+    requireParams SR "$@"
     
-    if [ -p /dev/stdin ] && [ -z "$1" ]; then
+    if [ -p /dev/stdin ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         local IFS=`echo -e "\n\r"`
         while read msg; do this call bg "$msg" "$2"; echo; done
         return 0
@@ -74,7 +72,7 @@ function CLASS_Bashor_Color_bg()
 # &1    string binary color
 function CLASS_Bashor_Color_getFGColorByName()
 {
-    : ${1:?}
+    requireParams R "$@"
 
     if [ -n "$2" ]; then
         local style=`this call getStyleByName "$2"`
@@ -118,7 +116,7 @@ function CLASS_Bashor_Color_getFGColorByName()
 # &1    string binary color
 function CLASS_Bashor_Color_getBGColorByName()
 {
-    : ${1:?}
+    requireParams R "$@"
     
     local BG_NAME[1]=black
     local BG_NAME[2]=red
@@ -156,7 +154,7 @@ function CLASS_Bashor_Color_getBGColorByName()
 # &1    string binary color
 function CLASS_Bashor_Color_getStyleByName()
 {
-    : ${1:?}
+    requireParams R "$@"
     
     local IFS=' '
     for word in $1; do

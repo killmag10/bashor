@@ -60,7 +60,7 @@ function CLASS_Bashor_Registry_set()
     requireObject
     requireParams R "$@"
     
-    if [ -p /dev/stdin ] && [ -z "$2" ] && [ "$2" !=  "${2-null}"]; then
+    if [ -p /dev/stdin ] && [ -z "$2" ] && [ "$2" !=  "${2-null}" ]; then
         local value="$(cat - | encodeData)"
     else
         local value="$(echo "$2" | encodeData)"

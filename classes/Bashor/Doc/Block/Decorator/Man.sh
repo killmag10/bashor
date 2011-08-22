@@ -23,7 +23,7 @@
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Decorator_Man___construct()
 {
-    : ${OBJECT:?}
+    requireObject
     
     isObject "$1" || error 'Pointer "'"$1"'" is not a Object!'    
     object "$1" isA Bashor_Doc_Block_Item || error 'Not a Bashor_Doc_Block_Item' 
@@ -41,7 +41,7 @@ function CLASS_Bashor_Doc_Block_Decorator_Man___construct()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Decorator_Man_get()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local Item
     Item="`this get item`"
@@ -63,7 +63,7 @@ function CLASS_Bashor_Doc_Block_Decorator_Man_get()
 # $?    1       ERROR
 function CLASS_Bashor_Doc_Block_Decorator_Man__getFunction()
 {
-    : ${OBJECT:?}
+    requireObject
     
     local Item
     Item="`this get item`"
