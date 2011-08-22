@@ -97,6 +97,7 @@ doTest 'classes/Cache/File';
 doTest 'classes/Color';
 doTest 'classes/Lock';
 doTest 'classes/Hash';
+doTest 'classes/Math';
 doTest 'classes/Registry';
 doTest 'classes/Data';
 doTest 'classes/Session';
