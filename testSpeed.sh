@@ -12,7 +12,7 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: test.sh 143 2011-04-07 23:57:20Z lars $
+# @version      $Id$
 ################################################################################
 
 BASE_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
@@ -53,6 +53,7 @@ for i in `seq 1000`; do
 done
 echo $SECONDS;
 
+loadClassOnce 'Bashor_List_Data';
 echo -n 'OBJ PARALLEL NEW: ';
 SECONDS=0;
 for i in `seq 500`; do
@@ -75,7 +76,7 @@ for i in `seq 500`; do
     p='Data_'"$i"
     p="${!p}"
     out="`object "$p" get 'test' 't'"$i"`"
-    [ "$out" == 't'"$i" ] || echo 'ERROR ON t'"$i" >&2
+    #[ "$out" == 't'"$i" ] || echo 'ERROR ON t'"$i" >&2
 done
 echo $SECONDS;
 
@@ -95,7 +96,7 @@ for i in `seq 500`; do
     p='Data_'"$i"
     p="${!p}"
     out="`object "$p" get 'test' 't'"$i"`"
-    [ "$out" == 't'"$i" ] || echo 'ERROR ON t'"$i" >&2
+    #[ "$out" == 't'"$i" ] || echo 'ERROR ON t'"$i" >&2
 done
 echo $SECONDS;
 

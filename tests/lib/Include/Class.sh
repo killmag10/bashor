@@ -12,7 +12,7 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: registry.sh 16 2010-03-12 23:35:45Z lars $
+# @version      $Id$
 ################################################################################
 
 function CLASS_Include_Class___construct()

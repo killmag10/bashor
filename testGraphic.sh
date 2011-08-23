@@ -12,7 +12,7 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: test.sh 23 2010-03-14 19:36:03Z lars $
+# @version      $Id$
 ################################################################################
 
 BASE_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;

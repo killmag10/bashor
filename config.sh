@@ -11,7 +11,7 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: loader.sh 11 2010-03-11 21:41:42Z lars $
+# @version      $Id$
 ################################################################################
 
 # Directorys
