@@ -27,7 +27,7 @@ function CLASS_Bashor_Color_fg()
 {
     requireParams SR "$@"
         
-    if [ -p /dev/stdin ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
+    if [ -p /dev/stdin ] && [ -z "$1" ]; then
         local IFS=$'\n\r'
         while read msg; do this call fg "$msg" "$2" "$3"; echo; done
         return 0
@@ -51,7 +51,7 @@ function CLASS_Bashor_Color_bg()
 {
     requireParams SR "$@"
     
-    if [ -p /dev/stdin ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
+    if [ -p /dev/stdin ] && [ -z "$1" ]; then
         local IFS=`echo -e "\n\r"`
         while read msg; do this call bg "$msg" "$2"; echo; done
         return 0

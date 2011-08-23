@@ -19,9 +19,6 @@ if [[ ! "$BASHOR_PATH" =~ ^/ ]]; then
     BASHOR_PATH=`echo "$PWD/$BASHOR_PATH" | sed 's#/\.\?$##'`;
 fi
 
-# Set New Line
-export NL=$'\n';
-
 # Set paths
 BASHOR_PATH_INCLUDES="${BASHOR_PATH}/includes";
 BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
@@ -31,11 +28,11 @@ BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
 
 # Defaults
 [ -z "BASHOR_LOG_FILE" ] && BASHOR_LOG_FILE="./error.log";
-[ -z "$BASHOR_PATH_CONFIG" ] && BASHOR_PATH_CONFIG="${BASHOR_PATH}/config.sh";
 BASHOR_BACKTRACE_REMOVE=0;
 
 # Load Config
-. "$BASHOR_PATH_CONFIG";
+. "${BASHOR_PATH}/config.sh"
+[ -n "$BASHOR_PATH_CONFIG" ] && . "$BASHOR_PATH_CONFIG";
 
 # Add debuging channel
 exec 3>&2;
