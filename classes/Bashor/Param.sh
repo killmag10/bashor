@@ -12,7 +12,7 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: getopt.sh 100 2010-11-24 15:28:25Z lars $
+# @version      $Id$
 ################################################################################
 
 function CLASS_Bashor_Param___construct()

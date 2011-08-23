@@ -12,7 +12,7 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: color.sh 19 2010-03-13 19:27:45Z lars $
+# @version      $Id$
 ################################################################################
 
 ##
