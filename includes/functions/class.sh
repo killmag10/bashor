@@ -23,7 +23,7 @@
 # $?    1       ERROR
 loadClass()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     local dn filename IFS=$'\n\r'
     for dn in $BASHOR_PATHS_CLASS; do
@@ -45,7 +45,7 @@ loadClass()
 # $?    1       ERROR
 loadClassOnce()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     eval '[ -n "$_BASHOR_CLASS_'"$1"'_LOADED" ]' || loadClass "$1"
     return $?
@@ -83,7 +83,7 @@ __hookClassRouter()
 # $?    1       ERROR
 addClass()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     eval _BASHOR_CLASS_"$1"_LOADED=1
     local namespace='_BASHOR_CLASS_'"$1"  
@@ -112,7 +112,7 @@ addClass()
 # $?    1       ERROR
 _bashor_addStdClass()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     _bashor_createExtendedClassFunctions "$1" Class 1
     eval '_BASHOR_CLASS_'"$1"'_EXTENDS=Class'
@@ -128,8 +128,7 @@ _bashor_addStdClass()
 # $?    1       ERROR
 _bashor_createExtendedClassFunctions()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     
     local fList=$(declare -F | sed -n 's#^declare -f CLASS_'"$2"'_\(.*\)$#\1#p')
     local f fNameParent fNameNew IFS=$'\n\r'
@@ -151,8 +150,7 @@ _bashor_createExtendedClassFunctions()
 # $?    *       all of class method
 class()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     
     local CLASS_NAME="$1"    
     __hookClassRouter || return 1
@@ -171,7 +169,7 @@ class()
 # $?    1       NOT FOUND
 classExists()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     local classVarName=_BASHOR_CLASS_"$1"
     [ -n "${!classVarName}" ]
@@ -187,8 +185,7 @@ classExists()
 # $?    1       ERROR
 _bashor_objectLoadData()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ "$#" -lt 2 ] && error '2: Parameter not set'
+    requireParams RS "$@"
     
     local dataLine="$(echo "$2" | grep '^DATA=' -n | sed 's/:.*$//')"
     local value="$(echo "$2" | tail -n +$((++dataLine)) | decodeData)"
@@ -204,7 +201,7 @@ _bashor_objectLoadData()
 # $?    1       ERROR
 _bashor_objectSaveData()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     echo 'bashor dump 1.0.0 objectData'
     echo "CLASS_NAME=$CLASS_NAME"
     echo 'DATA='
@@ -221,8 +218,7 @@ _bashor_objectSaveData()
 # $?    *       all of class method
 object()
 {    
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'   
+    requireParams RR "$@" 
     if [ ! "${!1}" == "$BASHOR_TYPE_OBJECT" ] || [[ ! "$1" =~ ^_BASHOR_POINTER_ ]]; then
         error 'Pointer "'"$1"'" is not a Object!'
     fi
@@ -248,7 +244,7 @@ object()
 serialize()
 {    
     {
-        [ -z "$1" ] && error '1: Parameter empty or not set'
+        requireParams R "$@"
         issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
         
         local OBJECT_POINTER CLASS_NAME
@@ -274,7 +270,7 @@ serialize()
 # $?    1       ERROR
 unserialize()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     local _bashor_temp_dataLine _bashor_temp_header CLASS_NAME
     
     if [ "$#" -lt 2 ] && [ -p /dev/stdin ]; then
@@ -313,7 +309,7 @@ unserialize()
 # $?    1       ERROR
 _bashor_call()
 {    
-    [ -z "$1" ] && error '1: Parameter empty or not set'    
+    requireParams R "$@" 
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$CLASS_NAME"
       
     eval '[ -z "$_BASHOR_CLASS_'"$CLASS_NAME"'" ]' \
@@ -346,8 +342,7 @@ _bashor_call()
 # $?    1       ERROR
 new()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     
     local CLASS_NAME="$1"
     __hookClassRouter || return 1
@@ -374,8 +369,7 @@ new()
 # $?    1       ERROR
 extends()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     
     [ "$BASHOR_CLASS_AUTOLOAD" == 1 ] && __autoloadClass "$2"
     eval '_BASHOR_CLASS_'"$1"'_EXTENDS'"='$2'"
@@ -391,8 +385,7 @@ extends()
 # $?    *       all of class method __clone
 clone()
 {    
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     isObject "$1" || error 'Pointer "'"$1"'" is not a Object!'
     
     _bashor_generatePointer "$2" "$BASHOR_TYPE_OBJECT"        
@@ -416,7 +409,7 @@ clone()
 # $?    1       ERROR
 remove()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     [ -z "$1"_CLASS ] && error 'Pointer "'"$1"'" is not a Object!'
 
     local CLASS_NAME res=0
@@ -444,7 +437,7 @@ remove()
 # $?    1       ERROR
 _bashor_generatePointer()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     local _bashor_temp_pointer
     while true; do
@@ -474,7 +467,7 @@ _bashor_generatePointer()
 # $?    *       all of class method
 this()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set' 
+    requireParams R "$@"
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
     case "$1" in
@@ -548,7 +541,7 @@ this()
 # $?    *       all of class method
 parent()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set' 
+    requireParams R "$@"
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
     eval 'local CLASS_NAME="$_BASHOR_CLASS_'"$CLASS_NAME"'_EXTENDS"'
@@ -583,8 +576,7 @@ parent()
 # &0    string  Data
 _bashor_objectSet()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'   
-    [ -z "$2" ] && error '2: Parameter empty or not set'  
+    requireParams RR "$@"  
 
     if [ "$#" -lt 3 ] && [ -p /dev/stdin ]; then
         local value=$(cat - | encodeData)
@@ -609,8 +601,7 @@ _bashor_objectSet()
 # $?    1       ERROR
 _bashor_objectUnset()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'   
-    [ -z "$2" ] && error '2: Parameter empty or not set'  
+    requireParams RR "$@"
     
     local key=$(echo "$2" | encodeData)
     local data=$(echo "${!1}" | grep -v "^${key}[[:space:]]\+.*$")
@@ -629,8 +620,7 @@ _bashor_objectUnset()
 # &0    string  Data
 _bashor_objectGet()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set' 
+    requireParams RR "$@"
     
     data=$(echo "${!1}" | grep "$(echo "$2" | encodeData)")    
     [ $? == 0 ] || return 1
@@ -648,7 +638,7 @@ _bashor_objectGet()
 # &0    integer count
 _bashor_objectCount()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     if [ -z "${!1}" ]; then
         echo 0 
@@ -680,8 +670,7 @@ _bashor_objectClear()
 # &0    integer count
 _bashor_objectKey()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     
     local IFS=$'\n'
     local data=(`echo "${!1}"`);
@@ -699,8 +688,7 @@ _bashor_objectKey()
 # $?    1       ERROR
 _bashor_objectIsset()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'   
-    [ -z "$2" ] && error '2: Parameter empty or not set'  
+    requireParams RR "$@"
     
     local key=$(echo "$2" | encodeData)
     echo "${!1}" | grep "^$key " >/dev/null
@@ -715,7 +703,7 @@ _bashor_objectIsset()
 # $?    1       ERROR
 isObject()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'   
+    requireParams S "$@"
     
     [ "${!1}" == "$BASHOR_TYPE_OBJECT" ] && [[ "$1" =~ ^_BASHOR_POINTER_ ]]
     return $?

@@ -27,6 +27,7 @@ BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
 . "${BASHOR_PATH_INCLUDES}/constants.sh";
 
 # Defaults
+NL=$'\n'
 [ -z "BASHOR_LOG_FILE" ] && BASHOR_LOG_FILE="./error.log";
 BASHOR_BACKTRACE_REMOVE=0;
 

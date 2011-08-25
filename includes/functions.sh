@@ -24,8 +24,7 @@
 # $?    1       ERROR
 copyFunction()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     
     eval "$(echo "$2"(); declare -f "$1" | tail -n +2;)"
     return $?
@@ -40,8 +39,7 @@ copyFunction()
 # $?    1       ERROR
 renameFunction()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
-    [ -z "$2" ] && error '2: Parameter empty or not set'
+    requireParams RR "$@"
     
     copyFunction "$1" "$2" && unset -f "$1"
     return $?
@@ -57,7 +55,7 @@ renameFunction()
 # $?    1       ERROR
 prepareOutput()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     local msg
     while read msg; do echo "$1$msg"; done
@@ -219,8 +217,20 @@ _bashor_handleError()
         } | class Bashor_Log error
     fi
     
-    [ -n "$exit" ] && exit "$exit"
-    return 0
+    if [ -n "$exit" ]; then
+        if [ "$BASHOR_ERROR_EXIT" = 1 ]; then
+            exit "$exit"
+        else
+            trap '
+                if ! [[ "$BASH_COMMAND" =~ ^return ]]; then
+                    trap DEBUG;
+                    return 1;
+                fi
+            ' DEBUG;
+        fi
+    else
+        return 0
+    fi
 }
 
 ##
@@ -231,7 +241,7 @@ _bashor_handleError()
 # &3    string  error messages
 error()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     local BASHOR_BACKTRACE_REMOVE
     ((BASHOR_BACKTRACE_REMOVE++))
@@ -245,7 +255,7 @@ error()
 # &3    string  warning messages
 warning()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     local BASHOR_BACKTRACE_REMOVE
     ((BASHOR_BACKTRACE_REMOVE++))
@@ -259,7 +269,7 @@ warning()
 # &3    string  debug messages
 debug()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     local BASHOR_BACKTRACE_REMOVE
     ((BASHOR_BACKTRACE_REMOVE++))
@@ -275,16 +285,16 @@ debug()
 # $?    1       not set
 isset()
 {
-    [ -z "$1" ] && error '1: Parameter empty or not set'
+    requireParams R "$@"
     
     case "$1" in
         var)
-            [ -z "$2" ] && error '2: Parameter empty or not set'
+            requireParams RR "$@"
             issetVar "$2"
             return $?
             ;;
         function)
-            [ -z "$2" ] && error '2: Parameter empty or not set'
+            requireParams RR "$@"
             issetFunction "$2"
             return $?
             ;;           
@@ -405,6 +415,7 @@ requireParams()
     if [ "$#" -le "${#config}" ]; then
         local paramCount="$#"
         error "$((++paramCount)): Parameter not set"
+        return 1
     fi
     
     local current=0
@@ -412,7 +423,9 @@ requireParams()
         case "${config:$current:1}" in
             R)
                 if [ -z "$1" ]; then
-                    error "$((current+1)): Parameter empty but required"
+                    ((current+1))
+                    error "$current: Parameter empty but required"
+                    return 1
                 fi
                 ;;
             S)
@@ -420,11 +433,53 @@ requireParams()
             '')
                 ;;
             *)
-                error "${config:$current:1} = $current not allowd in config \"${config}\""
+                local configSegment="${config:$current:1}"
+                error "$configSegment = $current not allowd in config \"${config}\""
+                return 1
                 ;;
         esac
         ((current++))
     done
+}
+
+##
+# Check if the Params are correct.
+#
+# Config String:
+# R     Is set and not empty
+# S     Is set
+#
+# Example: needParamCount 4 $#
+#
+# $1    string  Config String
+# $@    mixed   All Params
+# $?    0       OK
+# $?    1       ERROR
+checkParams()
+{
+    local config="$1"    
+    if [ "$#" -le "${#config}" ]; then
+        return 1
+    fi
+    
+    local current=0
+    while shift; do
+        case "${config:$current:1}" in
+            R)
+                [ -z "$1" ] && return 1
+                ;;
+            S)
+                ;;
+            '')
+                ;;
+            *)
+                return 1
+                ;;
+        esac
+        ((current++))
+    done
+    
+    return 0
 }
 
 . "$BASHOR_PATH_INCLUDES/functions/class.sh"
