@@ -18,35 +18,36 @@
 loadClass 'Bashor_Log';
 nl=`echo -e '\n\r'`;
 
-class Bashor_Log remove;
-class Bashor_Log remove;
+class Bashor_Log getDefault log
+object "$log" remove;
+object "$log" remove;
 checkSimple "remove false" "$?" "1";
 
-class Bashor_Log log "zeile1";
+object "$log" log "zeile1";
 checkSimple "log string" "$?" "0";
-echo "zeile2" | class Bashor_Log log;
+echo "zeile2" | object "$log" log;
 checkSimple "log stream" "$?" "0";
 
 testString="zeile1
 zeile2";
-res=`class Bashor_Log get`;
+res=`object "$log" get`;
 checkSimple "get" "$?" "0";
-checkSimple "get data" "`class Bashor_Log get`" "$testString";
+checkSimple "get data" "`object \"$log\" get`" "$testString";
 
-class Bashor_Log remove;
+object "$log" remove;
 checkSimple "remove true" "$?" "0";
 
-class Bashor_Log error "blab";
+object "$log" error "blab";
 checkSimple "error string" "$?" "0";
-echo "blub" | class Bashor_Log error;
+echo "blub" | object "$log" error;
 checkSimple "error stream" "$?" "0";
 
 checkRegexLines "error data" "`cat \"$TEST_TEMP_DIR/log.log\"`" \
     "[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\} ERROR:      1	bl.b" "2";
 
-class Bashor_Log debug "blab";
+object "$log" debug "blab";
 checkSimple "debug string" "$?" "0";
-echo "blub" | class Bashor_Log debug;
+echo "blub" | object "$log" debug;
 checkSimple "debug stream" "$?" "0";
 
 checkRegexLines "debug data" "`cat \"$TEST_TEMP_DIR/log.log\"`" \

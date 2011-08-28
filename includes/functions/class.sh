@@ -136,7 +136,11 @@ _bashor_createExtendedClassFunctions()
         fNameParent=CLASS_"$2"_"$f"
         fNameNew=CLASS_"$1"_"$f"
         if [ -z "$3" ] || ! issetFunction "$fNameNew"; then
-            eval 'function '"$fNameNew"'() { '"$fNameParent"' "$@"; return $?;}'
+            eval 'function '"$fNameNew"'() {
+                local CLASS_NAME='\'"$2"\'';
+                '"$fNameParent"' "$@";
+                return $?;
+            }'
         fi
     done
 }
@@ -467,8 +471,10 @@ _bashor_generatePointer()
 # $?    *       all of class method
 this()
 {
+    requireObject
     requireParams R "$@"
-    [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
+    [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set' 
+    local CLASS_NAME="$CLASS_TOP_NAME";
     
     case "$1" in
         call)
@@ -485,11 +491,7 @@ this()
             ;;
     esac
     
-    if [ -z "$OBJECT" ]; then
-        eval 'local OBJECT_POINTER=$_BASHOR_CLASS_'"$CLASS_NAME"'_POINTER'
-    fi
-    local dataVarName="$OBJECT_POINTER"_DATA
-    
+    local dataVarName="$OBJECT_POINTER"_DATA    
     case "$1" in
         get)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
@@ -527,6 +529,88 @@ this()
             ;;
         *)
             error "\"$1\" is not a option of this!"
+            ;;
+    esac
+    
+    return 1
+}
+
+##
+# Access to the class.
+#
+# call [method]:    call a method of the current class/object
+# pointer:          get the pointer of the object
+# get [key]:        get the contend of a var from the object/class
+# set [key]:        set the contend of a var from the object/class
+# unset [key]:      remove a var from the object/class
+# isset [key]:      check if a var from the object/class is set
+# count:            get the count of vars from the object/class
+# key:              get the key of a var from the object/class var list
+# clear:            remove all vars from a object/class
+#
+# $1    string  action (call,pointer,get,set,unset,isset)
+# $@    mixed   params
+# $?    *       all of class method
+static()
+{
+    requireParams R "$@"
+    [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set' 
+    local CLASS_NAME="$CLASS_TOP_NAME";
+    
+    case "$1" in
+        call)
+            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            shift
+            class "$CLASS_NAME" "$@"
+            return $?
+            ;;
+        pointer)
+            [ -z "$OBJECT" ] && error 'Not a Object'
+            [ -z "$OBJECT_POINTER" ] && error 'No pointer found'
+            echo "$OBJECT_POINTER"
+            return 0
+            ;;
+    esac
+    
+    eval 'local OBJECT_POINTER=$_BASHOR_CLASS_'"$CLASS_NAME"'_POINTER'
+    local dataVarName="$OBJECT_POINTER"_DATA
+    case "$1" in
+        get)
+            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            _bashor_objectGet "$dataVarName" "$2"
+            return $?
+            ;;
+        set)
+            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            [ "$#" -lt 3 ] && error '3: Parameter not set'
+            _bashor_objectSet "$dataVarName" "$2" "$3"
+            return $?
+            ;;
+        unset)
+            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            _bashor_objectUnset "$dataVarName" "$2"
+            return $?
+            ;;
+        isset)
+            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            _bashor_objectIsset "$dataVarName" "$2"
+            return $?
+            ;;
+        count)
+            _bashor_objectCount "$dataVarName"
+            return $?
+            ;;
+        key)
+            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            _bashor_objectKey "$dataVarName" "$2"
+            return $?
+            ;;
+        clear)
+             _bashor_objectClear "$dataVarName"
+            return $?
+            ;;
+        *)
+            error "\"$1\" is not a option of static!"
             ;;
     esac
     
@@ -726,7 +810,7 @@ requireObject()
 # $?    1       ERROR
 requireStatic()
 {
-    [ -z "$Static" ] && error 'Not a static call!'
+    [ -z "$STATIC" ] && error 'Not a static call!'
 }
 
 . "$BASHOR_PATH_INCLUDES/Class.sh"

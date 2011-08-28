@@ -29,11 +29,11 @@ function CLASS_Bashor_Color_fg()
         
     if [ -p /dev/stdin ] && [ -z "$1" ]; then
         local IFS=$'\n\r'
-        while read msg; do this call fg "$msg" "$2" "$3"; echo; done
+        while read msg; do static call fg "$msg" "$2" "$3"; echo; done
         return 0
     fi
     
-    local color=`this call getFGColorByName "$2" "$3"`
+    local color=`static call getFGColorByName "$2" "$3"`
     echo -en "\033$color"
     echo -n "$1"
     echo -en "\033[0m"
@@ -53,11 +53,11 @@ function CLASS_Bashor_Color_bg()
     
     if [ -p /dev/stdin ] && [ -z "$1" ]; then
         local IFS=`echo -e "\n\r"`
-        while read msg; do this call bg "$msg" "$2"; echo; done
+        while read msg; do static call bg "$msg" "$2"; echo; done
         return 0
     fi
     
-    local color=`this call getBGColorByName "$2"`
+    local color=`static call getBGColorByName "$2"`
     echo -en "\033$color"
     echo -n "$1"
     echo -en "\033[0m"
@@ -75,7 +75,7 @@ function CLASS_Bashor_Color_getFGColorByName()
     requireParams R "$@"
 
     if [ -n "$2" ]; then
-        local style=`this call getStyleByName "$2"`
+        local style=`static call getStyleByName "$2"`
     else
         local style=
     fi

@@ -103,10 +103,12 @@ handleError()
             echo "$msgOut" | class Bashor_Color fg '' 'red' 'bold'
         fi
         if [ $BASHOR_ERROR_LOG == 1 ]; then
+            local log
+            class Bashor_Log getDefault log
             msgLog="$msg"
             [ $BASHOR_ERROR_BACKTRACE == 1 ] \
                 && local msgLog="$msgOut""$NL""$trace"
-            echo "$msgLog" | class Bashor_Log error
+            echo "$msgLog" | object "$log" error
         fi
         [ -n "$1" ] && exit "$1"
     done
@@ -211,10 +213,12 @@ _bashor_handleError()
     
     if [ "$doLog" = 1 ]; then
         loadClassOnce "Bashor_Log"
+        local log
+        class Bashor_Log getDefault log
         {
             echo "$message" | sed "s/^/$prefix/g"
             [ -n "$backtrace" ] && echo "$backtrace"
-        } | class Bashor_Log error
+        } | object "$log" error
     fi
     
     if [ -n "$exit" ]; then
@@ -415,7 +419,7 @@ requireParams()
     local config="$1"    
     if [ "$#" -le "${#config}" ]; then
         local paramCount="$#"
-        error "$((paramCount)): Parameter not set"
+        error "$((++paramCount)): Parameter not set"
         return 1
     fi
     

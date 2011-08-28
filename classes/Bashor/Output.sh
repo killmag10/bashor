@@ -16,13 +16,6 @@
 ################################################################################
 
 ##
-# Loader.
-function CLASS_Bashor_Output___load()
-{
-    this set 'prefixes' ''
-}
-
-##
 # Constructor.
 function CLASS_Bashor_Output___construct()
 {

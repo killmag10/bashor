@@ -19,7 +19,7 @@
 # Loader
 function CLASS_Class___load()
 {
-    : ${STATIC:?}
+    requireStatic
     return 0
 }
 
@@ -27,7 +27,7 @@ function CLASS_Class___load()
 # Constructor
 function CLASS_Class___construct()
 {
-    : ${OBJECT:?}
+    requireObject
     return 0
 }
 
@@ -35,7 +35,7 @@ function CLASS_Class___construct()
 # Destructor
 function CLASS_Class___destruct()
 {
-    : ${OBJECT:?}
+    requireObject
     return 0
 }
 
@@ -46,7 +46,7 @@ function CLASS_Class___destruct()
 # &0    string  class name
 function CLASS_Class_getClass()
 {
-    : ${CLASS_NAME:?}
+    [ -z "$CLASS_NAME" ] && error 'Not in a Class'
     echo "$CLASS_NAME"
     return 0
 }
@@ -58,7 +58,7 @@ function CLASS_Class_getClass()
 # &0    string  class name
 function CLASS_Class_getClassTrace()
 {
-    : ${CLASS_NAME:?}
+    [ -z "$CLASS_NAME" ] && error 'Not in a Class'
     echo "$CLASS_NAME"
     parent exists || return 1
     parent call getClassTrace
@@ -71,7 +71,7 @@ function CLASS_Class_getClassTrace()
 # $?    0:TRUE   1:FALSE
 function CLASS_Class_hasParentClass()
 {
-    : ${CLASS_NAME:?}
+    [ -z "$CLASS_NAME" ] && error 'Not in a Class'
     parent exists
     return $?
 }
@@ -82,8 +82,8 @@ function CLASS_Class_hasParentClass()
 # $?    0:TRUE    1:FALSE
 function CLASS_Class_isA()
 {
-    : ${CLASS_NAME:?}
-    : ${1:?}
+    [ -z "$CLASS_NAME" ] && error 'Not in a Class'
+    requireParams R "$@"
     [ "$CLASS_NAME" == "$1" ] && return 0
     parent exists || return 1
     parent call isA "$1"

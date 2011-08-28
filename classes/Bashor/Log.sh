@@ -16,12 +16,18 @@
 ################################################################################
 
 ##
-# Constructor
+# Get a instance.
 #
-# $1    string  log file
-function CLASS_Bashor_Log___load()
+# $1    string  instance var name
+function CLASS_Bashor_Log_getDefault()
 {
-    this set file "$BASHOR_LOG_FILE"
+    if ! static isset instance; then
+        local instanceDefault
+        new "$CLASS_NAME" instanceDefault "$BASHOR_LOG_FILE"
+        static set instanceDefault "$instanceDefault";
+    fi
+    eval "$1"'="$(static get instanceDefault)"';
+    return $?;
 }
 
 ##
@@ -43,6 +49,7 @@ function CLASS_Bashor_Log___construct()
 # &0    string  Text
 function CLASS_Bashor_Log_log()
 {
+    requireObject
     local logFile=`this get file`
     
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
@@ -59,6 +66,7 @@ function CLASS_Bashor_Log_log()
 # &0    string  Text
 function CLASS_Bashor_Log_get()
 {
+    requireObject
     local logFile=`this get file`
     
     if [ -f "$logFile" ]; then
@@ -73,6 +81,7 @@ function CLASS_Bashor_Log_get()
 # Remove the log.
 function CLASS_Bashor_Log_remove()
 {
+    requireObject
     local logFile=`this get file`
     
     if [ -f "$logFile" ]; then
@@ -89,7 +98,8 @@ function CLASS_Bashor_Log_remove()
 # $1    string  Text
 # &0    string  Text
 function CLASS_Bashor_Log_error()
-{    
+{
+    requireObject
     datestring=`date +'%Y-%m-%d %H:%M:%S'`
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring ERROR: #" | this call log
@@ -105,6 +115,7 @@ function CLASS_Bashor_Log_error()
 # &0    string  Text
 function CLASS_Bashor_Log_warning()
 {    
+    requireObject
     datestring=`date +'%Y-%m-%d %H:%M:%S'`
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring WARNING: #" | this call log
@@ -120,6 +131,7 @@ function CLASS_Bashor_Log_warning()
 # &0    string  Text
 function CLASS_Bashor_Log_debug()
 {   
+    requireObject
     datestring=`date +'%Y-%m-%d %H:%M:%S'`
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring DEBUG: #" | this call log
