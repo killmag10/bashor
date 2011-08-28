@@ -45,7 +45,7 @@ echo '
 .\"
 .\" Man page for Bashor
 .\"
-.TH Bashor 7 "2011-03-20" "Lars Dietrich" "Bashor Coding Commands"
+.TH Bashor 7 "'"$(date +'%Y-%m-%d')"'" "Lars Dietrich" "Bashor Coding Commands"
 .SH Bashor
 .B Bashor
 \- an pseudo object extension for bash

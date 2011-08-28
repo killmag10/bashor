@@ -2,12 +2,12 @@
 .\"
 .\" Man page for Bashor
 .\"
-.TH Bashor 7 "2011-03-20" "Lars Dietrich" "Bashor Coding Commands"
+.TH Bashor 7 "2011-08-29" "Lars Dietrich" "Bashor Coding Commands"
 .SH Bashor
 .B Bashor
 \- an pseudo object extension for bash
 
-.PD 1
+.PD 0
 
 
 .SH GENERAL FUNCTIONS
@@ -15,16 +15,51 @@
 .B bufferStream()
 .RS
 .HP
-Buffer a stream completly,
+Buffer a stream completly otherwise it will trow a error.
+.HP
 .B &0
 .I mixed
 input
+.HP
 .B &1
 .I mixed
 output
+.HP
 .B $?
 .I 0
 OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B checkParams()
+.RS
+.HP
+Check if the Params are correct.
+.HP
+Config String:
+.HP
+R     Is set and not empty
+.HP
+S     Is set
+.HP
+Example: needParamCount 4 $#
+.HP
+.B $1
+.I string
+Config String
+.HP
+.B $@
+.I mixed
+All Params
+.HP
+.B $?
+.I 0
+OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -35,15 +70,19 @@ ERROR
 .RS
 .HP
 Copy a function
+.HP
 .B $1
 .I string
 current function name
+.HP
 .B $2
 .I string
 new function name
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -54,9 +93,11 @@ ERROR
 .RS
 .HP
 debug message
+.HP
 .B $1
 .I string
 message
+.HP
 .B &3
 .I string
 debug messages
@@ -67,12 +108,15 @@ debug messages
 .RS
 .HP
 error message
+.HP
 .B $1
 .I string
 message
+.HP
 .B $2
 .I integer|null
 return value for exit default=1
+.HP
 .B &3
 .I string
 error messages
@@ -83,12 +127,15 @@ error messages
 .RS
 .HP
 Get a baacktrace to the current file.
+.HP
 .B &1
 .I string
 files with line number per line
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -105,6 +152,7 @@ exec 101>&1; (
 COMANDS
 .HP
 ) 2>&1 >&101 | handleError
+.HP
 .B &0
 .I string
 error stream
@@ -115,18 +163,23 @@ error stream
 .RS
 .HP
 Error handler call
+.HP
 .B $1
 .I string
 message
+.HP
 .B $2
 .I integer|null
 return value for exit default=1
+.HP
 .B &3
 .I string
 error messages
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 Use internal error handler
@@ -137,15 +190,19 @@ Use internal error handler
 .RS
 .HP
 Check if's a value is in the array.
+.HP
 .B $1
 .I mixed
 search
+.HP
 .B $@
 .I mixed
 list of values
+.HP
 .B $?
 .I 0
 in list
+.HP
 .B $?
 .I 1
 not in list
@@ -156,15 +213,19 @@ not in list
 .RS
 .HP
 Isset a var | function
+.HP
 .B $1
 .I string
 the type (var|function)
+.HP
 .B $2
 .I string
 name
+.HP
 .B $?
 .I 0
 set
+.HP
 .B $?
 .I 1
 not set
@@ -175,12 +236,15 @@ not set
 .RS
 .HP
 Isset a function
+.HP
 .B $1
 .I string
 name
+.HP
 .B $?
 .I 0
 set
+.HP
 .B $?
 .I 1
 not set
@@ -191,12 +255,15 @@ not set
 .RS
 .HP
 Isset a var
+.HP
 .B $1
 .I string
 name
+.HP
 .B $?
 .I 0
 set
+.HP
 .B $?
 .I 1
 not set
@@ -207,18 +274,23 @@ not set
 .RS
 .HP
 Add a prefix for each line.
+.HP
 .B $1
 .I string
 prefix
+.HP
 .B &0
 .I string
 input
+.HP
 .B &1
 .I string
 prepared input
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -229,15 +301,50 @@ ERROR
 .RS
 .HP
 Rename a function
+.HP
 .B $1
 .I string
 current function name
+.HP
 .B $2
 .I string
 new function name
+.HP
 .B $?
 .I 0
 OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B requireParams()
+.RS
+.HP
+Check if the Params are correct otherwise it will trow a error.
+.HP
+Config String:
+.HP
+R     Is set and not empty
+.HP
+S     Is set
+.HP
+Example: needParamCount 4 $#
+.HP
+.B $1
+.I string
+Config String
+.HP
+.B $@
+.I mixed
+All Params
+.HP
+.B $?
+.I 0
+OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -248,6 +355,7 @@ ERROR
 .RS
 .HP
 Backtrace for error signal
+.HP
 .B &1
 .I string
 files with line number per line
@@ -258,9 +366,11 @@ files with line number per line
 .RS
 .HP
 warning message
+.HP
 .B $1
 .I string
 message
+.HP
 .B &3
 .I string
 warning messages
@@ -272,15 +382,19 @@ warning messages
 .RS
 .HP
 Add Class functions.
+.HP
 .B $1
 .I string
 class
+.HP
 .B $@
 .I mixed
 params
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -291,12 +405,15 @@ ERROR
 .RS
 .HP
 Autoloader for Classes
+.HP
 .B $1
 .I string
 class
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -307,15 +424,42 @@ ERROR
 .RS
 .HP
 Call a class method
+.HP
 .B $1
 .I string
 class name
+.HP
 .B $2
 .I string
 function name
+.HP
 .B $@
 .I mixed
 method params
+.HP
+.B $?
+.I *
+all of class method
+.RE
+
+.TP
+.B class()
+.RS
+.HP
+Call a class method
+.HP
+.B $1
+.I string
+class name
+.HP
+.B $2
+.I string
+function name
+.HP
+.B $@
+.I mixed
+method params
+.HP
 .B $?
 .I *
 all of class method
@@ -326,12 +470,15 @@ all of class method
 .RS
 .HP
 Check if a class exists.
+.HP
 .B $1
 .I string
 class name
+.HP
 .B $?
 .I 0
 FOUND
+.HP
 .B $?
 .I 1
 NOT FOUND
@@ -342,12 +489,15 @@ NOT FOUND
 .RS
 .HP
 Clone object.
+.HP
 .B $1
 .I string
 object name
+.HP
 .B $2
 .I string
 object name
+.HP
 .B $?
 .I *
 all of class method __clone
@@ -358,15 +508,19 @@ all of class method __clone
 .RS
 .HP
 Extends a class.
+.HP
 .B $1
 .I string
 class name
+.HP
 .B $2
 .I string
 parent class name
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -377,12 +531,15 @@ ERROR
 .RS
 .HP
 Hook for class routing.
+.HP
 .B $CLASS_NAME
 .I string
 class name what will be call
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -393,12 +550,15 @@ ERROR
 .RS
 .HP
 Check if it is a Pointer of a object.
+.HP
 .B $1
 .I mixed
 string to check
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -409,12 +569,15 @@ ERROR
 .RS
 .HP
 Load class.
+.HP
 .B $1
 .I string
 namespace
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -425,12 +588,15 @@ ERROR
 .RS
 .HP
 Load class once.
+.HP
 .B $1
 .I string
 namespace
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -441,18 +607,23 @@ ERROR
 .RS
 .HP
 Create a new object from class.
+.HP
 .B $1
 .I string
 class name
+.HP
 .B $2
 .I string
 var name
+.HP
 .B $@
 .I mixed
 method params
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -463,15 +634,19 @@ ERROR
 .RS
 .HP
 Call a object method
+.HP
 .B $1
 .I string
 pointer
+.HP
 .B $2
 .I string
 function name
+.HP
 .B $@
 .I mixed
 method params
+.HP
 .B $?
 .I *
 all of class method
@@ -482,12 +657,15 @@ all of class method
 .RS
 .HP
 Access to the parent class.
+.HP
 .B $1
 .I string
 action (call,exists)
+.HP
 .B $@
 .I mixed
 params
+.HP
 .B $?
 .I *
 all of class method
@@ -498,12 +676,45 @@ all of class method
 .RS
 .HP
 Remove a object.
+.HP
 .B $1
 .I tring
 pointer
+.HP
 .B $?
 .I 0
 OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B requireObject()
+.RS
+.HP
+Check if you are in a object call otherwise it will trow a error.
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B requireStatic()
+.RS
+.HP
+Check if you are in a static call otherwise it will trow a error.
+.HP
+.B $?
+.I 0
+OK
+.HP
 .B $?
 .I 1
 ERROR
@@ -514,18 +725,174 @@ ERROR
 .RS
 .HP
 Serialize a object.
+.HP
 .B $1
 .I string
 pointer
+.HP
 .B &1
 .I string
 serialized data
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
+.RE
+
+.TP
+.B serialize()
+.RS
+.HP
+Serialize a object.
+.HP
+.B $1
+.I string
+pointer
+.HP
+.B &1
+.I string
+serialized data
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B class()
+.RS
+.HP
+Call a class method
+.HP
+.B $1
+.I string
+class name
+.HP
+.B $2
+.I string
+function name
+.HP
+.B $@
+.I mixed
+method params
+.HP
+.B $?
+.I *
+all of class method
+.RE
+
+.TP
+.B class()
+.RS
+.HP
+Call a class method
+.HP
+.B $1
+.I string
+class name
+.HP
+.B $2
+.I string
+function name
+.HP
+.B $@
+.I mixed
+method params
+.HP
+.B $?
+.I *
+all of class method
+.RE
+
+.TP
+.B serialize()
+.RS
+.HP
+Serialize a object.
+.HP
+.B $1
+.I string
+pointer
+.HP
+.B &1
+.I string
+serialized data
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B serialize()
+.RS
+.HP
+Serialize a object.
+.HP
+.B $1
+.I string
+pointer
+.HP
+.B &1
+.I string
+serialized data
+.HP
+.B $?
+.I 0
+OK
+.HP
+.B $?
+.I 1
+ERROR
+.RE
+
+.TP
+.B static()
+.RS
+.HP
+Access to the class.
+.HP
+call [method]:    call a method of the current class/object
+.HP
+pointer:          get the pointer of the object
+.HP
+get [key]:        get the contend of a var from the object/class
+.HP
+set [key]:        set the contend of a var from the object/class
+.HP
+unset [key]:      remove a var from the object/class
+.HP
+isset [key]:      check if a var from the object/class is set
+.HP
+count:            get the count of vars from the object/class
+.HP
+key:              get the key of a var from the object/class var list
+.HP
+clear:            remove all vars from a object/class
+.HP
+.B $1
+.I string
+action (call,pointer,get,set,unset,isset)
+.HP
+.B $@
+.I mixed
+params
+.HP
+.B $?
+.I *
+all of class method
 .RE
 
 .TP
@@ -551,12 +918,15 @@ count:            get the count of vars from the object/class
 key:              get the key of a var from the object/class var list
 .HP
 clear:            remove all vars from a object/class
+.HP
 .B $1
 .I string
 action (call,pointer,get,set,unset,isset)
+.HP
 .B $@
 .I mixed
 params
+.HP
 .B $?
 .I *
 all of class method
@@ -567,15 +937,19 @@ all of class method
 .RS
 .HP
 Unserialize a object.
+.HP
 .B $1
 .I string
 var name
+.HP
 .B $2
 .I string
 serialized data
+.HP
 .B $?
 .I 0
 OK
+.HP
 .B $?
 .I 1
 ERROR
