@@ -159,7 +159,7 @@ class()
     local CLASS_NAME="$1"    
     __hookClassRouter || return 1
     local CLASS_TOP_NAME="$CLASS_NAME"
-    local OBJECT_NAME= OBJECT= OBJECT_POINTER= STATIC=1
+    local OBJECT= OBJECT_POINTER= STATIC=1
     shift
     _bashor_call "$@"
     return $?
@@ -227,8 +227,7 @@ object()
         error 'Pointer "'"$1"'" is not a Object!'
     fi
     
-    local OBJECT_NAME OBJECT_POINTER CLASS_TOP_NAME CLASS_NAME STATIC= OBJECT=1
-    OBJECT_NAME="$2"
+    local OBJECT_POINTER CLASS_TOP_NAME CLASS_NAME STATIC= OBJECT=1
     OBJECT_POINTER="$1"
     eval 'CLASS_NAME="$'"$1"'_CLASS"'
     CLASS_TOP_NAME="$CLASS_NAME"
@@ -559,9 +558,10 @@ static()
     
     case "$1" in
         call)
-            [ -z "$2" ] && error '2: Parameter empty or not set' 
+            [ -z "$2" ] && error '2: Parameter empty or not set'
+            local OBJECT= OBJECT_POINTER= STATIC=1
             shift
-            class "$CLASS_NAME" "$@"
+            _bashor_call "$@"            
             return $?
             ;;
         pointer)
