@@ -218,15 +218,16 @@ _bashor_handleError()
     fi
     
     if [ -n "$exit" ]; then
-        if [ "$BASHOR_ERROR_EXIT" = 1 ]; then
-            exit "$exit"
-        else
+        if [ "$BASHOR_INTERACTIVE" = 1 ]; then
             trap '
-                if ! [[ "$BASH_COMMAND" =~ ^return ]]; then
-                    trap DEBUG;
-                    return 1;
-                fi
+                while [ "${#FUNCNAME[@]}" -gt 0 ]; do
+                    return '\'"$exit"\'';
+                done                
+                trap DEBUG;
+                '"$(trap -p DEBUG)"'
             ' DEBUG;
+        else
+            exit "$exit"
         fi
     else
         return 0
@@ -414,7 +415,7 @@ requireParams()
     local config="$1"    
     if [ "$#" -le "${#config}" ]; then
         local paramCount="$#"
-        error "$((++paramCount)): Parameter not set"
+        error "$((paramCount)): Parameter not set"
         return 1
     fi
     
