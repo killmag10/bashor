@@ -266,10 +266,10 @@ function CLASS_Bashor_Terminal_moveCurserBackward()
 function CLASS_Bashor_Terminal_moveCurserBy()
 {
     requireParams RR "$@"
-    [ "$1" -gt 0 ] && this call moveCurserForward "$1"
-    [ "$1" -lt 0 ] && this call moveCurserBackward "${1:1}"
-    [ "$2" -gt 0 ] && this call moveCurserDown "$2"
-    [ "$2" -lt 0 ] && this call moveCurserUp "${2:1}"
+    [ "$1" -gt 0 ] && static call moveCurserForward "$1"
+    [ "$1" -lt 0 ] && static call moveCurserBackward "${1:1}"
+    [ "$2" -gt 0 ] && static call moveCurserDown "$2"
+    [ "$2" -lt 0 ] && static call moveCurserUp "${2:1}"
     return 0
 }
 
@@ -282,10 +282,10 @@ function CLASS_Bashor_Terminal_moveCurserBy()
 function CLASS_Bashor_Terminal_moveCurserReversedBy()
 {
     requireParams RR "$@"
-    [ "$1" -lt 0 ] && this call moveCurserForward "${1:1}"
-    [ "$1" -gt 0 ] && this call moveCurserBackward "$1"
-    [ "$2" -lt 0 ] && this call moveCurserDown "${2:1}"
-    [ "$2" -gt 0 ] && this call moveCurserUp "$2"
+    [ "$1" -lt 0 ] && static call moveCurserForward "${1:1}"
+    [ "$1" -gt 0 ] && static call moveCurserBackward "$1"
+    [ "$2" -lt 0 ] && static call moveCurserDown "${2:1}"
+    [ "$2" -gt 0 ] && static call moveCurserUp "$2"
     return 0
 }
 
