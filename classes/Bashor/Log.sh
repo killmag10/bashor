@@ -16,11 +16,13 @@
 ################################################################################
 
 ##
-# Get a instance.
+# Get the default logger.
 #
 # $1    string  instance var name
 function CLASS_Bashor_Log_getDefault()
 {
+    static set abc '"=\'\'
+    
     if ! static isset instance; then
         local instanceDefault
         new "$CLASS_NAME" instanceDefault "$BASHOR_LOG_FILE"

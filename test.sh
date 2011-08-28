@@ -86,6 +86,7 @@ function checkRegexLines()
 }
 
 doTest 'includes/functions/class';
+doTest 'includes/Class';
 
 doTest 'classes/Object';
 doTest 'classes/Getopt';

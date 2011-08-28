@@ -46,8 +46,8 @@ function CLASS_Class___destruct()
 # &0    string  class name
 function CLASS_Class_getClass()
 {
-    [ -z "$CLASS_NAME" ] && error 'Not in a Class'
-    echo "$CLASS_NAME"
+    [ -z "$CLASS_TOP_NAME" ] && error 'Not in a Class'
+    echo "$CLASS_TOP_NAME"
     return 0
 }
 
@@ -72,7 +72,8 @@ function CLASS_Class_getClassTrace()
 function CLASS_Class_hasParentClass()
 {
     [ -z "$CLASS_NAME" ] && error 'Not in a Class'
-    parent exists
+    eval 'local CLASS_NAME="$_BASHOR_CLASS_'"$CLASS_NAME"'_EXTENDS"'
+    [ -n "$CLASS_NAME" ]
     return $?
 }
 
@@ -82,20 +83,43 @@ function CLASS_Class_hasParentClass()
 # $?    0:TRUE    1:FALSE
 function CLASS_Class_isA()
 {
-    [ -z "$CLASS_NAME" ] && error 'Not in a Class'
+    [ -z "$CLASS_TOP_NAME" ] && error 'Not in a Class'
     requireParams R "$@"
-    [ "$CLASS_NAME" == "$1" ] && return 0
-    parent exists || return 1
-    parent call isA "$1"
-    return $?
+    local className="$CLASS_TOP_NAME";
+    while [ -n "$className" ]; do
+        [ "$className" == "$1" ] && return 0
+        eval 'local className="$_BASHOR_CLASS_'"$className"'_EXTENDS"'    
+    done
+    
+    return 1
 }
 
 ##
 # Check if class is a instance of.
 #
 # $?    0:TRUE    1:FALSE
-function CLASS_Class_debug()
+function CLASS_Class_dumpPropertys()
 {
-    # @todo
-    return 0
+    if [ -n "$OBJECT" ]; then
+        local count=$(this count)
+        local key current=0
+        while [ "$count" -gt "$current" ]; do
+            key="$(this key "$current")"
+            echo "$key"' : '"$(this get "$key")"
+            ((current++))
+        done
+        return 0
+    fi
+    if [ -n "$STATIC" ]; then
+        local count=$(static count)
+        local key current=0
+        while [ "$count" -gt "$current" ]; do
+            key="$(static key "$current")"
+            echo "$key"' : '"$(static get "$key")"
+            ((current++))
+        done
+        return 0
+    fi
+    
+    return 1
 }
