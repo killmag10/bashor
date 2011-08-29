@@ -28,7 +28,7 @@ loadClassOnce Bashor_Terminal
 # -B    -       Bold
 # -U    -       Underline
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_Graphic_setPixel()
+CLASS_Bashor_Terminal_Graphic_setPixel()
 {
     requireParams RR "$@"
 
@@ -60,7 +60,7 @@ function CLASS_Bashor_Terminal_Graphic_setPixel()
 # -B    -       Bold
 # -U    -       Underline
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_Graphic_printText()
+CLASS_Bashor_Terminal_Graphic_printText()
 {
     requireParams RRR "$@"
 
@@ -91,7 +91,7 @@ function CLASS_Bashor_Terminal_Graphic_printText()
 # $6    integer background color
 # $7    integer forderground color
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
+CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
 {
     requireParams RRRR "$@"
     loadClassOnce Bashor_Escape

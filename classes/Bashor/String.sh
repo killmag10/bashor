@@ -22,7 +22,7 @@
 # $1    char    one char
 # $2    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_String_repeat()
+CLASS_Bashor_String_repeat()
 {
     requireParams RR "$@"
     
@@ -44,7 +44,7 @@ function CLASS_Bashor_String_repeat()
 # $2    string  replacement
 # &1    string  text
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_String_replace()
+CLASS_Bashor_String_replace()
 {
     requireParams RR "$@"
     

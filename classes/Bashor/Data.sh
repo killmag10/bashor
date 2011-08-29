@@ -20,7 +20,7 @@
 #
 # -s   integer session size (Default:65536)
 # -c   compress
-function CLASS_Bashor_Data___construct()
+CLASS_Bashor_Data___construct()
 {    
     requireObject
     
@@ -47,7 +47,7 @@ function CLASS_Bashor_Data___construct()
 # $2    string  Data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Bashor_Data_set()
+CLASS_Bashor_Data_set()
 {
     requireObject
     requireParams R "$@"
@@ -79,7 +79,7 @@ function CLASS_Bashor_Data_set()
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Data_remove()
+CLASS_Bashor_Data_remove()
 {
     requireObject
     requireParams R "$@"
@@ -100,7 +100,7 @@ function CLASS_Bashor_Data_remove()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Data_get()
+CLASS_Bashor_Data_get()
 {
     requireObject
     requireParams R "$@"
@@ -122,7 +122,7 @@ function CLASS_Bashor_Data_get()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Data_isset()
+CLASS_Bashor_Data_isset()
 {
     requireObject
     requireParams R "$@"
@@ -144,7 +144,7 @@ function CLASS_Bashor_Data_isset()
 # &0    string Data
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Data__compress()
+CLASS_Bashor_Data__compress()
 {
     requireObject
     requireParams R "$@"
@@ -163,7 +163,7 @@ function CLASS_Bashor_Data__compress()
 # Check if registry is compressed.
 #
 # $?    0:YES   1:NO
-function CLASS_Bashor_Data_isCompressed()
+CLASS_Bashor_Data_isCompressed()
 {
     requireObject
     
@@ -176,7 +176,7 @@ function CLASS_Bashor_Data_isCompressed()
 # Get current size
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Data_size()
+CLASS_Bashor_Data_size()
 {
     requireObject
     
@@ -189,7 +189,7 @@ function CLASS_Bashor_Data_size()
 #
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Data_getKeys()
+CLASS_Bashor_Data_getKeys()
 {
     requireObject
     
@@ -211,7 +211,7 @@ function CLASS_Bashor_Data_getKeys()
 #
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Data_getValues()
+CLASS_Bashor_Data_getValues()
 {
     requireObject
     
@@ -234,7 +234,7 @@ function CLASS_Bashor_Data_getValues()
 # Get count of items
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Data_count()
+CLASS_Bashor_Data_count()
 {
     requireObject
     
@@ -246,7 +246,7 @@ function CLASS_Bashor_Data_count()
 # Clear data.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Data_clear()
+CLASS_Bashor_Data_clear()
 {
     requireObject
 

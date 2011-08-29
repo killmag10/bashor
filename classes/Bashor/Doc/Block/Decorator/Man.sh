@@ -21,7 +21,7 @@
 # $1      doc block contend
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Decorator_Man___construct()
+CLASS_Bashor_Doc_Block_Decorator_Man___construct()
 {
     requireObject
     
@@ -39,7 +39,7 @@ function CLASS_Bashor_Doc_Block_Decorator_Man___construct()
 # &1    string  block type
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Decorator_Man_get()
+CLASS_Bashor_Doc_Block_Decorator_Man_get()
 {
     requireObject
     
@@ -61,7 +61,7 @@ function CLASS_Bashor_Doc_Block_Decorator_Man_get()
 # &1    string  block type
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Decorator_Man__getFunction()
+CLASS_Bashor_Doc_Block_Decorator_Man__getFunction()
 {
     requireObject
     

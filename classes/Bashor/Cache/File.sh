@@ -22,7 +22,7 @@ extends Bashor_Cache_File Bashor_Cache
 # Constructor
 #
 # $1    string  cache dir
-function CLASS_Bashor_Cache_File___construct()
+CLASS_Bashor_Cache_File___construct()
 {
     requireObject
     requireParams R "$@"
@@ -39,7 +39,7 @@ function CLASS_Bashor_Cache_File___construct()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &1    string filename 
-function CLASS_Bashor_Cache_File_filename()
+CLASS_Bashor_Cache_File_filename()
 {
     requireObject
     requireParams S "$@"
@@ -60,7 +60,7 @@ function CLASS_Bashor_Cache_File_filename()
 # $3    string  Data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Bashor_Cache_File_set()
+CLASS_Bashor_Cache_File_set()
 {
     requireObject
     requireParams RR "$@"
@@ -87,7 +87,7 @@ function CLASS_Bashor_Cache_File_set()
 # $1    string  Id
 # $?    0:CACHED    1:NOT CACHED
 # &1    string Data 
-function CLASS_Bashor_Cache_File_get()
+CLASS_Bashor_Cache_File_get()
 {
     requireObject
     requireParams R "$@"
@@ -110,7 +110,7 @@ function CLASS_Bashor_Cache_File_get()
 #
 # $1    string  Id
 # $?    0:CACHED    1:NOT CACHED
-function CLASS_Bashor_Cache_File_check()
+CLASS_Bashor_Cache_File_check()
 {
     requireObject
     requireParams R "$@"
@@ -131,7 +131,7 @@ function CLASS_Bashor_Cache_File_check()
 # Remove old cache files.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Cache_File_removeOutdated()
+CLASS_Bashor_Cache_File_removeOutdated()
 {
     requireObject
     

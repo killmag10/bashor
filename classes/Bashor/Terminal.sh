@@ -29,7 +29,7 @@
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_setBackgroundColor()
+CLASS_Bashor_Terminal_setBackgroundColor()
 {
     requireParams R "$@"
     tput setb "$1"
@@ -50,7 +50,7 @@ function CLASS_Bashor_Terminal_setBackgroundColor()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_setBackgroundColorAnsi()
+CLASS_Bashor_Terminal_setBackgroundColorAnsi()
 {
     requireParams R "$@"
     [ "$1" -lt 0 ] && return 1
@@ -73,7 +73,7 @@ function CLASS_Bashor_Terminal_setBackgroundColorAnsi()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_setFordergroundColor()
+CLASS_Bashor_Terminal_setFordergroundColor()
 {
     requireParams R "$@"
     tput setf "$1"
@@ -94,7 +94,7 @@ function CLASS_Bashor_Terminal_setFordergroundColor()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_setFordergroundColorAnsi()
+CLASS_Bashor_Terminal_setFordergroundColorAnsi()
 {
     requireParams R "$@"
     [ "$1" -lt 0 ] && return 1
@@ -111,7 +111,7 @@ function CLASS_Bashor_Terminal_setFordergroundColorAnsi()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_setStyleBold()
+CLASS_Bashor_Terminal_setStyleBold()
 {
     requireParams R "$@"
     [ "$1" == 1 ] && echo -en '\033[1m' || tput dim
@@ -126,7 +126,7 @@ function CLASS_Bashor_Terminal_setStyleBold()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_setExtendedCharacters()
+CLASS_Bashor_Terminal_setExtendedCharacters()
 {
     requireParams R "$@"
     [ "$1" == 1 ] && echo -en '\033(0' || echo -en '\033(B'
@@ -141,7 +141,7 @@ function CLASS_Bashor_Terminal_setExtendedCharacters()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_setStyleUnderline()
+CLASS_Bashor_Terminal_setStyleUnderline()
 {
     requireParams R "$@"
     [ "$1" == 1 ] && tput smul || tput rmul
@@ -153,7 +153,7 @@ function CLASS_Bashor_Terminal_setStyleUnderline()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_resetStyle()
+CLASS_Bashor_Terminal_resetStyle()
 {    
     echo -en '\033[0m'
     return $?
@@ -163,7 +163,7 @@ function CLASS_Bashor_Terminal_resetStyle()
 # Get the terminal columns
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_getColumns()
+CLASS_Bashor_Terminal_getColumns()
 {
 	if [ -n "$COLUMNS" ]; then
 		echo "$COLUMNS"
@@ -178,7 +178,7 @@ function CLASS_Bashor_Terminal_getColumns()
 # Get the terminal lines
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_getLines()
+CLASS_Bashor_Terminal_getLines()
 {  
 	if [ -n "$LINES" ]; then
 		echo "$LINES"
@@ -193,7 +193,7 @@ function CLASS_Bashor_Terminal_getLines()
 # Restore curser position
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_restoreCurser()
+CLASS_Bashor_Terminal_restoreCurser()
 {
     echo -en '\033[u'
     return $?
@@ -203,7 +203,7 @@ function CLASS_Bashor_Terminal_restoreCurser()
 # Save curser position
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_saveCurser()
+CLASS_Bashor_Terminal_saveCurser()
 {
     echo -en '\033[s'
     return $?
@@ -214,7 +214,7 @@ function CLASS_Bashor_Terminal_saveCurser()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_moveCurserUp()
+CLASS_Bashor_Terminal_moveCurserUp()
 {
     requireParams R "$@"
     echo -en '\033['"$1"'A'
@@ -226,7 +226,7 @@ function CLASS_Bashor_Terminal_moveCurserUp()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_moveCurserDown()
+CLASS_Bashor_Terminal_moveCurserDown()
 {
     requireParams R "$@"
     echo -en '\033['"$1"'B'
@@ -238,7 +238,7 @@ function CLASS_Bashor_Terminal_moveCurserDown()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_moveCurserForward()
+CLASS_Bashor_Terminal_moveCurserForward()
 {
     requireParams R "$@"
     echo -en '\033['"$1"'C'
@@ -250,7 +250,7 @@ function CLASS_Bashor_Terminal_moveCurserForward()
 #
 # $1    integer count
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_moveCurserBackward()
+CLASS_Bashor_Terminal_moveCurserBackward()
 {
     requireParams R "$@"
     echo -en '\033['"$1"'D'
@@ -263,7 +263,7 @@ function CLASS_Bashor_Terminal_moveCurserBackward()
 # $1    integer x
 # $2    integer y
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_moveCurserBy()
+CLASS_Bashor_Terminal_moveCurserBy()
 {
     requireParams RR "$@"
     [ "$1" -gt 0 ] && static call moveCurserForward "$1"
@@ -279,7 +279,7 @@ function CLASS_Bashor_Terminal_moveCurserBy()
 # $1    integer x
 # $2    integer y
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_moveCurserReversedBy()
+CLASS_Bashor_Terminal_moveCurserReversedBy()
 {
     requireParams RR "$@"
     [ "$1" -lt 0 ] && static call moveCurserForward "${1:1}"
@@ -295,7 +295,7 @@ function CLASS_Bashor_Terminal_moveCurserReversedBy()
 # $1    integer x
 # $2    integer y
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_moveCurserTo()
+CLASS_Bashor_Terminal_moveCurserTo()
 {
     requireParams RR "$@"
     echo -en '\033['"$2"';'"$1"'H'
@@ -306,7 +306,7 @@ function CLASS_Bashor_Terminal_moveCurserTo()
 # Clear the terminal
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_clear()
+CLASS_Bashor_Terminal_clear()
 {
     clear
     return $?
@@ -316,7 +316,7 @@ function CLASS_Bashor_Terminal_clear()
 # Visual flash.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Terminal_flash()
+CLASS_Bashor_Terminal_flash()
 {
     tput flash
     return $?

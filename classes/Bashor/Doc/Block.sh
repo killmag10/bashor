@@ -20,7 +20,7 @@
 #
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block___construct()
+CLASS_Bashor_Doc_Block___construct()
 {
     : ${OBJECT:?}
     
@@ -43,7 +43,7 @@ function CLASS_Bashor_Doc_Block___construct()
 # $2    string  option value
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_setOption()
+CLASS_Bashor_Doc_Block_setOption()
 {
     requireObject
     requireParams RS "$@"
@@ -63,7 +63,7 @@ function CLASS_Bashor_Doc_Block_setOption()
 # $1    string  filename
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_parseFile()
+CLASS_Bashor_Doc_Block_parseFile()
 {
     requireObject
     requireParams R "$@"
@@ -78,7 +78,7 @@ function CLASS_Bashor_Doc_Block_parseFile()
 # $1    string  contend
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_parseString()
+CLASS_Bashor_Doc_Block_parseString()
 {
     requireObject
     requireParams R "$@"
@@ -119,7 +119,7 @@ function CLASS_Bashor_Doc_Block_parseString()
     return 0
 }
 
-function CLASS_Bashor_Doc_Block_parseDocBlock()
+CLASS_Bashor_Doc_Block_parseDocBlock()
 {
     requireObject
     requireParams SS "$@"
@@ -147,7 +147,7 @@ function CLASS_Bashor_Doc_Block_parseDocBlock()
 }
 
 
-function CLASS_Bashor_Doc_Block_getItems()
+CLASS_Bashor_Doc_Block_getItems()
 {
     requireObject
     
@@ -155,7 +155,7 @@ function CLASS_Bashor_Doc_Block_getItems()
     object "$items" asLines
 }
 
-function CLASS_Bashor_Doc_Block_getItemsByType()
+CLASS_Bashor_Doc_Block_getItemsByType()
 {
     requireObject
     requireParams R "$@"
@@ -168,7 +168,7 @@ function CLASS_Bashor_Doc_Block_getItemsByType()
     done
 }
 
-function CLASS_Bashor_Doc_Block_sortByName()
+CLASS_Bashor_Doc_Block_sortByName()
 {
     requireObject
     

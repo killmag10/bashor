@@ -23,7 +23,7 @@
 # $2    integer max
 # &1    integer random number
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Math_random()
+CLASS_Bashor_Math_random()
 {
     requireParams RR "$@"
     [ "$1" -gt "$2" ] && error "Min can't greater than max."

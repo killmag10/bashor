@@ -22,7 +22,7 @@
 # $&    string  version number
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Version_getCurrent()
+CLASS_Bashor_Version_getCurrent()
 {
     echo '1.2.0'
     return 0

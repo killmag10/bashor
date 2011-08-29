@@ -20,7 +20,7 @@
 #
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
-function optIsset()
+optIsset()
 {
     : ${1:?}
     
@@ -39,7 +39,7 @@ function optIsset()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function optIsNotEmpty()
+optIsNotEmpty()
 {
     : ${1:?}
     optIsset "$1" || return 1
@@ -53,7 +53,7 @@ function optIsNotEmpty()
 #
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
-function optValue()
+optValue()
 { 
     : ${1:?}
        
@@ -74,7 +74,7 @@ function optValue()
 # Get argument keys
 #
 # $?    0:OK    1:ERROR
-function optKeys()
+optKeys()
 {
     local OPTIND=1
     local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`
@@ -90,7 +90,7 @@ function optKeys()
 # Get argument keys and valus seperate by :
 #
 # $?    0:OK    1:ERROR
-function optList()
+optList()
 {
     local OPTIND=1
     local pArgs=`echo "$OPT_ARGS" | sed 's#^[^-]*##'`
@@ -108,7 +108,7 @@ function optList()
 # $1    string  getopts expression
 # $2    string  long getopts expression
 # $?    0:OK 1:ERROR
-function optSetOpts()
+optSetOpts()
 {
     : ${1:?}
     
@@ -122,7 +122,7 @@ function optSetOpts()
 #
 # $@    arguments
 # $?    0:OK 1:ERROR
-function optSetArgs()
+optSetArgs()
 {        
     local v
     OPT_ARGS="$@"
@@ -145,7 +145,7 @@ function optSetArgs()
 # 1:Short 2:Long
 #
 # $?    0:OK 1:ERROR
-function optGetOpts()
+optGetOpts()
 {    
     echo "$OPT_OPTS"
     echo "$OPT_OPTS_LONG"
@@ -156,7 +156,7 @@ function optGetOpts()
 # Get arguments
 #
 # $?    0:OK 1:ERROR
-function optGetArgs()
+optGetArgs()
 {        
     echo "$OPT_ARGS"
     return 0
@@ -166,7 +166,7 @@ function optGetArgs()
 # Get argument list
 #
 # $?    0:OK    1:ERROR
-function argList()
+argList()
 {
     (
         local return=1
@@ -190,7 +190,7 @@ function argList()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function argValue()
+argValue()
 {
     : ${1:?}
     local key="$1"
@@ -209,7 +209,7 @@ function argValue()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function argIsset()
+argIsset()
 {
     : ${1:?}
     local key="$1"
@@ -223,7 +223,7 @@ function argIsset()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function argIsNotEmpty()
+argIsNotEmpty()
 {
     : ${1:?}
     argIsset "$1" || return 1

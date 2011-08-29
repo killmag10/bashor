@@ -17,7 +17,7 @@
 
 ##
 # Loader
-function CLASS_Class___load()
+CLASS_Class___load()
 {
     requireStatic
     return 0
@@ -25,7 +25,7 @@ function CLASS_Class___load()
 
 ##
 # Constructor
-function CLASS_Class___construct()
+CLASS_Class___construct()
 {
     requireObject
     return 0
@@ -33,7 +33,7 @@ function CLASS_Class___construct()
 
 ##
 # Destructor
-function CLASS_Class___destruct()
+CLASS_Class___destruct()
 {
     requireObject
     return 0
@@ -44,7 +44,7 @@ function CLASS_Class___destruct()
 #
 # $?    0:OK    1:ERROR
 # &0    string  class name
-function CLASS_Class_getClass()
+CLASS_Class_getClass()
 {
     [ -z "$CLASS_TOP_NAME" ] && error 'Not in a Class'
     echo "$CLASS_TOP_NAME"
@@ -56,7 +56,7 @@ function CLASS_Class_getClass()
 #
 # $?    0:OK    1:ERROR
 # &0    string  class name
-function CLASS_Class_getClassTrace()
+CLASS_Class_getClassTrace()
 {
     [ -z "$CLASS_NAME" ] && error 'Not in a Class'
     echo "$CLASS_NAME"
@@ -69,7 +69,7 @@ function CLASS_Class_getClassTrace()
 # Check if the class has a parent.
 #
 # $?    0:TRUE   1:FALSE
-function CLASS_Class_hasParentClass()
+CLASS_Class_hasParentClass()
 {
     [ -z "$CLASS_NAME" ] && error 'Not in a Class'
     eval 'local CLASS_NAME="$_BASHOR_CLASS_'"$CLASS_NAME"'_EXTENDS"'
@@ -81,7 +81,7 @@ function CLASS_Class_hasParentClass()
 # Check if class is a instance of.
 #
 # $?    0:TRUE    1:FALSE
-function CLASS_Class_isA()
+CLASS_Class_isA()
 {
     [ -z "$CLASS_TOP_NAME" ] && error 'Not in a Class'
     requireParams R "$@"
@@ -98,7 +98,7 @@ function CLASS_Class_isA()
 # Check if class is a instance of.
 #
 # $?    0:TRUE    1:FALSE
-function CLASS_Class_dumpPropertys()
+CLASS_Class_dumpPropertys()
 {
     if [ -n "$OBJECT" ]; then
         local count=$(this count)

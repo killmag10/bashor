@@ -20,7 +20,7 @@
 #
 # @see flock
 # $?    0:OK    1:LOCKED    2:ERROR
-function CLASS_Bashor_Lock_lock()
+CLASS_Bashor_Lock_lock()
 {
     requireParams R "$@"
     
@@ -33,7 +33,7 @@ function CLASS_Bashor_Lock_lock()
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Lock_filename()
+CLASS_Bashor_Lock_filename()
 {
     requireParams R "$@"
     
@@ -46,7 +46,7 @@ function CLASS_Bashor_Lock_filename()
 #
 # $1    string  file
 # $?    0:OK    1:LOCKED    2:ERROR
-function CLASS_Bashor_Lock_delete()
+CLASS_Bashor_Lock_delete()
 {
     requireParams R "$@"
     
@@ -63,7 +63,7 @@ function CLASS_Bashor_Lock_delete()
 #
 # $1    string  file
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
-function CLASS_Bashor_Lock_checkRead()
+CLASS_Bashor_Lock_checkRead()
 {
     requireParams R "$@"
     
@@ -80,7 +80,7 @@ function CLASS_Bashor_Lock_checkRead()
 #
 # $1    string  file
 # $?    0:NOT LOCKED    1:LOCKED    2:ERROR
-function CLASS_Bashor_Lock_checkWrite()
+CLASS_Bashor_Lock_checkWrite()
 {
     requireParams R "$@"
     

@@ -17,7 +17,7 @@
 
 ##
 # Constructor.
-function CLASS_Bashor_Output___construct()
+CLASS_Bashor_Output___construct()
 {
     this set 'prefixes' ''
 }
@@ -26,7 +26,7 @@ function CLASS_Bashor_Output___construct()
 # Prepare each line.
 #
 # $1    string  prefix
-function CLASS_Bashor_Output_prepare()
+CLASS_Bashor_Output_prepare()
 {
     local IFS=$'\n\r'
     local prefixes=(`this get 'prefixes'`)
@@ -41,7 +41,7 @@ function CLASS_Bashor_Output_prepare()
 # Prepare echo.
 #
 # @see echo
-function CLASS_Bashor_Output_echo()
+CLASS_Bashor_Output_echo()
 {
     local IFS=$'\n\r'
     local prefixes=(`this get 'prefixes'`)
@@ -54,7 +54,7 @@ function CLASS_Bashor_Output_echo()
 # Add a prefix.
 #
 # $1    string  prefix
-function CLASS_Bashor_Output_addPrefix()
+CLASS_Bashor_Output_addPrefix()
 {    
     local IFS=$'\n\r'    
     local prefixes="`this get 'prefixes'`"
@@ -63,7 +63,7 @@ function CLASS_Bashor_Output_addPrefix()
 
 ##
 # Remove last prefix.
-function CLASS_Bashor_Output_removePrefix()
+CLASS_Bashor_Output_removePrefix()
 {
     local IFS=$'\n\r'    
     local prefixes=(`this get 'prefixes'`)
@@ -75,7 +75,7 @@ function CLASS_Bashor_Output_removePrefix()
 
 ##
 # Remove complete prefix.
-function CLASS_Bashor_Output_clearPrefix()
+CLASS_Bashor_Output_clearPrefix()
 {
     this set 'prefixes' ''
 }

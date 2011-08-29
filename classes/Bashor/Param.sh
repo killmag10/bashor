@@ -15,7 +15,7 @@
 # @version      $Id$
 ################################################################################
 
-function CLASS_Bashor_Param___construct()
+CLASS_Bashor_Param___construct()
 {
     requireObject
     
@@ -28,7 +28,7 @@ function CLASS_Bashor_Param___construct()
 #
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
-function CLASS_Bashor_Param_issetOpt()
+CLASS_Bashor_Param_issetOpt()
 {
     requireObject
     requireParams R "$@"
@@ -59,7 +59,7 @@ function CLASS_Bashor_Param_issetOpt()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Param_notEmptyOpt()
+CLASS_Bashor_Param_notEmptyOpt()
 {
     requireObject
     requireParams R "$@"
@@ -75,7 +75,7 @@ function CLASS_Bashor_Param_notEmptyOpt()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Param_issetArg()
+CLASS_Bashor_Param_issetArg()
 {
     requireObject
     requireParams R "$@"
@@ -91,7 +91,7 @@ function CLASS_Bashor_Param_issetArg()
 # Is argument / option not empty
 #
 # $?    0:OK 1:ERROR
-function CLASS_Bashor_Param_notEmpty()
+CLASS_Bashor_Param_notEmpty()
 {
     requireObject
     requireParams R "$@"
@@ -114,7 +114,7 @@ function CLASS_Bashor_Param_notEmpty()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Param_notEmptyArg()
+CLASS_Bashor_Param_notEmptyArg()
 {
     requireObject
     requireParams R "$@"
@@ -130,7 +130,7 @@ function CLASS_Bashor_Param_notEmptyArg()
 #
 # $1    string  key
 # $?    0:FOUND 1:NOT FOUND
-function CLASS_Bashor_Param_getOpt()
+CLASS_Bashor_Param_getOpt()
 {
     requireObject
     requireParams R "$@"
@@ -166,7 +166,7 @@ function CLASS_Bashor_Param_getOpt()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Param_getArg()
+CLASS_Bashor_Param_getArg()
 {
     requireObject
     requireParams R "$@"
@@ -187,7 +187,7 @@ function CLASS_Bashor_Param_getArg()
 # Get option keys
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Param_getOptKeys()
+CLASS_Bashor_Param_getOptKeys()
 {
     requireObject
     
@@ -219,7 +219,7 @@ function CLASS_Bashor_Param_getOptKeys()
 # Get option keys and valus seperate by :
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Param_listOpt()
+CLASS_Bashor_Param_listOpt()
 {
     requireObject
     
@@ -253,7 +253,7 @@ function CLASS_Bashor_Param_listOpt()
 # Get argument list
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Param_listArg()
+CLASS_Bashor_Param_listArg()
 {
     requireObject
     
@@ -282,7 +282,7 @@ function CLASS_Bashor_Param_listArg()
 # $1    string  getopts expression
 # $2    string  long getopts expression
 # $?    0:FOUND 1:NOT FOUND
-function CLASS_Bashor_Param_setOpts()
+CLASS_Bashor_Param_setOpts()
 {
     requireObject
     
@@ -296,7 +296,7 @@ function CLASS_Bashor_Param_setOpts()
 #
 # $@    arguments
 # $?    0:FOUND 1:NOT FOUND
-function CLASS_Bashor_Param_set()
+CLASS_Bashor_Param_set()
 {    
     requireObject
     
@@ -313,7 +313,7 @@ function CLASS_Bashor_Param_set()
 # 1:Short 2:Long
 #
 # $?    0:OK 1:ERROR
-function CLASS_Bashor_Param_getOpts()
+CLASS_Bashor_Param_getOpts()
 {    
     requireObject
 
@@ -326,7 +326,7 @@ function CLASS_Bashor_Param_getOpts()
 # Get arguments / options
 #
 # $?    0:OK 1:ERROR
-function CLASS_Bashor_Param_get()
+CLASS_Bashor_Param_get()
 {
     requireObject
     
@@ -352,7 +352,7 @@ function CLASS_Bashor_Param_get()
 # Isset arguments / options
 #
 # $?    0:OK 1:ERROR
-function CLASS_Bashor_Param_isset()
+CLASS_Bashor_Param_isset()
 {
     requireObject
     requireParams R "$@"
@@ -375,7 +375,7 @@ function CLASS_Bashor_Param_isset()
 #
 # $1    string  long getopts expression value
 # $?    0:FOUND 1:NOT FOUND
-function CLASS_Bashor_Param_getOptLongExtension()
+CLASS_Bashor_Param_getOptLongExtension()
 {
     requireObject
     

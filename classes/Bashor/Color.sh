@@ -23,7 +23,7 @@
 # $3?   string Style
 # $?    0:OK    1:ERROR
 # &1    string Text
-function CLASS_Bashor_Color_fg()
+CLASS_Bashor_Color_fg()
 {
     requireParams SR "$@"
         
@@ -47,7 +47,7 @@ function CLASS_Bashor_Color_fg()
 # $2    string Color
 # $?    0:OK    1:ERROR
 # &1    string Text
-function CLASS_Bashor_Color_bg()
+CLASS_Bashor_Color_bg()
 {
     requireParams SR "$@"
     
@@ -70,7 +70,7 @@ function CLASS_Bashor_Color_bg()
 # $1    string Color
 # $?    0:OK    1:ERROR
 # &1    string binary color
-function CLASS_Bashor_Color_getFGColorByName()
+CLASS_Bashor_Color_getFGColorByName()
 {
     requireParams R "$@"
 
@@ -114,7 +114,7 @@ function CLASS_Bashor_Color_getFGColorByName()
 # $1    string Color
 # $?    0:OK    1:ERROR
 # &1    string binary color
-function CLASS_Bashor_Color_getBGColorByName()
+CLASS_Bashor_Color_getBGColorByName()
 {
     requireParams R "$@"
     
@@ -152,7 +152,7 @@ function CLASS_Bashor_Color_getBGColorByName()
 # $1    string Style
 # $?    0:OK    1:ERROR
 # &1    string binary color
-function CLASS_Bashor_Color_getStyleByName()
+CLASS_Bashor_Color_getStyleByName()
 {
     requireParams R "$@"
     

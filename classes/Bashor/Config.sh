@@ -17,7 +17,7 @@
 
 ##
 # Constructor
-function CLASS_Bashor_Config___construct()
+CLASS_Bashor_Config___construct()
 {
     requireObject
     
@@ -33,7 +33,7 @@ function CLASS_Bashor_Config___construct()
 # $1    string  key
 # $2    mixed   data
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Config_set()
+CLASS_Bashor_Config_set()
 {
     requireObject
     requireParams RS "$@"
@@ -56,7 +56,7 @@ function CLASS_Bashor_Config_set()
 # $1    string  key
 # &1    mixed   data
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Config_get()
+CLASS_Bashor_Config_get()
 {
     requireObject
     requireParams R "$@"
@@ -74,7 +74,7 @@ function CLASS_Bashor_Config_get()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Config_isset()
+CLASS_Bashor_Config_isset()
 {
     requireObject
     requireParams R "$@"
@@ -91,7 +91,7 @@ function CLASS_Bashor_Config_isset()
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Config_remove()
+CLASS_Bashor_Config_remove()
 {
     requireObject
     requireParams R "$@"
@@ -112,7 +112,7 @@ function CLASS_Bashor_Config_remove()
 # Set readonly.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Config_setReadonly()
+CLASS_Bashor_Config_setReadonly()
 {
     requireObject
     

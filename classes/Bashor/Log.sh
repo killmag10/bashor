@@ -19,7 +19,7 @@
 # Get the default logger.
 #
 # $1    string  instance var name
-function CLASS_Bashor_Log_getDefault()
+CLASS_Bashor_Log_getDefault()
 {
     static set abc '"=\'\'
     
@@ -36,7 +36,7 @@ function CLASS_Bashor_Log_getDefault()
 # Constructor
 #
 # $1    string  cache dir
-function CLASS_Bashor_Log___construct()
+CLASS_Bashor_Log___construct()
 {
     requireObject
     requireParams R "$@"
@@ -49,7 +49,7 @@ function CLASS_Bashor_Log___construct()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Bashor_Log_log()
+CLASS_Bashor_Log_log()
 {
     requireObject
     local logFile=`this get file`
@@ -66,7 +66,7 @@ function CLASS_Bashor_Log_log()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Bashor_Log_get()
+CLASS_Bashor_Log_get()
 {
     requireObject
     local logFile=`this get file`
@@ -81,7 +81,7 @@ function CLASS_Bashor_Log_get()
 
 ##
 # Remove the log.
-function CLASS_Bashor_Log_remove()
+CLASS_Bashor_Log_remove()
 {
     requireObject
     local logFile=`this get file`
@@ -99,7 +99,7 @@ function CLASS_Bashor_Log_remove()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Bashor_Log_error()
+CLASS_Bashor_Log_error()
 {
     requireObject
     datestring=`date +'%Y-%m-%d %H:%M:%S'`
@@ -115,7 +115,7 @@ function CLASS_Bashor_Log_error()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Bashor_Log_warning()
+CLASS_Bashor_Log_warning()
 {    
     requireObject
     datestring=`date +'%Y-%m-%d %H:%M:%S'`
@@ -131,7 +131,7 @@ function CLASS_Bashor_Log_warning()
 #
 # $1    string  Text
 # &0    string  Text
-function CLASS_Bashor_Log_debug()
+CLASS_Bashor_Log_debug()
 {   
     requireObject
     datestring=`date +'%Y-%m-%d %H:%M:%S'`

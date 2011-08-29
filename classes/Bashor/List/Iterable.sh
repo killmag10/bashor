@@ -20,7 +20,7 @@ extends Bashor_List_Iterable Bashor_List
 
 ##
 # Constructor
-function CLASS_Bashor_List_Iterable___construct()
+CLASS_Bashor_List_Iterable___construct()
 {
     requireObject
     
@@ -33,7 +33,7 @@ function CLASS_Bashor_List_Iterable___construct()
 
 ##
 # Return the current element.
-function CLASS_Bashor_List_Iterable_current()
+CLASS_Bashor_List_Iterable_current()
 {
     requireObject
     
@@ -45,7 +45,7 @@ function CLASS_Bashor_List_Iterable_current()
 
 ##
 # Move forward to next element
-function CLASS_Bashor_List_Iterable_next()
+CLASS_Bashor_List_Iterable_next()
 {
     requireObject
 
@@ -55,7 +55,7 @@ function CLASS_Bashor_List_Iterable_next()
 
 ##
 # Rewind the Iterator to the first element
-function CLASS_Bashor_List_Iterable_rewind()
+CLASS_Bashor_List_Iterable_rewind()
 {
     requireObject
     
@@ -65,7 +65,7 @@ function CLASS_Bashor_List_Iterable_rewind()
 
 ##
 # Checks if current position is valid
-function CLASS_Bashor_List_Iterable_valid()
+CLASS_Bashor_List_Iterable_valid()
 {
     requireObject
     
@@ -75,7 +75,7 @@ function CLASS_Bashor_List_Iterable_valid()
 
 ##
 # Return the key of the current element
-function CLASS_Bashor_List_Iterable_key()
+CLASS_Bashor_List_Iterable_key()
 {
     requireObject
     

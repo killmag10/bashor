@@ -18,7 +18,7 @@
 ##
 # Constructor
 #
-function CLASS_Bashor_List_Data___construct()
+CLASS_Bashor_List_Data___construct()
 {    
     requireObject
     
@@ -32,7 +32,7 @@ function CLASS_Bashor_List_Data___construct()
 # $2    string  data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Bashor_List_Data_set()
+CLASS_Bashor_List_Data_set()
 {
     requireObject
     requireParams RS "$@"
@@ -46,7 +46,7 @@ function CLASS_Bashor_List_Data_set()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_List_Data_unset()
+CLASS_Bashor_List_Data_unset()
 {
     requireObject
     requireParams R "$@"
@@ -61,7 +61,7 @@ function CLASS_Bashor_List_Data_unset()
 # $1    string  key
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_List_Data_get()
+CLASS_Bashor_List_Data_get()
 {
     requireObject
     requireParams R "$@"
@@ -76,7 +76,7 @@ function CLASS_Bashor_List_Data_get()
 # $1    string  key
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_List_Data_isset()
+CLASS_Bashor_List_Data_isset()
 {
     requireObject
     requireParams R "$@"
@@ -91,7 +91,7 @@ function CLASS_Bashor_List_Data_isset()
 # $1    integer  pos of item in list
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_List_Data_key()
+CLASS_Bashor_List_Data_key()
 {
     requireObject
     requireParams R "$@"
@@ -104,7 +104,7 @@ function CLASS_Bashor_List_Data_key()
 # Get count of items.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_List_Data_count()
+CLASS_Bashor_List_Data_count()
 {
     requireObject
 
@@ -116,7 +116,7 @@ function CLASS_Bashor_List_Data_count()
 # Remove all items.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_List_Data_clear()
+CLASS_Bashor_List_Data_clear()
 {
     requireObject
 

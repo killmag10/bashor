@@ -17,7 +17,7 @@
 
 ##
 # Constructor
-function CLASS_Bashor_Cache___construct()
+CLASS_Bashor_Cache___construct()
 {
     requireObject
     return 0
@@ -31,7 +31,7 @@ function CLASS_Bashor_Cache___construct()
 # $3    string  Data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Bashor_Cache_set()
+CLASS_Bashor_Cache_set()
 {
     requireObject
     requireParams RR "$@"
@@ -45,7 +45,7 @@ function CLASS_Bashor_Cache_set()
 # $1    string  Id
 # $?    0:CACHED    1:NOT CACHED
 # &1    string Data 
-function CLASS_Bashor_Cache_get()
+CLASS_Bashor_Cache_get()
 {
     requireObject
     requireParams R "$@"
@@ -58,7 +58,7 @@ function CLASS_Bashor_Cache_get()
 #
 # $1    string  Id
 # $?    0:CACHED    1:NOT CACHED
-function CLASS_Bashor_Cache_check()
+CLASS_Bashor_Cache_check()
 {
     requireObject
     requireParams R "$@"
@@ -70,7 +70,7 @@ function CLASS_Bashor_Cache_check()
 # Remove old cache files.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Cache_removeOutdated()
+CLASS_Bashor_Cache_removeOutdated()
 {
     requireObject
     

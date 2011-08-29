@@ -20,7 +20,7 @@ loadClassOnce Bashor_List_Data
 ##
 # Constructor
 #
-function CLASS_Bashor_List___construct()
+CLASS_Bashor_List___construct()
 {    
     requireObject
     
@@ -37,7 +37,7 @@ function CLASS_Bashor_List___construct()
 # $1    string  data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Bashor_List_add()
+CLASS_Bashor_List_add()
 {
     requireObject
     requireParams R "$@"
@@ -57,7 +57,7 @@ function CLASS_Bashor_List_add()
 #
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_List_asLines()
+CLASS_Bashor_List_asLines()
 {
     requireObject
     
@@ -74,7 +74,7 @@ function CLASS_Bashor_List_asLines()
 # Clear the list.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_List_clear()
+CLASS_Bashor_List_clear()
 {
     requireObject
 
@@ -90,7 +90,7 @@ function CLASS_Bashor_List_clear()
 # $2    string  data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Bashor_List_set()
+CLASS_Bashor_List_set()
 {
     requireObject
     requireParams RS "$@"
@@ -104,7 +104,7 @@ function CLASS_Bashor_List_set()
 #
 # $1    string  key
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_List_unset()
+CLASS_Bashor_List_unset()
 {
     requireObject
     requireParams R "$@"
@@ -119,7 +119,7 @@ function CLASS_Bashor_List_unset()
 # $1    string  key
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_List_get()
+CLASS_Bashor_List_get()
 {
     requireObject
     requireParams R "$@"
@@ -134,7 +134,7 @@ function CLASS_Bashor_List_get()
 # $1    string  key
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_List_isset()
+CLASS_Bashor_List_isset()
 {
     requireObject
     requireParams R "$@"
@@ -149,7 +149,7 @@ function CLASS_Bashor_List_isset()
 # $1    integer  pos of item in list
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_List_key()
+CLASS_Bashor_List_key()
 {
     requireObject
     requireParams R "$@"
@@ -162,7 +162,7 @@ function CLASS_Bashor_List_key()
 # Get count of items
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_List_count()
+CLASS_Bashor_List_count()
 {
     requireObject
 
@@ -174,7 +174,7 @@ function CLASS_Bashor_List_count()
 # On sleep
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_List___sleep()
+CLASS_Bashor_List___sleep()
 {
     requireObject
 
@@ -187,7 +187,7 @@ function CLASS_Bashor_List___sleep()
 # On wakeup
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_List___wakeup()
+CLASS_Bashor_List___wakeup()
 {
     requireObject
 

@@ -19,7 +19,7 @@
 # Constructor
 #
 # $1    string  temp dir
-function CLASS_Bashor_Temp___construct()
+CLASS_Bashor_Temp___construct()
 {
     requireObject
     requireParams R "$@"
@@ -34,7 +34,7 @@ function CLASS_Bashor_Temp___construct()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  path
-function CLASS_Bashor_Temp_dir()
+CLASS_Bashor_Temp_dir()
 {
     requireObject
     requireParams R "$@"
@@ -51,7 +51,7 @@ function CLASS_Bashor_Temp_dir()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  path
-function CLASS_Bashor_Temp_file()
+CLASS_Bashor_Temp_file()
 {
     requireObject
     requireParams R "$@"
@@ -66,7 +66,7 @@ function CLASS_Bashor_Temp_file()
 # $1    string  Id
 # $?    0:OK    1:ERROR
 # &0    string  name
-function CLASS_Bashor_Temp_generateFilename()
+CLASS_Bashor_Temp_generateFilename()
 {
     requireParams R "$@"
 
@@ -78,7 +78,7 @@ function CLASS_Bashor_Temp_generateFilename()
 # Clear the temp dir.
 #
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Temp_clear()
+CLASS_Bashor_Temp_clear()
 {
     requireObject
     

@@ -19,7 +19,7 @@
 # Constructor
 #
 # $1    string  registry file
-function CLASS_Bashor_Registry___construct()
+CLASS_Bashor_Registry___construct()
 {
     requireObject
     requireParams R "$@"
@@ -55,7 +55,7 @@ function CLASS_Bashor_Registry___construct()
 # $2    string  Data
 # $?    0:OK    1:ERROR
 # &0    string  Data
-function CLASS_Bashor_Registry_set()
+CLASS_Bashor_Registry_set()
 {
     requireObject
     requireParams R "$@"
@@ -90,7 +90,7 @@ function CLASS_Bashor_Registry_set()
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-function CLASS_Bashor_Registry_remove()
+CLASS_Bashor_Registry_remove()
 {
     requireObject
     requireParams R "$@"
@@ -121,7 +121,7 @@ function CLASS_Bashor_Registry_remove()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Registry_get()
+CLASS_Bashor_Registry_get()
 {
     requireObject
     requireParams R "$@"
@@ -151,7 +151,7 @@ function CLASS_Bashor_Registry_get()
 # $1    string  Id
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Registry_isset()
+CLASS_Bashor_Registry_isset()
 {
     requireObject
     requireParams R "$@"
@@ -181,7 +181,7 @@ function CLASS_Bashor_Registry_isset()
 # &0    string Data
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Registry__compress()
+CLASS_Bashor_Registry__compress()
 {
     requireObject
     requireParams R "$@"
@@ -200,7 +200,7 @@ function CLASS_Bashor_Registry__compress()
 # Check if registry is compressed.
 #
 # $?    0:YES   1:NO
-function CLASS_Bashor_Registry_isCompressed()
+CLASS_Bashor_Registry_isCompressed()
 {
     requireObject
     
@@ -214,7 +214,7 @@ function CLASS_Bashor_Registry_isCompressed()
 #
 # &1    string  filename
 # $?    0:YES   1:NO
-function CLASS_Bashor_Registry_getFilename()
+CLASS_Bashor_Registry_getFilename()
 {
     requireObject
     
@@ -227,7 +227,7 @@ function CLASS_Bashor_Registry_getFilename()
 #
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Registry_getKeys()
+CLASS_Bashor_Registry_getKeys()
 {
     requireObject
     
@@ -260,7 +260,7 @@ function CLASS_Bashor_Registry_getKeys()
 #
 # $?    0:EXISTS    1:NOT FOUND
 # &1    string Data 
-function CLASS_Bashor_Registry_getValues()
+CLASS_Bashor_Registry_getValues()
 {
     requireObject
     
@@ -293,7 +293,7 @@ function CLASS_Bashor_Registry_getValues()
 ##
 # Clear the registry.
 #
-function CLASS_Bashor_Registry_clear()
+CLASS_Bashor_Registry_clear()
 {
     requireObject
 
@@ -311,7 +311,7 @@ function CLASS_Bashor_Registry_clear()
 ##
 # Clear the registry.
 #
-function CLASS_Bashor_Registry_removeFile()
+CLASS_Bashor_Registry_removeFile()
 {
     requireObject
 
@@ -332,7 +332,7 @@ function CLASS_Bashor_Registry_removeFile()
 #
 # $1    string  file path
 # &1    string  lock file path
-function CLASS_Bashor_Registry__getLockFileByFile()
+CLASS_Bashor_Registry__getLockFileByFile()
 {
     requireObject
     requireParams R "$@"

@@ -20,7 +20,7 @@
 #
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Item___construct()
+CLASS_Bashor_Doc_Block_Item___construct()
 {
     requireObject
     
@@ -33,7 +33,7 @@ function CLASS_Bashor_Doc_Block_Item___construct()
 # $1    string  doc block contend
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Item_setDoc()
+CLASS_Bashor_Doc_Block_Item_setDoc()
 {
     requireObject
     requireParams R "$@"
@@ -48,7 +48,7 @@ function CLASS_Bashor_Doc_Block_Item_setDoc()
 # $1    string  doc block contend
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Item_setLineAfter()
+CLASS_Bashor_Doc_Block_Item_setLineAfter()
 {
     requireObject
     requireParams R "$@"
@@ -63,7 +63,7 @@ function CLASS_Bashor_Doc_Block_Item_setLineAfter()
 # $1    string  type of the block (function)
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Item_setType()
+CLASS_Bashor_Doc_Block_Item_setType()
 {
     requireObject
     requireParams R "$@"
@@ -78,7 +78,7 @@ function CLASS_Bashor_Doc_Block_Item_setType()
 # &1    string  line after
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Item_getLineAfter()
+CLASS_Bashor_Doc_Block_Item_getLineAfter()
 {
     requireObject
     
@@ -92,7 +92,7 @@ function CLASS_Bashor_Doc_Block_Item_getLineAfter()
 # &1    string  block type
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Item_getType()
+CLASS_Bashor_Doc_Block_Item_getType()
 {
     requireObject
     
@@ -106,7 +106,7 @@ function CLASS_Bashor_Doc_Block_Item_getType()
 # &1    string  block doc contend
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Item_getDoc()
+CLASS_Bashor_Doc_Block_Item_getDoc()
 {
     requireObject
     
@@ -120,7 +120,7 @@ function CLASS_Bashor_Doc_Block_Item_getDoc()
 # &1    string  block doc contend
 # $?    0       OK
 # $?    1       ERROR
-function CLASS_Bashor_Doc_Block_Item_getName()
+CLASS_Bashor_Doc_Block_Item_getName()
 {
     requireObject
     

@@ -22,7 +22,7 @@ extends Bashor_Session Bashor_Registry
 # Constructor
 #
 # $1    string  session dir
-function CLASS_Bashor_Session___construct()
+CLASS_Bashor_Session___construct()
 {
     requireObject
     
