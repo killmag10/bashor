@@ -470,6 +470,10 @@ _bashor_generatePointer()
 # $?    *       all of class method
 this()
 {
+    if [ -n "$BASHOR_COMPATIBILITY_THIS" ] && [ -z "$OBJECT" ]; then
+        static "$@"
+        return $?
+    fi
     requireObject
     requireParams R "$@"
     [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set' 
