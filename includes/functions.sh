@@ -26,7 +26,7 @@ copyFunction()
 {
     requireParams RR "$@"
     
-    eval "$(echo "$2"(); declare -f "$1" | tail -n +2;)"
+    eval "$(echo "$2"'()'; declare -f "$1" | tail -n +2;)"
     return $?
 }
 
@@ -115,16 +115,6 @@ handleError()
 }
 
 ##
-# Backtrace for error signal
-# &1    string  files with line number per line
-signalErrBacktrace()
-{
-    [ "$BASHOR_ERROR_BACKTRACE" == 1 ] && \
-        getBacktrace | tail -n +2  | sed 's#^#    #'
-}
-#trap 'signalErrBacktrace' ERR
-
-##
 # Error handler call
 #
 # $1    string  message
@@ -137,6 +127,20 @@ __handleError()
     return 1
 }
 
+##
+# Internal fallback error handler
+#
+# $1    string  message
+# &3    string  error messages
+_bashor_handleErrorFallback()
+{
+    echo 'Use fallback error handling.' 1>&3 
+    if [ "$showOutput" = 1 ]; then
+        echo "$1" | sed "s/^/ERROR: /g" 1>&3
+        getBacktrace | sed 's#^#    #'
+    fi 
+    exit 1
+}
 
 ##
 # Internal error handler
@@ -146,10 +150,9 @@ __handleError()
 # &3    string  error messages
 _bashor_handleError()
 {
-    : ${1:?}
     if [ -n "$BASHOR_ERROR" ]; then
-        echo 'Error in error handling!' >&2
-        exit 1
+        echo 'Error in error handling!' 1>&3        
+        _bashor_handleErrorFallback "$1"
     fi
     local BASHOR_ERROR=ERROR;
     local BASHOR_BACKTRACE_REMOVE=$((BASHOR_BACKTRACE_REMOVE+2))
@@ -433,9 +436,7 @@ requireParams()
                     return 1
                 fi
                 ;;
-            S)
-                ;;
-            '')
+            S|'')
                 ;;
             *)
                 local configSegment="${config:$current:1}"
@@ -473,9 +474,7 @@ checkParams()
             R)
                 [ -z "$1" ] && return 1
                 ;;
-            S)
-                ;;
-            '')
+            S|'')
                 ;;
             *)
                 return 1
