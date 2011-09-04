@@ -22,7 +22,7 @@ BASHOR_CLASS_AUTOLOAD='1';
 
 # Compatibility
 BASHOR_BASE64_USE='base64'; # openssl|perl|base64
-BASHOR_CODEING_METHOD='hex' # base64|hex
+BASHOR_CODEING_METHOD='base64' # base64|hex
 BASHOR_USE_GETOPT='1'; # 0|1
 BASHOR_COMPATIBILITY_THIS='' # ''|1
 

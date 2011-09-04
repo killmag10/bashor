@@ -26,7 +26,7 @@ copyFunction()
 {
     requireParams RR "$@"
     
-    eval "$(echo "$2"'()'; declare -f "$1" | tail -n +2;)"
+    eval "$(printf '%s' "$2"'()'; declare -f "$1" | tail -n +2;)"
     return $?
 }
 
@@ -58,7 +58,7 @@ prepareOutput()
     requireParams R "$@"
     
     local msg
-    while read msg; do echo "$1$msg"; done
+    while read msg; do printf '%s' "$1$msg"; done
     return 0
 }
 
@@ -74,7 +74,7 @@ getBacktrace()
     local pos=0
     while [ -n "$res" ]; do
         res=$(caller "$pos")
-        [ -n "$res" ] && echo "$pos: $res"
+        [ -n "$res" ] && printf '%s' "$pos: $res"
         ((pos++))
     done
     return 0
@@ -97,10 +97,10 @@ handleError()
         [ $BASHOR_ERROR_BACKTRACE == 1 ] \
             && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
         if [ $BASHOR_ERROR_OUTPUT == 1 ]; then
-            msgOut=$(echo "$msg" | sed "s/^/$pre/g")
+            msgOut=$(printf '%s' "$msg" | sed "s/^/$pre/g")
             [ $BASHOR_ERROR_BACKTRACE == 1 ] \
                 && local msgOut="$msgOut""$NL""$trace"
-            echo "$msgOut" | class Bashor_Color fg '' 'red' 'bold'
+            printf '%s' "$msgOut" | class Bashor_Color fg '' 'red' 'bold'
         fi
         if [ $BASHOR_ERROR_LOG == 1 ]; then
             local log
@@ -108,7 +108,7 @@ handleError()
             msgLog="$msg"
             [ $BASHOR_ERROR_BACKTRACE == 1 ] \
                 && local msgLog="$msgOut""$NL""$trace"
-            echo "$msgLog" | object "$log" error
+            printf '%s' "$msgLog" | object "$log" error
         fi
         [ -n "$1" ] && exit "$1"
     done
@@ -136,7 +136,7 @@ _bashor_handleErrorFallback()
 {
     echo 'Use fallback error handling.' 1>&3 
     if [ "$showOutput" = 1 ]; then
-        echo "$1" | sed "s/^/ERROR: /g" 1>&3
+        printf '%s' "$1" | sed "s/^/ERROR: /g" 1>&3
         getBacktrace | sed 's#^#    #'
     fi 
     exit 1
@@ -209,8 +209,8 @@ _bashor_handleError()
     if [ "$showOutput" = 1 ]; then
         loadClassOnce 'Bashor_Color'
         {
-            echo "$message" | sed "s/^/$prefix/g"
-            [ -n "$backtrace" ] && echo "$backtrace"
+            printf '%s' "$message" | sed "s/^/$prefix/g"
+            [ -n "$backtrace" ] && printf '%s' "$backtrace"
         } | class Bashor_Color fg '' "$colorFG" "$colorFGStyle" 1>&3
     fi
     
@@ -219,8 +219,8 @@ _bashor_handleError()
         local log
         class Bashor_Log getDefault log
         {
-            echo "$message" | sed "s/^/$prefix/g"
-            [ -n "$backtrace" ] && echo "$backtrace"
+            printf '%s' "$message" | sed "s/^/$prefix/g"
+            [ -n "$backtrace" ] && printf '%s' "$backtrace"
         } | object "$log" error
     fi
     
@@ -377,7 +377,7 @@ decodeData()
             ;;
         *) #base64
             decodeBase64
-            eturn $?
+            return $?
             ;;
     esac
 }
@@ -428,7 +428,7 @@ decodeBase64()
 # $?    1       ERROR
 bufferStream()
 {
-    echo -n "$(cat -)"
+    printf '%s' "$(cat -)"
     return $?
 }
 

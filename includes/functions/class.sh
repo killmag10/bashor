@@ -191,8 +191,8 @@ _bashor_objectLoadData()
 {
     requireParams RS "$@"
     
-    local dataLine="$(echo "$2" | grep '^DATA=' -n | sed 's/:.*$//')"
-    local value="$(echo "$2" | tail -n +$((++dataLine)) | decodeData)"
+    local dataLine="$(printf '%s' "$2" | grep '^DATA=' -n | sed 's/:.*$//')"
+    local value="$(printf '%s' "$2" | tail -n +$((++dataLine)) | decodeData)"
     eval "$1"'="$value"'
     return $?
 }
@@ -207,9 +207,9 @@ _bashor_objectSaveData()
 {
     requireParams R "$@"
     echo 'bashor dump 1.0.0 objectData'
-    echo "CLASS_NAME=$CLASS_NAME"
+    printf '%s\n' "CLASS_NAME=$CLASS_NAME"
     echo 'DATA='
-    echo "${!1}" | encodeData
+    printf '%s' "${!1}" | encodeData
     return $?
 }
 
@@ -283,12 +283,12 @@ unserialize()
     fi
     
     _bashor_temp_dataLine=$(
-        echo "$_bashor_temp_data" | grep '^DATA=' -n | sed 's/:.*$//'
+        printf '%s' "$_bashor_temp_data" | grep '^DATA=' -n | sed 's/:.*$//'
     )
     ((_bashor_temp_dataLine--))
-    _bashor_temp_header="$(echo "$_bashor_temp_data" | head -n $_bashor_temp_dataLine)"
+    _bashor_temp_header="$(printf '%s' "$_bashor_temp_data" | head -n $_bashor_temp_dataLine)"
     
-    CLASS_NAME=$(echo "$_bashor_temp_header" | sed -n 's/^CLASS_NAME=//1p')
+    CLASS_NAME=$(printf '%s' "$_bashor_temp_header" | sed -n 's/^CLASS_NAME=//1p')
     _bashor_generatePointer "${1}" "$BASHOR_TYPE_OBJECT"
     eval "${!1}"'_CLASS='"$CLASS_NAME"
     eval "${!1}"_DATA=
@@ -489,7 +489,7 @@ this()
         pointer)
             [ -z "$OBJECT" ] && error 'Not a Object'
             [ -z "$OBJECT_POINTER" ] && error 'No pointer found'
-            echo "$OBJECT_POINTER"
+            printf '%s' "$OBJECT_POINTER"
             return 0
             ;;
     esac
@@ -527,7 +527,7 @@ this()
             return $?
             ;;
         size)
-            echo "$dataVarName" | wc -c
+            printf '%s' "$dataVarName" | wc -c
             return $?
             ;;
         clear)
@@ -608,7 +608,7 @@ static()
             return $?
             ;;
         size)
-            echo "$dataVarName" | wc -c
+            printf '%s' "$dataVarName" | wc -c
             return $?
             ;;
         clear)
@@ -671,12 +671,12 @@ _bashor_objectSet()
     if [ "$#" -lt 3 ] && [ -p /dev/stdin ]; then
         local value=$(cat - | encodeData)
     else
-        local value=$(echo "$3" | encodeData)
+        local value=$(printf '%s\n' "$3" | encodeData)
     fi
     
-    local key=$(echo "$2" | encodeData)
-    local data=$(echo -n "${!1}" \
-        | grep -v "^${key}[[:space:]]\+.*$"; echo "$key $value";)
+    local key=$(printf '%s' "$2" | encodeData)
+    local data=$(printf '%s' "${!1}" \
+        | grep -v "^${key}[[:space:]]\+.*$"; printf '%s\n' "$key $value";)
     eval "$1"'="$data"'
     
     return $?
@@ -693,8 +693,8 @@ _bashor_objectUnset()
 {
     requireParams RR "$@"
     
-    local key=$(echo "$2" | encodeData)
-    local data=$(echo "${!1}" | grep -v "^${key}[[:space:]]\+.*$")
+    local key=$(printf '%s' "$2" | encodeData)
+    local data=$(printf '%s' "${!1}" | grep -v "^${key}[[:space:]]\+.*$")
     eval "$1"'="$data"'
     
     return $?
@@ -712,10 +712,10 @@ _bashor_objectGet()
 {
     requireParams RR "$@"
     
-    data=$(echo "${!1}" | grep "$(echo "$2" | encodeData)")    
+    data=$(printf '%s' "${!1}" | grep "$(printf '%s' "$2" | encodeData)")    
     [ $? == 0 ] || return 1
     
-    echo "$data" | cut -d ' ' -f 2 | decodeData
+    printf '%s' "$data" | cut -d ' ' -f 2 | decodeData
     return 0
 }
 
@@ -735,7 +735,7 @@ _bashor_objectCount()
         return 0
     fi
     
-    echo "${!1}" | wc -l    
+    printf '%s\n' "${!1}" | wc -l    
     return 0
 }
 
@@ -763,9 +763,9 @@ _bashor_objectKey()
     requireParams RR "$@"
     
     local IFS=$'\n'
-    local data=(`echo "${!1}"`);
+    local data=(`printf '%s' "${!1}"`);
     [ "$2" -ge "${#data[@]}" ] && return 1;
-    echo "${data[$2]}" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
+    printf '%s' "${data[$2]}" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
     return $?
 }
 
@@ -780,8 +780,8 @@ _bashor_objectIsset()
 {
     requireParams RR "$@"
     
-    local key=$(echo "$2" | encodeData)
-    echo "${!1}" | grep "^$key " >/dev/null
+    local key=$(printf '%s' "$2" | encodeData)
+    printf '%s' "${!1}" | grep "^$key " >/dev/null
     return $?
 }
 
