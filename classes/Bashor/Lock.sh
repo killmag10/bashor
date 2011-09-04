@@ -37,7 +37,7 @@ CLASS_Bashor_Lock_filename()
 {
     requireParams R "$@"
     
-    echo "$1"".lock"
+    printf '%s' "$1"".lock"
     return 0
 }
 

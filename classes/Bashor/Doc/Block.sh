@@ -105,7 +105,7 @@ CLASS_Bashor_Doc_Block_parseString()
         fi
         
         if [[ "$line" =~ ^[[:space:]]*\# ]]; then
-            line="`echo "$line" | sed 's/^[[:space:]]*\#[[:space:]]*//'`"
+            line="`printf '%s' "$line" | sed 's/^[[:space:]]*\#[[:space:]]*//'`"
             docBlock="${docBlock}${line}${NL}"
             continue;
         fi
@@ -163,7 +163,7 @@ CLASS_Bashor_Doc_Block_getItemsByType()
     local Current
     for Current in `this call getItems`; do        
         if [ "`object "$Current" getType`" = "$1" ]; then
-            echo "$Current"
+            printf '%s' "$Current"
         fi
     done
 }
@@ -181,7 +181,7 @@ CLASS_Bashor_Doc_Block_sortByName()
     done
     
     sortList=$(
-        echo "$sortList" | sort | sed 's/^.*[[:space:]]\([^[:space:]]\+\)$/\1/'
+        printf '%s' "$sortList" | sort | sed 's/^.*[[:space:]]\([^[:space:]]\+\)$/\1/'
     )
     
     object $Items clear

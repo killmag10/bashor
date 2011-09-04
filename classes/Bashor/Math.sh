@@ -28,6 +28,6 @@ CLASS_Bashor_Math_random()
     requireParams RR "$@"
     [ "$1" -gt "$2" ] && error "Min can't greater than max."
 
-    echo "$((RANDOM % ($2-$1+1) + $1))"
+    printf '%d' "$((RANDOM % ($2-$1+1) + $1))"
     return $?
 }

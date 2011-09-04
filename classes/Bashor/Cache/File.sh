@@ -47,8 +47,8 @@ CLASS_Bashor_Cache_File_filename()
     loadClassOnce Bashor_Hash
     
     local hashMd5=`class Bashor_Hash md5 "$1"`
-    local hashCrc32=`echo "$1" | cksum | tr ' ' '_'`
-    echo "`this get dir`""/CACHE_${hashMd5}_${hashCrc32}"
+    local hashCrc32=`printf '%s' "$1" | cksum | tr ' ' '_'`
+    printf '%s' "`this get dir`""/CACHE_${hashMd5}_${hashCrc32}"
     return 0
 }
 
@@ -69,12 +69,13 @@ CLASS_Bashor_Cache_File_set()
     local time=`date +%s`
     ((time="$time"+"$2"))
     {
-        echo "$time"
-        echo "`echo "$1" | tr '\n\r' ' '`"
+        printf '%s\n' "$time"
+        printf '%s' "$1" | tr '\n\r' ' '
+        echo
         if [ -p /dev/stdin ]; then
             cat /dev/stdin
         else
-            echo -n "$3"
+            printf '%s' "$3"
         fi
     } > "$filename"
     

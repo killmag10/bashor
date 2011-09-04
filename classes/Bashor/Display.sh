@@ -35,8 +35,7 @@ CLASS_Bashor_Display_simpleRotateBar()
     while read value; do
         local barLast=`echo "$bar" | cut -b "$barLength"`
         local bar=`echo "$barLast""$bar" | cut -b 1-"$barLength"`
-        echo "$barPre""$bar""$barPost"
-        echo -n -e "\e[1A"
+        printf '%s\n\e[1A' "$barPre""$bar""$barPost"
     done
     echo
 }

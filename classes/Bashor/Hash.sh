@@ -25,6 +25,6 @@ CLASS_Bashor_Hash_md5()
 {
     requireParams S "$@"
     
-    echo "$1" | md5sum | sed 's/^\(\S\+\).*/\1/'
+    printf '%s' "$1" | md5sum | sed 's/^\(\S\+\).*/\1/'
     return $?
 }

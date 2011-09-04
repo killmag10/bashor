@@ -34,9 +34,7 @@ CLASS_Bashor_Color_fg()
     fi
     
     local color=`static call getFGColorByName "$2" "$3"`
-    echo -en "\033$color"
-    echo -n "$1"
-    echo -en "\033[0m"
+    printf "\033$color%s\033[0m" "$1"
     return 0
 }
 
@@ -57,10 +55,8 @@ CLASS_Bashor_Color_bg()
         return 0
     fi
     
-    local color=`static call getBGColorByName "$2"`
-    echo -en "\033$color"
-    echo -n "$1"
-    echo -en "\033[0m"
+    local color=`static call getBGColorByName "$2"`    
+    printf "\033$color%s\033[0m" "$1"
     return 0
 }
 
@@ -102,7 +98,7 @@ CLASS_Bashor_Color_getFGColorByName()
     local IFS=' '
     for item in "${FG_NUMBER[@]}"; do
         if [ "$1" == "${FG_NAME[$i]}" ]; then
-            echo "[$style""$item"
+            printf '%s' "[$style""$item"
         fi
         ((i++))
     done
@@ -140,7 +136,7 @@ CLASS_Bashor_Color_getBGColorByName()
     local IFS=' '
     for item in "${BG_NUMBER[@]}"; do
         if [ "$1" == "${BG_NAME[$i]}" ]; then
-            echo "[$item"
+            printf '%s' "[$item"
         fi        
         ((i++))
     done
@@ -175,7 +171,7 @@ CLASS_Bashor_Color_getStyleByName()
         i=1
         for item in "${ST_NUMBER[@]}"; do
             if [ "$word" == "${ST_NAME[$i]}" ]; then
-                echo -n "$item"';'
+                printf '%s' "$item"';'
             fi        
             ((i++))
         done

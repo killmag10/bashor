@@ -42,7 +42,7 @@ CLASS_Bashor_Registry___construct()
         loadClassOnce 'Bashor_Lock'
         {
             class Bashor_Lock lock 200
-            echo '' | this call _compress 'c' > "$file"    
+            printf '%s' '' | this call _compress 'c' > "$file"    
         } 200>"$lockFile"
         class Bashor_Lock delete "$lockFile"
     fi

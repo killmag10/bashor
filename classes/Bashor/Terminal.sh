@@ -55,7 +55,7 @@ CLASS_Bashor_Terminal_setBackgroundColorAnsi()
     requireParams R "$@"
     [ "$1" -lt 0 ] && return 1
     [ "$1" -gt 7 ] && return 1
-    echo -en '\033[4'"$1"'m'
+    printf '\033[4%dm' "$1"
     return $?
 }
 
@@ -99,7 +99,7 @@ CLASS_Bashor_Terminal_setFordergroundColorAnsi()
     requireParams R "$@"
     [ "$1" -lt 0 ] && return 1
     [ "$1" -gt 7 ] && return 1
-    echo -en '\033[3'"$1"'m'
+    printf '\033[3%dm' "$1"
     return $?
 }
 
@@ -114,7 +114,7 @@ CLASS_Bashor_Terminal_setFordergroundColorAnsi()
 CLASS_Bashor_Terminal_setStyleBold()
 {
     requireParams R "$@"
-    [ "$1" == 1 ] && echo -en '\033[1m' || tput dim
+    [ "$1" == 1 ] && printf '\033[1m' || tput dim
     return $?
 }
 
@@ -129,7 +129,7 @@ CLASS_Bashor_Terminal_setStyleBold()
 CLASS_Bashor_Terminal_setExtendedCharacters()
 {
     requireParams R "$@"
-    [ "$1" == 1 ] && echo -en '\033(0' || echo -en '\033(B'
+    [ "$1" == 1 ] && printf '\033(0' || printf '\033(B'
     return $?
 }
 
@@ -155,7 +155,7 @@ CLASS_Bashor_Terminal_setStyleUnderline()
 # $?    0:OK    1:ERROR
 CLASS_Bashor_Terminal_resetStyle()
 {    
-    echo -en '\033[0m'
+    printf '\033[0m'
     return $?
 }
 
@@ -166,7 +166,7 @@ CLASS_Bashor_Terminal_resetStyle()
 CLASS_Bashor_Terminal_getColumns()
 {
 	if [ -n "$COLUMNS" ]; then
-		echo "$COLUMNS"
+		printf '%d' "$COLUMNS"
 		return $?
     fi
     
@@ -181,7 +181,7 @@ CLASS_Bashor_Terminal_getColumns()
 CLASS_Bashor_Terminal_getLines()
 {  
 	if [ -n "$LINES" ]; then
-		echo "$LINES"
+		printf '%d' "$LINES"
 		return $?
     fi
 	
@@ -195,7 +195,7 @@ CLASS_Bashor_Terminal_getLines()
 # $?    0:OK    1:ERROR
 CLASS_Bashor_Terminal_restoreCurser()
 {
-    echo -en '\033[u'
+    printf '\033[u'
     return $?
 }
 
@@ -205,7 +205,7 @@ CLASS_Bashor_Terminal_restoreCurser()
 # $?    0:OK    1:ERROR
 CLASS_Bashor_Terminal_saveCurser()
 {
-    echo -en '\033[s'
+    printf '\033[s'
     return $?
 }
 
@@ -217,7 +217,7 @@ CLASS_Bashor_Terminal_saveCurser()
 CLASS_Bashor_Terminal_moveCurserUp()
 {
     requireParams R "$@"
-    echo -en '\033['"$1"'A'
+    printf '\033[%sA' "$1"
     return $?
 }
 
@@ -229,7 +229,7 @@ CLASS_Bashor_Terminal_moveCurserUp()
 CLASS_Bashor_Terminal_moveCurserDown()
 {
     requireParams R "$@"
-    echo -en '\033['"$1"'B'
+    printf '\033[%sB' "$1"
     return $?
 }
 
@@ -241,7 +241,7 @@ CLASS_Bashor_Terminal_moveCurserDown()
 CLASS_Bashor_Terminal_moveCurserForward()
 {
     requireParams R "$@"
-    echo -en '\033['"$1"'C'
+    printf '\033[%sC' "$1"
     return $?
 }
 
@@ -253,7 +253,7 @@ CLASS_Bashor_Terminal_moveCurserForward()
 CLASS_Bashor_Terminal_moveCurserBackward()
 {
     requireParams R "$@"
-    echo -en '\033['"$1"'D'
+    printf '\033[%sD' "$1"
     return $?
 }
 
@@ -298,7 +298,7 @@ CLASS_Bashor_Terminal_moveCurserReversedBy()
 CLASS_Bashor_Terminal_moveCurserTo()
 {
     requireParams RR "$@"
-    echo -en '\033['"$2"';'"$1"'H'
+    printf '\033[%s;%sH' "$2" "$1"
     return $?
 }
 

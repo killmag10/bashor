@@ -68,38 +68,38 @@ CLASS_Bashor_Doc_Block_Decorator_Man__getFunction()
     local Item
     Item="`this get item`"
     
-    echo '.TP';
-    echo '.B '"`object "$Item" getName`"'()';
-    echo '.RS'
+    printf '%s\n' '.TP';
+    printf '%s\n' '.B '"`object "$Item" getName`"'()';
+    printf '%s\n' '.RS'
     
     local regex replace
     local line IFS=$'\n';
     for line in `object "$Item" getDoc`; do        
         if [[ "$line" =~ ^[[:space:]]*[\$\&][[:alnum:]_@]+ ]]; then
-            echo '.HP'
-            regex='^[[:space:]]*\([\$\&][[:alnum:]_@]\+\)[[:space:]]\+\([[:alpha:]|]\+\)[[:space:]]\+';
+            printf '%s\n' '.HP'
+            regex='^[[:space:]]*\([\$\&][[:alnum:]_@]\+\)[[:space:]]\+\([[:alpha:]|]\+\)[[:space:]]\+'
             replace='.B \1\n.I \2\n'
-            echo "$line" \
+            printf '%s\n' "$line" \
                 | sed 's/'"$regex"'/'"$replace"'/'
             continue;
         fi        
         if [[ "$line" =~ ^[[:space:]]*\$\? ]]; then
-            echo '.HP'
-            regex='^[[:space:]]*\(\$?\+\)[[:space:]]\+\([[:digit:]\*]\+\)[[:space:]]\+';
+            printf '%s\n' '.HP'
+            regex='^[[:space:]]*\(\$?\+\)[[:space:]]\+\([[:digit:]\*]\+\)[[:space:]]\+'
             replace='.B \1\n.I \2\n'
-            echo "$line" \
+            printf '%s\n' \
                 | sed 's/'"$regex"'/'"$replace"'/'
             continue;
         fi
         if [[ -z "$line" ]]; then
-            echo;
+            echo
             continue;
         fi
-        echo '.HP'
-        echo "$line";
+        printf '%s\n' '.HP'
+        printf '%s\n' "$line"
     done  
     
-    echo '.RE'
+    printf '%s\n' '.RE'
     echo
     
     return 0

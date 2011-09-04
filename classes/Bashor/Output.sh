@@ -34,7 +34,7 @@ CLASS_Bashor_Output_prepare()
     local preString="${prefixes[*]}${1}"
     
     IFS=$'\n\r'
-    while read msg; do echo "${preString}${msg}"; done
+    while read msg; do printf '%s\n' "${preString}${msg}"; done
 }
 
 ##
@@ -46,8 +46,21 @@ CLASS_Bashor_Output_echo()
     local IFS=$'\n\r'
     local prefixes=(`this get 'prefixes'`)
     IFS=
-    echo -n "${prefixes[*]}"
+    printf '%s' "${prefixes[*]}"
     echo "$@"
+}
+
+##
+# Prepare printf.
+#
+# @see printf
+CLASS_Bashor_Output_printf()
+{
+    local IFS=$'\n\r'
+    local prefixes=(`this get 'prefixes'`)
+    IFS=
+    printf '%s' "${prefixes[*]}"
+    printf "$@"
 }
 
 ##

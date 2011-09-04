@@ -22,7 +22,7 @@
 # $?    0:OK    1:ERROR
 CLASS_Bashor_Process_pid()
 {
-    echo "$$"
+    printf '%s' "$$"
     return 0
 }
 
@@ -33,7 +33,7 @@ CLASS_Bashor_Process_pid()
 # $?    0:OK    1:ERROR
 CLASS_Bashor_Process_ppid()
 {
-    echo "$PPID"
+    printf '%s' "$PPID"
     return 0
 }
 

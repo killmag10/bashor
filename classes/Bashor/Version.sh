@@ -24,6 +24,6 @@
 # $?    1       ERROR
 CLASS_Bashor_Version_getCurrent()
 {
-    echo '1.2.0'
+    printf '%s' '1.2.0'
     return 0
 }

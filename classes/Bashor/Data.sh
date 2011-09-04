@@ -58,17 +58,17 @@ CLASS_Bashor_Data_set()
         local value="$2"
     fi
                 
-    local key=`echo "$1" | encodeData`
-    local value=`echo "$value" | this call _compress 'c' | encodeData`
+    local key=`printf '%s\n' "$1" | encodeData`
+    local value=`printf '%s\n' "$value" | this call _compress 'c' | encodeData`
     local data="`this get data`"
-    local data=`echo "$data" | sed "s#^${key}[[:space:]]\+.*##"`
-    local data=`echo "$key $value"; echo -n "$data";`
+    local data=`printf '%s\n' "$data" | sed "s#^${key}[[:space:]]\+.*##"`
+    local data=`printf '%s\n' "$key $value"; printf '%s' "$data";`
     local maxSize="`this get maxSize`"
     if [ -n "$maxSize" ] && [ "${#data}" -gt "$maxSize" ]; then
         warning "Max session memory overrun of `this get maxSize` with ${#data}"
         return 1
     fi
-    local data=`echo "$data" | sort -u;`
+    local data=`printf '%s\n' "$data" | sort -u;`
     this set data "$data"
 
     return "$?"
@@ -84,9 +84,9 @@ CLASS_Bashor_Data_remove()
     requireObject
     requireParams R "$@"
     
-    local key=`echo "$1" | encodeData`
+    local key=`printf '%s\n' "$1" | encodeData`
     local data=`this get data`
-    data=`echo "$data" \
+    data=`printf '%s\n' "$data" \
         | sed "s#^${key}[[:space:]]\+.*##" \
         | sort -u`
     this set data "$data"
@@ -105,11 +105,11 @@ CLASS_Bashor_Data_get()
     requireObject
     requireParams R "$@"
     
-    local key=`echo "$1" | encodeData`
+    local key=`printf '%s\n' "$1" | encodeData`
     local data=`this get data`
-    local res=`echo "$data" | grep "^$key "`
+    local res=`printf '%s\n' "$data" | grep "^$key "`
     if [ -n "$res" ]; then
-        echo "$res" | sed 's#[^[:space:]]\+[[:space:]]\+##' | decodeData | this call _compress 'd'
+        printf '%s\n' "$res" | sed 's#[^[:space:]]\+[[:space:]]\+##' | decodeData | this call _compress 'd'
         return 0
     fi
     
@@ -127,9 +127,9 @@ CLASS_Bashor_Data_isset()
     requireObject
     requireParams R "$@"
     
-    local key=`echo "$1" | encodeData`
+    local key=`printf '%s\n' "$1" | encodeData`
     local data=`this get data`
-    local res=`echo "$data" | grep "^$key "`
+    local res=`printf '%s\n' "$data" | grep "^$key "`
     if [ -n "$res" ]; then
         return 0
     fi
@@ -198,7 +198,7 @@ CLASS_Bashor_Data_getKeys()
         local IFS=$'\n\r'
         local line
         for line in $data; do
-            echo "$line" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
+            printf '%s\n' "$line" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
         done
         return 0
     fi
@@ -220,9 +220,9 @@ CLASS_Bashor_Data_getValues()
         local IFS=$'\n\r'
         local line
         for line in $data; do
-            local key=`echo "$line" -n | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData`
-            local value=`echo -n "$line" | sed 's#^[^[:space:]]\+[[:space:]]\+##' | decodeData | this call _compress 'd'`
-            echo "$key : $value"
+            local key=`printf '%s\n' "$line" -n | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData`
+            local value=`printf '%s' "$line" | sed 's#^[^[:space:]]\+[[:space:]]\+##' | decodeData | this call _compress 'd'`
+            printf '%s\n' "$key : $value"
         done
         return 0
     fi

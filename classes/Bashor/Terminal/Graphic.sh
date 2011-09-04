@@ -41,7 +41,7 @@ CLASS_Bashor_Terminal_Graphic_setPixel()
         [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 1
     fi    
     local char="${3:- }"
-    echo -n "${char:0:1}"
+    printf '%s' "${char:0:1}"
     [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
     class Bashor_Terminal resetStyle
     class Bashor_Terminal moveCurserBy "$((-1+$1*-1))" "$(($2*-1))"
@@ -73,7 +73,7 @@ CLASS_Bashor_Terminal_Graphic_printText()
         [[ "$6" =~ U ]] && class Bashor_Terminal setStyleUnderline 1
         [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 1
     fi    
-    echo -n "$3"
+    printf '%s' "$3"
     [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
     class Bashor_Terminal resetStyle
     class Bashor_Terminal restoreCurser
@@ -113,7 +113,7 @@ CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
 	`
 	local i out=
     for i in `seq "$4"`; do out="${out}${tmp}"; done
-	echo -n "$out"
+	printf '%s' "$out"
 	[[ "$8" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
 	class Bashor_Terminal resetStyle
 	class Bashor_Terminal restoreCurser

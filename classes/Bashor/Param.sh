@@ -45,7 +45,7 @@ CLASS_Bashor_Param_issetOpt()
         if [ "${1:0:2}" = '--' ]; then
             local opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
+            local opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
         [ "$1" == "$key" ] && return 0
         [ ":" == "$opt" ] && shift    
@@ -147,11 +147,11 @@ CLASS_Bashor_Param_getOpt()
         if [ "${1:0:2}" = '--' ]; then
             local opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
+            local opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
         if [ ":" == "$opt" ]; then
             if [ "$1" == "$key" ]; then
-                echo "$2"
+                printf '%s\n' "$2"
                 return 0;
             fi
             shift
@@ -177,7 +177,7 @@ CLASS_Bashor_Param_getArg()
 
     shift $key
     if [ "$?" = 0 ]; then
-        echo "$1"
+        printf '%s\n' "$1"
         return 0
     fi    
     return "1"
@@ -203,9 +203,9 @@ CLASS_Bashor_Param_getOptKeys()
         if [ "${1:0:2}" = '--' ]; then
             local opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
+            local opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
-        echo "$1"
+        printf '%s\n' "$1"
         local return=0
         if [ ":" == "$opt" ]; then
             shift
@@ -235,15 +235,15 @@ CLASS_Bashor_Param_listOpt()
         if [ "${1:0:2}" = '--' ]; then
             local opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`echo "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
+            local opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
-        echo -n "$1"
+        printf '%s' "$1"
         local return=0
         if [ ":" == "$opt" ]; then
-            echo -n " $2"
+            printf '%s' " $2"
             shift
         fi
-        echo ""
+        echo
     done
         
     return "$return"
@@ -267,7 +267,7 @@ CLASS_Bashor_Param_listArg()
         done
 
         while shift "$first"; do
-            echo "$1"
+            printf '%s\n' "$1"
         done;
         
         return 0
@@ -382,9 +382,9 @@ CLASS_Bashor_Param_getOptLongExtension()
     local IFS=","
     local value
     for value in `this get optsLong`; do
-        local key=`echo "$value" | sed 's#:##g'`
+        local key="`printf '%s' "$value" | sed 's#:##g'`"
         if [ "$key" == "$1" ]; then
-            echo "$value" | sed 's#[^:]##g'
+            printf '%s' "$value" | sed 's#[^:]##g'
             return 0
         fi
     done

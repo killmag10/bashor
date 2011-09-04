@@ -32,3 +32,8 @@ REPLACED";
 tmp=`echo "$oldText" | class Bashor_String replace "FIND" "REPLACED"`;
 checkSimple "replace return" "$?" "0";
 checkSimple "replace text" "$tmp" "$newText";
+
+tmp=`class Bashor_String repeat "abc" 3`;
+checkSimple "repeat return" "$?" "0";
+checkSimple "repeat text" "$tmp" "abcabcabc";
+

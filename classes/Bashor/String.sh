@@ -17,7 +17,7 @@
 
 
 ##
-# Get the md5 hash
+# Repear a string.
 #
 # $1    char    one char
 # $2    integer count
@@ -26,18 +26,13 @@ CLASS_Bashor_String_repeat()
 {
     requireParams RR "$@"
     
-    local replacement=`echo "'" | sed 's#/#\\\\/#g'`
-
-    local char=`echo "$1" \
-        | sed 's#\([\\]\)#\\\1#g' \
-        | sed 's/'"$replacement"'/\\'"$replacement"'/g'`
-    
+    local char="`class Bashor_Escape regExReplacement "$1" '#'`"
     dd if=/dev/zero bs=1 count="$2" 2>/dev/null | tr '\0' "0" | sed "s#.#$char#g"
     return $?
 }
 
 ##
-# Get the md5 hash
+# Replace a string with a other.
 #
 # &0    string  text
 # $1    string  find

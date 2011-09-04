@@ -22,7 +22,7 @@ local Cache
 new 'Bashor_Cache_File' 'Cache' "$TEST_TEMP_DIR";
 
 res=`object "$Cache" filename 'test'`;
-checkSimple "filename" "$res" "$TEST_TEMP_DIR/CACHE_d8e8fca2dc0f896fd7cb4cb0031ba249_935282863_5";
+checkSimple "filename" "$res" "$TEST_TEMP_DIR/CACHE_098f6bcd4621d373cade4e832627b4f6_3076352578_4";
 
 object "$Cache" set 'test' '2' "`cat \"$TEST_RESOURCE_DIR/random.dat\"`";
 checkSimple "set var" "$?" "0";

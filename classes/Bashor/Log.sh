@@ -20,9 +20,7 @@
 #
 # $1    string  instance var name
 CLASS_Bashor_Log_getDefault()
-{
-    static set abc '"=\'\'
-    
+{   
     if ! static isset instance; then
         local instanceDefault
         new "$CLASS_NAME" instanceDefault "$BASHOR_LOG_FILE"
@@ -57,7 +55,7 @@ CLASS_Bashor_Log_log()
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         cat - >> "$logFile"
     else
-        echo "$1" >> "$logFile"
+        printf '%s\n' "$1" >> "$logFile"
     fi
 }
 
@@ -106,7 +104,7 @@ CLASS_Bashor_Log_error()
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring ERROR: #" | this call log
     else
-        echo "$1" | nl | sed "s#^#$datestring ERROR: #" | this call log
+        printf '%s' "$1" | nl | sed "s#^#$datestring ERROR: #" | this call log
     fi
 }
 
@@ -122,7 +120,7 @@ CLASS_Bashor_Log_warning()
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring WARNING: #" | this call log
     else
-        echo "$1" | nl | sed "s#^#$datestring WARNING: #" | this call log
+        printf '%s' "$1" | nl | sed "s#^#$datestring WARNING: #" | this call log
     fi
 }
 
@@ -138,7 +136,7 @@ CLASS_Bashor_Log_debug()
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring DEBUG: #" | this call log
     else
-        echo "$1" | nl | sed "s#^#$datestring DEBUG: #" | this call log
+        printf '%s' | nl | sed "s#^#$datestring DEBUG: #" | this call log
     fi
 
 }
