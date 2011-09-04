@@ -526,6 +526,10 @@ this()
             _bashor_objectKey "$dataVarName" "$2"
             return $?
             ;;
+        size)
+            echo "$dataVarName" | wc -c
+            return $?
+            ;;
         clear)
              _bashor_objectClear "$dataVarName"
             return $?
@@ -568,12 +572,6 @@ static()
             _bashor_call "$@"            
             return $?
             ;;
-        pointer)
-            [ -z "$OBJECT" ] && error 'Not a Object'
-            [ -z "$OBJECT_POINTER" ] && error 'No pointer found'
-            echo "$OBJECT_POINTER"
-            return 0
-            ;;
     esac
     
     eval 'local OBJECT_POINTER=$_BASHOR_CLASS_'"$CLASS_NAME"'_POINTER'
@@ -607,6 +605,10 @@ static()
         key)
             [ -z "$2" ] && error '2: Parameter empty or not set' 
             _bashor_objectKey "$dataVarName" "$2"
+            return $?
+            ;;
+        size)
+            echo "$dataVarName" | wc -c
             return $?
             ;;
         clear)

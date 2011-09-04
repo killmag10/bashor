@@ -356,6 +356,34 @@ inList()
 
 encodeData()
 {
+    case "$BASHOR_CODEING_METHOD" in
+        hex)
+            hexdump -v -e '1/1 "%02X"'
+            return $?
+            ;;
+        *) #base64
+            encodeBase64
+            return $?
+            ;;
+    esac
+}
+
+decodeData()
+{
+    case "$BASHOR_CODEING_METHOD" in
+        hex)
+            printf "`sed -n 's/../\\\\x\0/gp'`"
+            return $?
+            ;;
+        *) #base64
+            decodeBase64
+            eturn $?
+            ;;
+    esac
+}
+
+encodeBase64()
+{
     case "$BASHOR_BASE64_USE" in
         openssl)
             openssl enc -a -A
@@ -376,7 +404,7 @@ encodeData()
     esac
 }
 
-decodeData()
+decodeBase64()
 {
     case "$BASHOR_BASE64_USE" in
         openssl)

@@ -46,7 +46,13 @@ object "$Data" isCompressed;
 checkSimple "isCompressed" "$?" "0";
 
 res=`object "$Data" size`;
-checkSimple "size" "$res" "28795";
-
+case "$BASHOR_CODEING_METHOD" in
+hex)
+    checkSimple "size" "$res" "43187";
+    ;;
+*)
+    checkSimple "size" "$res" "28795";
+    ;;
+esac
 remove "$Data";
 checkSimple "remove object" "$?" "0";
