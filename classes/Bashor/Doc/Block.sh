@@ -105,7 +105,7 @@ CLASS_Bashor_Doc_Block_parseString()
         fi
         
         if [[ "$line" =~ ^[[:space:]]*\# ]]; then
-            line="`printf '%s' "$line" | sed 's/^[[:space:]]*\#[[:space:]]*//'`"
+            line="`printf '%s\n' "$line" | sed 's/^[[:space:]]*\#[[:space:]]*//'`"
             docBlock="${docBlock}${line}${NL}"
             continue;
         fi
@@ -163,7 +163,7 @@ CLASS_Bashor_Doc_Block_getItemsByType()
     local Current
     for Current in `this call getItems`; do        
         if [ "`object "$Current" getType`" = "$1" ]; then
-            printf '%s' "$Current"
+            printf '%s\n' "$Current"
         fi
     done
 }
