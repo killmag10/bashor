@@ -104,6 +104,108 @@ CLASS_Bashor_Terminal_setFordergroundColorAnsi()
 }
 
 ##
+# Set forderground rgb color with extendet color range (support must be on)
+#
+# $1    integer red     range 0-5
+# $2    integer green   range 0-5
+# $3    integer blue    range 0-5
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Terminal_setExtendedFordergroundColor()
+{
+    requireParams RRR "$@"
+    [ "$1" -lt 0 ] && return 1
+    [ "$1" -gt 5 ] && return 1
+    [ "$2" -lt 0 ] && return 1
+    [ "$2" -gt 5 ] && return 1
+    [ "$3" -lt 0 ] && return 1
+    [ "$3" -gt 5 ] && return 1
+    
+    printf "\033[38;5;$((16+$3+($2*6)+($1*36)))m"
+    return $?
+}
+
+##
+# Set background rgb color with extendet color range (support must be on)
+#
+# $1    integer red     range 0-5
+# $2    integer green   range 0-5
+# $3    integer blue    range 0-5
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Terminal_setExtendedBackgroundColor()
+{
+    requireParams RRR "$@"
+    [ "$1" -lt 0 ] && return 1
+    [ "$1" -gt 5 ] && return 1
+    [ "$2" -lt 0 ] && return 1
+    [ "$2" -gt 5 ] && return 1
+    [ "$3" -lt 0 ] && return 1
+    [ "$3" -gt 5 ] && return 1
+    
+    printf "\033[48;5;$((16+$3+($2*6)+($1*36)))m"
+    return $?
+}
+
+##
+# Set forderground system color with extendet range (support must be on)
+#
+# $1    integer value     range 0-15
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Terminal_setExtendedFordergroundColorSystem()
+{
+    requireParams R "$@"
+    [ "$1" -lt 0 ] && return 1
+    [ "$1" -gt 15 ] && return 1
+    
+    printf "\033[38;5;${1}m"
+    return $?
+}
+
+##
+# Set background system color with extendet range (support must be on)
+#
+# $1    integer value     range 0-15
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Terminal_setExtendedBackgroundColorSystem()
+{
+    requireParams R "$@"
+    [ "$1" -lt 0 ] && return 1
+    [ "$1" -gt 15 ] && return 1
+    
+    printf "\033[48;5;${1}m"
+    return $?
+}
+
+##
+# Set forderground grayscale tone with extendet range (support must be on)
+#
+# $1    integer value     range 0-23
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Terminal_setExtendedFordergroundColorGrayscale()
+{
+    requireParams R "$@"
+    [ "$1" -lt 0 ] && return 1
+    [ "$1" -gt 23 ] && return 1
+    
+    printf "\033[38;5;$((232+$1))m"
+    return $?
+}
+
+##
+# Set background grayscale tone with extendet range (support must be on)
+#
+# $1    integer value     range 0-23
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Terminal_setExtendedBackgroundColorGrayscale()
+{
+    requireParams R "$@"
+    [ "$1" -lt 0 ] && return 1
+    [ "$1" -gt 23 ] && return 1
+    
+    printf "\033[48;5;$((232+$1))m"
+    return $?
+}
+
+##
 # Set style bold
 #
 # 0:Off
