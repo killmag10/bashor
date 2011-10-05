@@ -216,7 +216,7 @@ CLASS_Bashor_Terminal_setExtendedBackgroundColorGrayscale()
 CLASS_Bashor_Terminal_setStyleBold()
 {
     requireParams R "$@"
-    [ "$1" == 1 ] && printf '\033[1m' || tput dim
+    [ "$1" == 1 ] && printf '\033[1m' || printf '\033[21m'
     return $?
 }
 
@@ -246,7 +246,7 @@ CLASS_Bashor_Terminal_setExtendedCharacters()
 CLASS_Bashor_Terminal_setStyleUnderline()
 {
     requireParams R "$@"
-    [ "$1" == 1 ] && tput smul || tput rmul
+    [ "$1" == 1 ] && printf '\033[4m' || printf '\033[24m'
     return $?
 }
 
@@ -410,7 +410,7 @@ CLASS_Bashor_Terminal_moveCurserTo()
 # $?    0:OK    1:ERROR
 CLASS_Bashor_Terminal_clear()
 {
-    clear
+    printf '\033[H\033[2J'    
     return $?
 }
 
