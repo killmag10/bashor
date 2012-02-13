@@ -74,7 +74,7 @@ getBacktrace()
     local pos=0
     while [ -n "$res" ]; do
         res=$(caller "$pos")
-        [ -n "$res" ] && printf '%s' "$pos: $res"
+        [ -n "$res" ] && printf '%s\n' "$pos: $res"
         ((pos++))
     done
     return 0
@@ -136,7 +136,7 @@ _bashor_handleErrorFallback()
 {
     echo 'Use fallback error handling.' 1>&3 
     if [ "$showOutput" = 1 ]; then
-        printf '%s' "$1" | sed "s/^/ERROR: /g" 1>&3
+        printf '%s\n' "$1" | sed "s/^/ERROR: /g" 1>&3
         getBacktrace | sed 's#^#    #'
     fi 
     exit 1
