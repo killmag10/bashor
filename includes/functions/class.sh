@@ -712,7 +712,7 @@ _bashor_objectGet()
 {
     requireParams RR "$@"
     
-    data=$(printf '%s' "${!1}" | grep "$(printf '%s' "$2" | encodeData)")    
+    data=$(printf '%s' "${!1}" | grep "^$(printf '%s' "$2" | encodeData)")    
     [ $? == 0 ] || return 1
     
     printf '%s' "$data" | cut -d ' ' -f 2 | decodeData
