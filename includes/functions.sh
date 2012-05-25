@@ -448,11 +448,18 @@ bufferStream()
 requireParams()
 {
     local config="$1"    
+    # Check for speedup
+    [ "$config" = "R" ] && [ -n "$2" ] && return 0
+    [ "$config" = "RR" ] && [ -n "$2" ] && [ -n "$3" ] && return 0
+
     if [ "$#" -le "${#config}" ]; then
         local paramCount="$#"
         error "$((++paramCount)): Parameter not set"
         return 1
     fi
+    
+    # Check for speedup
+    [[ "$config" =~ ^S+$ ]] && return 0
     
     local current=0
     while shift; do
