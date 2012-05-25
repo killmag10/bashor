@@ -15,15 +15,15 @@
 # @version      $Id$
 ################################################################################
 
+extends Bashor_Config Bashor_List_Iterable
+
 ##
 # Constructor
 CLASS_Bashor_Config___construct()
 {
     requireObject
     
-    local Data
-    new Bashor_Data Data
-    this set data "$Data"
+    parent call __construct;
     this set 'readonly' ''    
 }
 
@@ -43,55 +43,16 @@ CLASS_Bashor_Config_set()
         return 1
     fi
     
-    local Data   
-    Data=`this get data`
-    
-    object $Data set "$1" "$2"
+    parent call set "$1" "$2"
     return $?
 }
 
 ##
-# Get a value.
-#
-# $1    string  key
-# &1    mixed   data
-# $?    0:OK    1:ERROR
-CLASS_Bashor_Config_get()
-{
-    requireObject
-    requireParams R "$@"
-        
-    local Data   
-    Data=`this get data`
-    
-    object $Data get "$1"
-    return $?
-}
-
-##
-# Isset a value.
-#
-# $1    string  Id
-# $?    0:EXISTS    1:NOT FOUND
-# &1    string Data 
-CLASS_Bashor_Config_isset()
-{
-    requireObject
-    requireParams R "$@"
-    
-    local Data   
-    Data=`this get data`
-    
-    object $Data get "$1"
-    return $?
-}
-
-##
-# Remove a value.
+# Unset a key.
 #
 # $1    string  Id
 # $?    0:OK    1:ERROR
-CLASS_Bashor_Config_remove()
+CLASS_Bashor_Config_unset()
 {
     requireObject
     requireParams R "$@"
@@ -101,10 +62,7 @@ CLASS_Bashor_Config_remove()
         return 1
     fi
     
-    local Data   
-    Data=`this get data`
-    
-    object $Data remove "$1"
+    parent call unset "$1"
     return $?
 }
 
@@ -118,4 +76,42 @@ CLASS_Bashor_Config_setReadonly()
     
     this set 'readonly' '1'
     return 0
+}
+
+##
+# Merge config objects.
+#
+# $1    Bashor_Config   
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Config_mergeParent()
+{
+    requireObject
+    requireParams R "$@"
+    isObject "$1" || error 'Param 1 is not an object!'
+    
+    if [ -n "`this get readonly`" ]; then
+        warning 'is set readonly'
+        return 1
+    fi
+    
+    local key current
+    object "$1" rewind
+    while object "$1" valid; do
+        key="`object "$1" key`"
+        current="`object "$1" current`"
+        echo "MERGE KEY: $key" >&3
+        if this call isset "$key"; then
+            echo "MERGE KEY EXISTS: $key" >&3
+            if isObject "$current" && isObject "`this call get "$key"`"; then
+                echo "MERGE KEY RECALL: $key" >&3
+                object "`this call get "$key"`" mergeParent "$current"
+            fi
+        else
+            echo "MERGE KEY WILL SET: $key" >&3
+            this call set "$key" "$current"
+        fi
+        object "$1" next
+    done
+    
+    return $?
 }
