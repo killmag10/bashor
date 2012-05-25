@@ -17,7 +17,7 @@
 
 function CLASS_Include_Class___construct()
 {    
-    : ${OBJECT:?}
+    requireObject
     
     this set data "$1"
     
@@ -26,7 +26,7 @@ function CLASS_Include_Class___construct()
 
 function CLASS_Include_Class_get()
 {
-    : ${OBJECT:?}
+    requireObject
 	
 	this get data
     return "$?"

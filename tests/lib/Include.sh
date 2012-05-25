@@ -17,7 +17,7 @@
 
 function CLASS_Include___construct()
 {    
-    : ${OBJECT:?}
+    requireObject
     
     this set data "$1"
     
@@ -31,7 +31,7 @@ function CLASS_Include___construct()
 
 function CLASS_Include_get()
 {
-    : ${OBJECT:?}
+    requireObject
 	
 	this get data
     return "$?"
@@ -39,7 +39,7 @@ function CLASS_Include_get()
 
 function CLASS_Include_getInclude()
 {
-    : ${OBJECT:?}
+    requireObject
 	
     local Include="`this get Include`";
 	object "$Include" get
