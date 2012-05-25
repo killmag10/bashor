@@ -70,7 +70,7 @@ prepareOutput()
 # $?    1       ERROR
 getBacktrace()
 {    
-    local res='1'
+    local res=1
     local pos=0
     while [ -n "$res" ]; do
         res=$(caller "$pos")

@@ -712,6 +712,7 @@ _bashor_objectGet()
 {
     requireParams RR "$@"
     
+    local data
     data=$(printf '%s' "${!1}" | grep "^$(printf '%s' "$2" | encodeData)")    
     [ $? == 0 ] || return 1
     
