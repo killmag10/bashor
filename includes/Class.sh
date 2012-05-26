@@ -47,7 +47,7 @@ CLASS_Class___destruct()
 CLASS_Class_getClass()
 {
     [ -z "$CLASS_TOP_NAME" ] && error 'Not in a Class'
-    echo "$CLASS_TOP_NAME"
+    printf '%s' "$CLASS_TOP_NAME"
     return 0
 }
 
@@ -59,7 +59,7 @@ CLASS_Class_getClass()
 CLASS_Class_getClassTrace()
 {
     [ -z "$CLASS_NAME" ] && error 'Not in a Class'
-    echo "$CLASS_NAME"
+    printf '%s' "$CLASS_NAME"
     parent exists || return 1
     parent call getClassTrace
     return 0
@@ -95,12 +95,12 @@ CLASS_Class_isA()
 }
 
 ##
-# Check if class is a instance of.
+# Dump propertys of a class/object.
 #
 # $?    0:TRUE    1:FALSE
 CLASS_Class_dumpPropertys()
 {
-    if [ -n "$OBJECT" ]; then
+    if inObject; then
         local count=$(this count)
         local key current=0
         while [ "$count" -gt "$current" ]; do
@@ -110,7 +110,7 @@ CLASS_Class_dumpPropertys()
         done
         return 0
     fi
-    if [ -n "$STATIC" ]; then
+    if inStatic; then
         local count=$(static count)
         local key current=0
         while [ "$count" -gt "$current" ]; do

@@ -90,23 +90,23 @@ getBacktrace()
 # &0    string  error stream
 handleError()
 {    
-    [ $BASHOR_ERROR_OUTPUT == 1 ] && loadClassOnce "Bashor_Color"
-    [ $BASHOR_ERROR_LOG == 1 ] && loadClassOnce "Bashor_Log"
+    [ $BASHOR_ERROR_OUTPUT = 1 ] && loadClassOnce "Bashor_Color"
+    [ $BASHOR_ERROR_LOG = 1 ] && loadClassOnce "Bashor_Log"
     local pre='ERROR: '
     while read msg; do
-        [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+        [ $BASHOR_ERROR_BACKTRACE = 1 ] \
             && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
-        if [ $BASHOR_ERROR_OUTPUT == 1 ]; then
+        if [ $BASHOR_ERROR_OUTPUT = 1 ]; then
             msgOut=$(printf '%s' "$msg" | sed "s/^/$pre/g")
-            [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+            [ $BASHOR_ERROR_BACKTRACE = 1 ] \
                 && local msgOut="$msgOut""$NL""$trace"
             printf '%s' "$msgOut" | class Bashor_Color fg '' 'red' 'bold'
         fi
-        if [ $BASHOR_ERROR_LOG == 1 ]; then
+        if [ $BASHOR_ERROR_LOG = 1 ]; then
             local log
             class Bashor_Log getDefault log
             msgLog="$msg"
-            [ $BASHOR_ERROR_BACKTRACE == 1 ] \
+            [ $BASHOR_ERROR_BACKTRACE = 1 ] \
                 && local msgLog="$msgOut""$NL""$trace"
             printf '%s' "$msgLog" | object "$log" error
         fi
@@ -349,7 +349,7 @@ inList()
     local value IFS=$'\n' search="$1"
     shift
     for value in "$@"; do
-        [ "$search" == "$value" ] && return 0
+        [ "$search" = "$value" ] && return 0
     done
     return 1
 }
@@ -439,7 +439,7 @@ bufferStream()
 # R     Is set and not empty
 # S     Is set
 #
-# Example: needParamCount 4 $#
+# Example: requireParams RS "$@"
 #
 # $1    string  Config String
 # $@    mixed   All Params
@@ -448,8 +448,8 @@ bufferStream()
 requireParams()
 {
     # Checks for speedup
-    [ "$1" = "R" ] && [ -n "$2" ] && return 0
-    [ "$1" = "RR" ] && [ -n "$2" -a -n "$3" ] && return 0
+    [ "$1" = "R" -a -n "$2" ] && return 0
+    [ "$1" = "RR" -a -n "$2" -a -n "$3" ] && return 0
     if [ "$#" -le "${#1}" ]; then
         local paramCount="$#"
         error "$((++paramCount)): Parameter not set"
@@ -487,7 +487,7 @@ requireParams()
 # R     Is set and not empty
 # S     Is set
 #
-# Example: needParamCount 4 $#
+# Example: checkParams RS "$@"
 #
 # $1    string  Config String
 # $@    mixed   All Params
@@ -521,7 +521,7 @@ checkParams()
 . "$BASHOR_PATH_INCLUDES/functions/class.sh"
 
 # load opt function
-if [ "$BASHOR_USE_GETOPT" == 1 ]; then
+if [ "$BASHOR_USE_GETOPT" = 1 ]; then
     . "$BASHOR_PATH_INCLUDES/functions/getopt.sh"
 else
     . "$BASHOR_PATH_INCLUDES/functions/getopts.sh"
