@@ -447,21 +447,18 @@ bufferStream()
 # $?    1       ERROR
 requireParams()
 {
-    local config="$1"    
-    # Check for speedup
-    [ "$config" = "R" ] && [ -n "$2" ] && return 0
-    [ "$config" = "RR" ] && [ -n "$2" ] && [ -n "$3" ] && return 0
-
-    if [ "$#" -le "${#config}" ]; then
+    # Checks for speedup
+    [ "$1" = "R" ] && [ -n "$2" ] && return 0
+    [ "$1" = "RR" ] && [ -n "$2" -a -n "$3" ] && return 0
+    if [ "$#" -le "${#1}" ]; then
         local paramCount="$#"
         error "$((++paramCount)): Parameter not set"
         return 1
     fi
-    
-    # Check for speedup
-    [[ "$config" =~ ^S+$ ]] && return 0
+    [[ "$1" =~ ^S+$ ]] && return 0
     
     local current=0
+    local config="$1"
     while shift; do
         case "${config:$current:1}" in
             R)
