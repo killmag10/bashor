@@ -99,15 +99,11 @@ CLASS_Bashor_Config_mergeParent()
     while object "$1" valid; do
         key="`object "$1" key`"
         current="`object "$1" current`"
-        echo "MERGE KEY: $key" >&3
         if this call isset "$key"; then
-            echo "MERGE KEY EXISTS: $key" >&3
             if isObject "$current" && isObject "`this call get "$key"`"; then
-                echo "MERGE KEY RECALL: $key" >&3
                 object "`this call get "$key"`" mergeParent "$current"
             fi
         else
-            echo "MERGE KEY WILL SET: $key" >&3
             this call set "$key" "$current"
         fi
         object "$1" next

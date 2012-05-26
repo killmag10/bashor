@@ -33,14 +33,11 @@ CLASS_Bashor_Config_Ini___construct()
     [ -n "$file" ] || return 0;
     [ -e "$file" ] || error 'File does not exists!'
     
-    local section=
-    local line key value
+    local section line key value
     while read line; do
         [[ "$line" = ^\; ]] && continue
-        echo ">>> $line"
         if [[ "$line" =~ ^\[[^\]]+\]$ ]]; then
             section="`printf '%s' "$line" | sed 's/^[[:space:]]*\[//;s/\][[:space:]]*$//'`"
-            echo "Section $section"
         fi
         if [[ "$line" =~ [[:alnum:]\.]+[[:space:]]*= ]]; then
             key="`printf '%s' "$line" | sed 's/[[:space:]]*=.*$//'`"
@@ -55,20 +52,17 @@ CLASS_Bashor_Config_Ini___construct()
 CLASS_Bashor_Config_Ini__linkSections()
 {
     requireObject
-    local key section parent item itemParent ParentList
+    local key section parent parentKey item itemParent ParentList
 
     new Bashor_List_Iterable ParentList
 
     this call rewind
     while this call valid; do
         key="`this call key`"
-        echo "KEY: $key" >&3
         if [[ "$key" =~ : ]]; then
             section="`printf '%s' "$key" | sed -n 's/^\([^:]\+\).*$/\1/p'`"
             parent="`printf '%s' "$key" | sed -n 's/^[^:]\+://p'`"
             object "$ParentList" set "$section" "$parent"
-            echo "SECTION: $section" >&3
-            echo "PARENT: $parent" >&3
         fi
         this call next
     done
@@ -106,11 +100,9 @@ CLASS_Bashor_Config_Ini__linkSectionsChild()
     while object "$ParentList" valid; do
         section="`object "$ParentList" key`"
         parent="`object "$ParentList" current`"
-        echo "SECTION: $section HAS PARENT?: $parentKey" >&3
         if [ "$parent" = "$parentKey" ]; then
             item="`this call get "$section"`"
             itemParent="`this call get "$parent"`"
-            echo "SECTION MERGE: $section <= $parent" >&3
             object "$item" mergeParent "$itemParent"
             this call _linkSectionsChild "$section" "$ParentList"
         fi
@@ -120,14 +112,11 @@ CLASS_Bashor_Config_Ini__linkSectionsChild()
 
 CLASS_Bashor_Config_Ini__setIniValue()
 {
-    echo "SET $1 : $2"
-    
     if [[ "$1" =~ \. ]]; then
-        local key="`printf '%s' "$1" | sed -n 's/^\([^.]\+\).*$/\1/p'`"
-        local config
+        local key config
+        key="`printf '%s' "$1" | sed -n 's/^\([^.]\+\).*$/\1/p'`"
         if this call isset "$key"; then
             config="`this call get "$key"`"
-            #echo "SEARCH OBJECT: $config"
             if ! isObject "$config"; then
                 new "`static call getClass`" config
                 this call set "$key" "$config"
@@ -137,10 +126,8 @@ CLASS_Bashor_Config_Ini__setIniValue()
             this call set "$key" "$config"
         fi
         newKey="`printf '%s' "$1" | sed -n 's/^[^.]\+[.]//p'`"
-        echo "SET object: $config : $newKey : $2"
         object "$config" _setIniValue "$newKey" "$2"
     else
         this call set "$1" "$2"
-        echo "SET END: $1 : $2"
     fi
 }
