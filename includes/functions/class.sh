@@ -30,6 +30,7 @@ loadClass()
         filename="$dn/""${1//_//}"'.sh'
         [ -f "$filename" ] || continue
         . "$filename"
+        unset -v filename
         addClass "$1"
         return $?
     done
@@ -45,9 +46,8 @@ loadClass()
 # $?    1       ERROR
 loadClassOnce()
 {
-    requireParams R "$@"
-    
-    eval '[ -n "$_BASHOR_CLASS_'"$1"'_LOADED" ]' || loadClass "$1"
+    local _bashor_temp_className=_BASHOR_CLASS_"$1"
+    [ -n "${!_bashor_temp_className}" ] || loadClass "$1"
     return $?
 }
 
@@ -85,7 +85,6 @@ addClass()
 {
     requireParams R "$@"
     
-    eval _BASHOR_CLASS_"$1"_LOADED=1
     local namespace='_BASHOR_CLASS_'"$1"  
     local pointer
     _bashor_generatePointer pointer "$BASHOR_TYPE_OBJECT"
@@ -155,11 +154,11 @@ _bashor_createExtendedClassFunctions()
 class()
 {
     requireParams RR "$@"
+    local CLASS_NAME CLASS_TOP_NAME OBJECT=
     
-    local CLASS_NAME="$1"    
+    CLASS_NAME="$1"    
     __hookClassRouter || return 1
-    local CLASS_TOP_NAME="$CLASS_NAME"
-    local OBJECT=
+    CLASS_TOP_NAME="$CLASS_NAME"
     shift
     _bashor_call "$@"
     return $?
@@ -314,12 +313,8 @@ _bashor_call()
 {    
     requireParams R "$@" 
     [ "$BASHOR_CLASS_AUTOLOAD" = 1 ] && __autoloadClass "$CLASS_NAME"
-      
-    eval '[ -z "$_BASHOR_CLASS_'"$CLASS_NAME"'" ]' \
-         && error "No class $CLASS_NAME found!"
     
     local FUNCTION_NAME="$1"
-    
     if issetFunction CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"; then
         shift
         CLASS_"$CLASS_NAME"_"$FUNCTION_NAME" "$@"
@@ -330,6 +325,9 @@ _bashor_call()
         CLASS_"$CLASS_NAME"___call "$@"
         return $?
     fi
+    
+    eval '[ -z "$_BASHOR_CLASS_'"$CLASS_NAME"'" ]' \
+         && error "No class $CLASS_NAME found!"
     
     error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!"
     return 1

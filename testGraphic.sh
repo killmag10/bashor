@@ -135,7 +135,7 @@ function toPrint() {
 }
 
 clear;
-echo $SECONDS;
+SECONDS=0;
 toPrint
 #temp="`toPrint`";
 echo $SECONDS;

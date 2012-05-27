@@ -448,27 +448,28 @@ bufferStream()
 requireParams()
 {
     # Checks for speedup
-    [ "$1" = "R" -a -n "$2" ] && return 0
-    [ "$1" = "RR" -a -n "$2" -a -n "$3" ] && return 0
-    if [ "$#" -le "${#1}" ]; then
-        local paramCount="$#"
-        error "$((++paramCount)): Parameter not set"
-        return 1
-    fi
-    [[ "$1" =~ ^S+$ ]] && return 0
+    [ "$1" = "R" ] && [ -n "$2" ] && return 0
+    [ "$1" = "RR" ] && [ -n "$2" -a -n "$3" ] && return 0
     
     local current=0
     local config="$1"
     while shift; do
         case "${config:$current:1}" in
             R)
-                if [ -z "$1" ]; then
-                    ((current+1))
-                    error "$current: Parameter empty but required"
-                    return 1
-                fi
+                    if [ -z "$1" ]; then
+                        ((current+1))
+                        error "$current: Parameter empty but required"
+                        return 1
+                    fi
                 ;;
-            S|'')
+            S)
+                    if [ "$#" = 0 ]; then
+                        ((current+1))
+                        error "$current: Parameter not set"
+                        return 1
+                    fi
+                ;;
+            '')
                 ;;
             *)
                 local configSegment="${config:$current:1}"
