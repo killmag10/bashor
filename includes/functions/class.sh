@@ -704,7 +704,7 @@ _bashor_objectGet()
     requireParams RR "$@"
     
     local data
-    data=$(printf '%s' "${!1}" | grep "^$(printf '%s' "$2" | encodeData)")    
+    data=$(printf '%s' "${!1}" | grep "^$(printf '%s' "$2" | encodeData)[[:space:]]\+.*$")    
     [ $? = 0 ] || return 1
     
     printf '%s' "$data" | cut -d ' ' -f 2 | decodeData
