@@ -773,7 +773,7 @@ _bashor_objectIsset()
     requireParams RR "$@"
     
     local key=$(printf '%s' "$2" | encodeData)
-    printf '%s' "${!1}" | grep "^$key " >/dev/null
+    printf '%s' "${!1}" | grep "^$key[[:space:]]\+.*$" >/dev/null
     return $?
 }
 

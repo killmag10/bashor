@@ -27,13 +27,25 @@ CLASS_Bashor_Config_Ini___construct()
     requireObject
     
     parent call __construct
-    file="$1"
-    set 'file' "$file"
+    local file="$1"
+    this set 'file' "$file"
     
     [ -n "$file" ] || return 0;
-    [ -e "$file" ] || error 'File does not exists!'
+    [ -e "$file" ] || error 'File "'"$file"'" does not exists!'
     
-    local section line key value
+    SECONDS=0
+    this call _readFile
+    echo "SECONDS _readFile: $SECONDS" >&3
+    this call _linkSections
+    echo "SECONDS _linkSections: $SECONDS" >&3
+}
+
+CLASS_Bashor_Config_Ini__readFile()
+{
+    requireObject
+    
+    local section line key value file
+    file="`this get 'file'`"
     while read line; do
         [[ "$line" = ^\; ]] && continue
         if [[ "$line" =~ ^\[[^\]]+\]$ ]]; then
@@ -45,8 +57,6 @@ CLASS_Bashor_Config_Ini___construct()
             this call _setIniValue "$section.$key" "$value"
         fi
     done < "$file"
-    
-    this call _linkSections
 }
 
 CLASS_Bashor_Config_Ini__linkSections()
@@ -66,7 +76,7 @@ CLASS_Bashor_Config_Ini__linkSections()
         fi
         this call next
     done
-    
+    echo "SECONDS 1: $SECONDS" >&3
     # remove parent in section name
     object "$ParentList" rewind
     while object "$ParentList" valid; do
@@ -76,7 +86,7 @@ CLASS_Bashor_Config_Ini__linkSections()
         this call unset "$section:$parent"
         object "$ParentList" next
     done
-    
+    echo "SECONDS 2: $SECONDS" >&3
     # extend sections
     this call rewind
     while this call valid; do
@@ -94,16 +104,14 @@ CLASS_Bashor_Config_Ini__linkSectionsChild()
 {
     local parentKey="$1"
     local ParentList="$2"
-    local key section parent item itemParent
+    local key section parent
     
     object "$ParentList" rewind
     while object "$ParentList" valid; do
         section="`object "$ParentList" key`"
         parent="`object "$ParentList" current`"
         if [ "$parent" = "$parentKey" ]; then
-            item="`this call get "$section"`"
-            itemParent="`this call get "$parent"`"
-            object "$item" mergeParent "$itemParent"
+            object "`this call get "$section"`" mergeParent "`this call get "$parent"`"
             this call _linkSectionsChild "$section" "$ParentList"
         fi
         object "$ParentList" next
@@ -125,8 +133,8 @@ CLASS_Bashor_Config_Ini__setIniValue()
             new "`static call getClass`" config
             this call set "$key" "$config"
         fi
-        newKey="`printf '%s' "$1" | sed -n 's/^[^.]\+[.]//p'`"
-        object "$config" _setIniValue "$newKey" "$2"
+        key="`printf '%s' "$1" | sed -n 's/^[^.]\+[.]//p'`"
+        object "$config" _setIniValue "$key" "$2"
     else
         this call set "$1" "$2"
     fi
