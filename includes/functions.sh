@@ -65,6 +65,7 @@ prepareOutput()
 ##
 # Get a baacktrace to the current file.
 #
+# $1    integer lines to remove
 # &1    string  files with line number per line
 # $?    0       OK
 # $?    1       ERROR
@@ -72,9 +73,10 @@ getBacktrace()
 {    
     local res=1
     local pos=0
+    local remove="$1"
     while [ -n "$res" ]; do
-        res=$(caller "$pos")
-        [ -n "$res" ] && printf '%s\n' "$pos: $res"
+        res=$(caller "$((pos+remove))")
+        [ -n "$res" ] && printf '%s\n' "$((pos+1)): $res"
         ((pos++))
     done
     return 0
@@ -117,8 +119,10 @@ handleError()
 ##
 # Error handler call
 #
-# $1    string  message
-# $2    integer|null return value for exit default=1
+# $1    string  type
+# $2    string  message
+# $3    integer|null return value for exit default=1
+# $4    string      Backtrace
 # &3    string  error messages
 # $?    0       OK
 # $?    1       Use internal error handler
@@ -145,8 +149,9 @@ _bashor_handleErrorFallback()
 ##
 # Internal error handler
 #
-# $1    string  message
-# $2    integer|null return value for exit default=1
+# $1    string  type
+# $2    string  message
+# $3    integer|null return value for exit default=1
 # &3    string  error messages
 _bashor_handleError()
 {
@@ -155,21 +160,20 @@ _bashor_handleError()
         _bashor_handleErrorFallback "$1"
     fi
     local BASHOR_ERROR=ERROR;
-    local BASHOR_BACKTRACE_REMOVE=$((BASHOR_BACKTRACE_REMOVE+2))
+    local BASHOR_BACKTRACE_REMOVE=$((BASHOR_BACKTRACE_REMOVE+1))
+    local BASHOR_BACKTRACE="`getBacktrace "$BASHOR_BACKTRACE_REMOVE"`"
     
-    __handleError "$@"
+    __handleError "$1" "$2" "$3" "$BASHOR_BACKTRACE"
     [ "$?" = 0 ] && return 0
     
     local type="$1"
     local message="$2"
-    local exit="${3-1}"
+    local exit="${3:-1}"
     local prefix=
     local backtrace=
     local showBacktrace=
     local showOutput=
     local doLog=
-    local colorFG='red'
-    local colorFGStyle='bold'
     
     case "$type" in
         error)
@@ -183,7 +187,6 @@ _bashor_handleError()
             showOutput="$BASHOR_WARNING_OUTPUT"
             showBacktrace="$BASHOR_WARNING_BACKTRACE"
             doLog="$BASHOR_WARNING_LOG"
-            colorFG='yellow'
             exit=
             ;;
         debug)
@@ -191,7 +194,6 @@ _bashor_handleError()
             showOutput="$BASHOR_DEBUG_OUTPUT"
             showBacktrace="$BASHOR_DEBUG_BACKTRACE"
             doLog="$BASHOR_DEBUG_LOG"
-            colorFG='white'
             exit=
             ;;
         *)
@@ -203,25 +205,20 @@ _bashor_handleError()
     esac
         
     [ "$showBacktrace" = 1 ] && backtrace=$(
-        getBacktrace | tail -n +"$BASHOR_BACKTRACE_REMOVE"  | sed 's#^#    #'
+        printf '%s' "$BASHOR_BACKTRACE" | sed 's#^#    #'
     )
     
     if [ "$showOutput" = 1 ]; then
-        loadClassOnce 'Bashor_Color'
-        {
-            printf '%s\n' "$message" | sed "s/^/$prefix/g"
-            [ -n "$backtrace" ] && printf '%s' "$backtrace"
-        } | class Bashor_Color fg '' "$colorFG" "$colorFGStyle" 1>&3
+        printf '%s\n' "$message" | sed "s/^/$prefix/g"
+        [ -n "$backtrace" ] && printf '%s\n' "$backtrace"
     fi
     
     if [ "$doLog" = 1 ]; then
-        loadClassOnce "Bashor_Log"
-        local log
-        class Bashor_Log getDefault log
+        local datestring=`date +'%Y-%m-%d %H:%M:%S'`
         {
-            printf '%s\n' "$message" | sed "s/^/$prefix/g"
-            [ -n "$backtrace" ] && printf '%s' "$backtrace"
-        } | object "$log" error
+            printf '%s\n' "$message" | sed "s/^/$datestring $prefix/g"
+            [ -n "$backtrace" ] && printf '%s\n' "$backtrace"
+        } >> "$BASHOR_LOG_FILE"
     fi
     
     if [ -n "$exit" ]; then
