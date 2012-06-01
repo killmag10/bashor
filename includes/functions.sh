@@ -209,7 +209,7 @@ _bashor_handleError()
     if [ "$showOutput" = 1 ]; then
         loadClassOnce 'Bashor_Color'
         {
-            printf '%s' "$message" | sed "s/^/$prefix/g"
+            printf '%s\n' "$message" | sed "s/^/$prefix/g"
             [ -n "$backtrace" ] && printf '%s' "$backtrace"
         } | class Bashor_Color fg '' "$colorFG" "$colorFGStyle" 1>&3
     fi
@@ -219,7 +219,7 @@ _bashor_handleError()
         local log
         class Bashor_Log getDefault log
         {
-            printf '%s' "$message" | sed "s/^/$prefix/g"
+            printf '%s\n' "$message" | sed "s/^/$prefix/g"
             [ -n "$backtrace" ] && printf '%s' "$backtrace"
         } | object "$log" error
     fi
