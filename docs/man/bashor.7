@@ -2,7 +2,7 @@
 .\"
 .\" Man page for Bashor
 .\"
-.TH Bashor 7 "2011-08-29" "Lars Dietrich" "Bashor Coding Commands"
+.TH Bashor 7 "2012-06-04" "Lars Dietrich" "Bashor Coding Commands"
 .SH Bashor
 .B Bashor
 \- an pseudo object extension for bash
@@ -25,13 +25,9 @@ input
 .I mixed
 output
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -46,7 +42,7 @@ R     Is set and not empty
 .HP
 S     Is set
 .HP
-Example: needParamCount 4 $#
+Example: checkParams RS "$@"
 .HP
 .B $1
 .I string
@@ -56,13 +52,9 @@ Config String
 .I mixed
 All Params
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -79,13 +71,9 @@ current function name
 .I string
 new function name
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -128,34 +116,17 @@ error messages
 .HP
 Get a baacktrace to the current file.
 .HP
+.B $1
+.I integer
+lines to remove
+.HP
 .B &1
 .I string
 files with line number per line
 .HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
 
-.TP
-.B handleError()
-.RS
 .HP
-Handle Errors
-.HP
-exec 101>&1; (
-.HP
-COMANDS
-.HP
-) 2>&1 >&101 | handleError
-.HP
-.B &0
-.I string
-error stream
+
 .RE
 
 .TP
@@ -166,23 +137,27 @@ Error handler call
 .HP
 .B $1
 .I string
-message
+type
 .HP
 .B $2
+.I string
+message
+.HP
+.B $3
 .I integer|null
 return value for exit default=1
+.HP
+.B $4
+.I string
+Backtrace
 .HP
 .B &3
 .I string
 error messages
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-Use internal error handler
+
 .RE
 
 .TP
@@ -199,13 +174,9 @@ search
 .I mixed
 list of values
 .HP
-.B $?
-.I 0
-in list
+
 .HP
-.B $?
-.I 1
-not in list
+
 .RE
 
 .TP
@@ -222,13 +193,9 @@ the type (var|function)
 .I string
 name
 .HP
-.B $?
-.I 0
-set
+
 .HP
-.B $?
-.I 1
-not set
+
 .RE
 
 .TP
@@ -241,13 +208,9 @@ Isset a function
 .I string
 name
 .HP
-.B $?
-.I 0
-set
+
 .HP
-.B $?
-.I 1
-not set
+
 .RE
 
 .TP
@@ -260,13 +223,9 @@ Isset a var
 .I string
 name
 .HP
-.B $?
-.I 0
-set
+
 .HP
-.B $?
-.I 1
-not set
+
 .RE
 
 .TP
@@ -287,13 +246,9 @@ input
 .I string
 prepared input
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -310,13 +265,9 @@ current function name
 .I string
 new function name
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -331,7 +282,7 @@ R     Is set and not empty
 .HP
 S     Is set
 .HP
-Example: needParamCount 4 $#
+Example: requireParams RS "$@"
 .HP
 .B $1
 .I string
@@ -341,24 +292,9 @@ Config String
 .I mixed
 All Params
 .HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
 
-.TP
-.B signalErrBacktrace()
-.RS
 .HP
-Backtrace for error signal
-.HP
-.B &1
-.I string
-files with line number per line
+
 .RE
 
 .TP
@@ -391,13 +327,9 @@ class
 .I mixed
 params
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -410,13 +342,9 @@ Autoloader for Classes
 .I string
 class
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -437,32 +365,7 @@ function name
 .I mixed
 method params
 .HP
-.B $?
-.I *
-all of class method
-.RE
 
-.TP
-.B class()
-.RS
-.HP
-Call a class method
-.HP
-.B $1
-.I string
-class name
-.HP
-.B $2
-.I string
-function name
-.HP
-.B $@
-.I mixed
-method params
-.HP
-.B $?
-.I *
-all of class method
 .RE
 
 .TP
@@ -475,13 +378,9 @@ Check if a class exists.
 .I string
 class name
 .HP
-.B $?
-.I 0
-FOUND
+
 .HP
-.B $?
-.I 1
-NOT FOUND
+
 .RE
 
 .TP
@@ -498,9 +397,7 @@ object name
 .I string
 object name
 .HP
-.B $?
-.I *
-all of class method __clone
+
 .RE
 
 .TP
@@ -517,13 +414,9 @@ class name
 .I string
 parent class name
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -536,13 +429,31 @@ Hook for class routing.
 .I string
 class name what will be call
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
+.RE
+
+.TP
+.B inObject()
+.RS
+.HP
+Check if you are in a object call.
+.HP
+
+.HP
+
+.RE
+
+.TP
+.B inStatic()
+.RS
+.HP
+Check if you are in a static call.
+.HP
+
+.HP
+
 .RE
 
 .TP
@@ -555,13 +466,9 @@ Check if it is a Pointer of a object.
 .I mixed
 string to check
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -574,13 +481,9 @@ Load class.
 .I string
 namespace
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -593,13 +496,9 @@ Load class once.
 .I string
 namespace
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -620,13 +519,9 @@ var name
 .I mixed
 method params
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -647,9 +542,7 @@ function name
 .I mixed
 method params
 .HP
-.B $?
-.I *
-all of class method
+
 .RE
 
 .TP
@@ -666,9 +559,7 @@ action (call,exists)
 .I mixed
 params
 .HP
-.B $?
-.I *
-all of class method
+
 .RE
 
 .TP
@@ -681,13 +572,9 @@ Remove a object.
 .I tring
 pointer
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -696,13 +583,9 @@ ERROR
 .HP
 Check if you are in a object call otherwise it will trow a error.
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -711,13 +594,9 @@ ERROR
 .HP
 Check if you are in a static call otherwise it will trow a error.
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
 .RE
 
 .TP
@@ -734,128 +613,9 @@ pointer
 .I string
 serialized data
 .HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
 
-.TP
-.B serialize()
-.RS
 .HP
-Serialize a object.
-.HP
-.B $1
-.I string
-pointer
-.HP
-.B &1
-.I string
-serialized data
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
 
-.TP
-.B class()
-.RS
-.HP
-Call a class method
-.HP
-.B $1
-.I string
-class name
-.HP
-.B $2
-.I string
-function name
-.HP
-.B $@
-.I mixed
-method params
-.HP
-.B $?
-.I *
-all of class method
-.RE
-
-.TP
-.B class()
-.RS
-.HP
-Call a class method
-.HP
-.B $1
-.I string
-class name
-.HP
-.B $2
-.I string
-function name
-.HP
-.B $@
-.I mixed
-method params
-.HP
-.B $?
-.I *
-all of class method
-.RE
-
-.TP
-.B serialize()
-.RS
-.HP
-Serialize a object.
-.HP
-.B $1
-.I string
-pointer
-.HP
-.B &1
-.I string
-serialized data
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
-.RE
-
-.TP
-.B serialize()
-.RS
-.HP
-Serialize a object.
-.HP
-.B $1
-.I string
-pointer
-.HP
-.B &1
-.I string
-serialized data
-.HP
-.B $?
-.I 0
-OK
-.HP
-.B $?
-.I 1
-ERROR
 .RE
 
 .TP
@@ -890,9 +650,7 @@ action (call,pointer,get,set,unset,isset)
 .I mixed
 params
 .HP
-.B $?
-.I *
-all of class method
+
 .RE
 
 .TP
@@ -927,9 +685,7 @@ action (call,pointer,get,set,unset,isset)
 .I mixed
 params
 .HP
-.B $?
-.I *
-all of class method
+
 .RE
 
 .TP
@@ -946,12 +702,107 @@ var name
 .I string
 serialized data
 .HP
-.B $?
-.I 0
-OK
+
 .HP
-.B $?
-.I 1
-ERROR
+
+.RE
+
+.SH BASE CLASS METHODS
+.TP
+.B CLASS_Class___construct()
+.RS
+.HP
+Constructor
+.HP
+Called on object creation (new)
+.RE
+
+.TP
+.B CLASS_Class___destruct()
+.RS
+.HP
+Destructor
+.HP
+Called on object destruction (remove)
+.RE
+
+.TP
+.B CLASS_Class_dumpPropertys()
+.RS
+.HP
+Dump propertys of a class/object.
+.HP
+
+.RE
+
+.TP
+.B CLASS_Class_getClass()
+.RS
+.HP
+Get the class name.
+.HP
+
+.HP
+.B &0
+.I string
+class name
+.RE
+
+.TP
+.B CLASS_Class_getClassTrace()
+.RS
+.HP
+Get the parent class name.
+.HP
+
+.HP
+.B &0
+.I string
+class name
+.RE
+
+.TP
+.B CLASS_Class_hasParentClass()
+.RS
+.HP
+Check if the class has a parent.
+.HP
+
+.RE
+
+.TP
+.B CLASS_Class_isA()
+.RS
+.HP
+Check if class is a instance of.
+.HP
+
+.RE
+
+.TP
+.B CLASS_Class___load()
+.RS
+.HP
+Loader
+.HP
+Called on class loding
+.RE
+
+.TP
+.B CLASS_Class___sleep()
+.RS
+.HP
+Make object ready for sleep.
+.HP
+Called on object serialization (serialize)
+.RE
+
+.TP
+.B CLASS_Class___wakeup()
+.RS
+.HP
+Make object ready for wakeup.
+.HP
+Called on object unserialization (unserialize)
 .RE
 

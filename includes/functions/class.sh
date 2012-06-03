@@ -260,7 +260,9 @@ serialize()
     } 1>/dev/null
     
     _bashor_objectSaveData "$OBJECT"_DATA
-    return $?
+    local result=$?
+    remove "$OBJECT"
+    return $result
 }
 
 ##

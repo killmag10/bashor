@@ -61,8 +61,8 @@ CLASS_Bashor_Data_set()
     local key=`printf '%s\n' "$1" | encodeData`
     local value=`printf '%s\n' "$value" | this call _compress 'c' | encodeData`
     local data="`this get data`"
-    local data=`printf '%s\n' "$data" | sed "s#^${key}[[:space:]]\+.*##"`
-    local data=`printf '%s\n' "$key $value"; printf '%s' "$data";`
+    data=`printf '%s\n' "$data" | sed "s#^${key}[[:space:]]\+.*##"`
+    data=`printf '%s\n' "$key $value"; printf '%s' "$data";`
     local maxSize="`this get maxSize`"
     if [ -n "$maxSize" ] && [ "${#data}" -gt "$maxSize" ]; then
         warning "Max session memory overrun of `this get maxSize` with ${#data}"

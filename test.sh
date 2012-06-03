@@ -23,6 +23,7 @@ export TEST_DIR="$BASE_DIR/tests";
 export TEST_TEMP_DIR="$TEST_DIR/temp";
 export TEST_RESOURCE_DIR="$TEST_DIR/resources";
 export TESTS_FAIL='0';
+export TESTS_OK='0';
 
 . "$BASE_DIR/loader.sh";
 
@@ -30,7 +31,7 @@ export BASHOR_LOG_FILE="$TEST_TEMP_DIR/log.log";
 
 export BASHOR_PATHS_CLASS="${BASHOR_PATHS_CLASS}${NL}${TEST_DIR}/lib";
 
-function doTest()
+doTest()
 {
     echo "##### Test: $1 #####";
     . ${TEST_DIR}/${1}.sh;
@@ -40,18 +41,17 @@ function doTest()
     fi
 }
 
-function printFinalResult()
+printFinalResult()
 {    
     if [ 0 == "$TESTS_FAIL" ]; then
-        local res=`echo -en '\033[1;32mOK   \033[0m'`
+        local res=`echo -en '\033[1;32mOK ('"$TESTS_OK"')  \033[0m'`
     else
         local res=`echo -en '\033[1;31mTESTS FAIL ('"$TESTS_FAIL"')\033[0m'`;
-        ((TESTS_FAIL++));
     fi
     printf '\nRESULT: %s\n' "$res";
 }
 
-function printResult()
+printResult()
 {
     local res="$2";
     if [ -n "$3" ]; then
@@ -59,6 +59,7 @@ function printResult()
     fi
     if [ 0 == "$res" ]; then
         local res=`echo -en '\033[1;32mOK   \033[0m'`
+        ((TESTS_OK++));
     else
         local res=`echo -en '\033[1;31mERROR\033[0m'`;
         ((TESTS_FAIL++));
@@ -66,19 +67,19 @@ function printResult()
     printf '%s : %s\n' "$res" "$1";
 }
 
-function checkSimple()
+checkSimple()
 {
     [ "$2" == "$3" ];
     printResult "$1" "$?" "$4";
 }
 
-function checkRegex()
+checkRegex()
 {
     echo "$2" | grep "$3" > /dev/null;
     printResult "$1" "$?" "$4";
 }
 
-function checkRegexLines()
+checkRegexLines()
 {
     local res=`echo "$2" | grep "$3" | wc -l`;
     [ "$res" == "$4" ];
@@ -107,5 +108,6 @@ doTest 'classes/Log';
 doTest 'classes/Escape';
 doTest 'classes/Temp';
 doTest 'classes/Terminal';
+doTest 'classes/Config/Ini';
 
 printFinalResult;

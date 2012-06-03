@@ -34,9 +34,35 @@ show()
     done
 }
 
-show "$Ini" "+++"
+testIniNode()
+{
+    local item="$1"
+    local key IFS='.'
+    for key in $2; do
+        item="`object "$item" get "$key"`"
+    done
 
-#res=`class Bashor_Escape regEx "$testString"`;
-#checkSimple "regEx" "$?" "0";
-#checkSimple "regEx data" "$res" "`cat \"$TEST_RESOURCE_DIR/escape.esc.dat\"`";
+    checkSimple "Node: $2" "$item" "$3"
+}
 
+testIniNode "$Ini" "base1.base.tree.string" 'test= base1'
+testIniNode "$Ini" "base1.base.tree.number" '111'
+testIniNode "$Ini" "base1.base.comment" ''
+testIniNode "$Ini" "base1.;base" ''
+
+testIniNode "$Ini" "base2.base.tree.string" 'test= base2'
+testIniNode "$Ini" "base2.base.tree.number" '222'
+testIniNode "$Ini" "base2.base.tree.float" '2.2'
+
+testIniNode "$Ini" "extented1.base.tree.string" 'replace1'
+testIniNode "$Ini" "extented1.base.next.string" 'extented1'
+testIniNode "$Ini" "extented1.base.tree.number" '111'
+
+testIniNode "$Ini" "extented2.base.tree" 'tree2'
+testIniNode "$Ini" "extented2.base.next.string" 'extented1'
+testIniNode "$Ini" "extented2.base.new.string" 'extented2'
+
+remove "$Ini"
+checkSimple "remove" "$?" "0"
+
+#show "$Ini" "+++"

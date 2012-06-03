@@ -12,7 +12,7 @@
 # @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: Session.sh 185 2011-08-29 22:09:38Z lars $
+# @version      $Id
 ################################################################################
 
 loadClassOnce 'Bashor_Config'
@@ -33,13 +33,12 @@ CLASS_Bashor_Config_Ini___construct()
     [ -n "$file" ] || return 0;
     [ -e "$file" ] || error 'File "'"$file"'" does not exists!'
     
-    SECONDS=0
     this call _readFile
-    echo "SECONDS _readFile: $SECONDS" >&3
-    this call _linkSections
-    echo "SECONDS _linkSections: $SECONDS" >&3
+    this call _extendsSections
 }
 
+##
+# Read the ini file content
 CLASS_Bashor_Config_Ini__readFile()
 {
     requireObject
@@ -47,7 +46,7 @@ CLASS_Bashor_Config_Ini__readFile()
     local section line key value file
     file="`this get 'file'`"
     while read line; do
-        [[ "$line" = ^\; ]] && continue
+        [[ "$line" =~ ^\; ]] && continue
         if [[ "$line" =~ ^\[[^\]]+\]$ ]]; then
             section="`printf '%s' "$line" | sed 's/^[[:space:]]*\[//;s/\][[:space:]]*$//'`"
         fi
@@ -59,7 +58,9 @@ CLASS_Bashor_Config_Ini__readFile()
     done < "$file"
 }
 
-CLASS_Bashor_Config_Ini__linkSections()
+##
+# Extends the sections
+CLASS_Bashor_Config_Ini__extendsSections()
 {
     requireObject
     local key section parent parentKey item itemParent ParentList
@@ -76,7 +77,7 @@ CLASS_Bashor_Config_Ini__linkSections()
         fi
         this call next
     done
-    echo "SECONDS 1: $SECONDS" >&3
+    
     # remove parent in section name
     object "$ParentList" rewind
     while object "$ParentList" valid; do
@@ -86,7 +87,7 @@ CLASS_Bashor_Config_Ini__linkSections()
         this call unset "$section:$parent"
         object "$ParentList" next
     done
-    echo "SECONDS 2: $SECONDS" >&3
+    
     # extend sections
     this call rewind
     while this call valid; do
@@ -94,13 +95,18 @@ CLASS_Bashor_Config_Ini__linkSections()
         object "$ParentList" isset "$key"
         parentKey="`object "$ParentList" get "$key"`"
         if [ -z "$parentKey" ]; then
-            this call _linkSectionsChild "$key" "$ParentList"
+            this call _extendsSectionsChild "$key" "$ParentList"
         fi
         this call next
     done
 }
 
-CLASS_Bashor_Config_Ini__linkSectionsChild()
+##
+# Extends a child element of a sections
+#
+# $1    string      key
+# $2    Bashor_List_Iterable  parent list
+CLASS_Bashor_Config_Ini__extendsSectionsChild()
 {
     local parentKey="$1"
     local ParentList="$2"
@@ -112,12 +118,17 @@ CLASS_Bashor_Config_Ini__linkSectionsChild()
         parent="`object "$ParentList" current`"
         if [ "$parent" = "$parentKey" ]; then
             object "`this call get "$section"`" mergeParent "`this call get "$parent"`"
-            this call _linkSectionsChild "$section" "$ParentList"
+            this call _extendsSectionsChild "$section" "$ParentList"
         fi
         object "$ParentList" next
     done
 }
 
+##
+# Set a value from a ini line.
+#
+# $1    string      key
+# $2    string      value
 CLASS_Bashor_Config_Ini__setIniValue()
 {
     if [[ "$1" =~ \. ]]; then

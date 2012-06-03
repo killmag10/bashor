@@ -76,7 +76,6 @@ CLASS_Bashor_ErrorHandler_handle()
     else
         backtrace=
     fi
-            echo "backtrace: $backtrace" >&3
 
     if [ "$showOutput" = 1 ]; then
         loadClassOnce 'Bashor_Color'
@@ -114,7 +113,7 @@ CLASS_Bashor_ErrorHandler_handle()
 }
 
 ##
-# Handle Errors
+# Handle errors from error stream
 #
 # exec 101>&1; (
 #       COMANDS

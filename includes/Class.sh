@@ -17,6 +17,8 @@
 
 ##
 # Loader
+#
+# Called on class loding
 CLASS_Class___load()
 {
     requireStatic
@@ -25,6 +27,8 @@ CLASS_Class___load()
 
 ##
 # Constructor
+#
+# Called on object creation (new)
 CLASS_Class___construct()
 {
     requireObject
@@ -33,7 +37,29 @@ CLASS_Class___construct()
 
 ##
 # Destructor
+#
+# Called on object destruction (remove)
 CLASS_Class___destruct()
+{
+    requireObject
+    return 0
+}
+
+##
+# Make object ready for sleep.
+#
+# Called on object serialization (serialize)
+CLASS_Class___sleep()
+{
+    requireObject
+    return 0
+}
+
+##
+# Make object ready for wakeup.
+#
+# Called on object unserialization (unserialize)
+CLASS_Class___wakeup()
 {
     requireObject
     return 0

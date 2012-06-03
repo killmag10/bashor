@@ -59,3 +59,6 @@ parseFile "$BASE_DIR/../includes/functions.sh"
 
 echo '.SH CLASS / OBJECT FUNCTIONS';
 parseFile "$BASE_DIR/../includes/functions/class.sh"
+
+echo '.SH BASE CLASS METHODS';
+parseFile "$BASE_DIR/../includes/Class.sh"
