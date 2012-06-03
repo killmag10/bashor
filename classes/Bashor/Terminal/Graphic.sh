@@ -42,7 +42,9 @@ CLASS_Bashor_Terminal_Graphic_setPixel()
     fi    
     local char="${3:- }"
     printf '%s' "${char:0:1}"
-    [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
+    if [ -n "$6" ]; then
+        [[ "$6" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
+    fi
     class Bashor_Terminal resetStyle
     class Bashor_Terminal moveCurserBy "$((-1+$1*-1))" "$(($2*-1))"
     
@@ -62,7 +64,7 @@ CLASS_Bashor_Terminal_Graphic_setPixel()
 # $?    0:OK    1:ERROR
 CLASS_Bashor_Terminal_Graphic_printText()
 {
-    requireParams RRR "$@"
+    requireParams RR "$@"
 
     class Bashor_Terminal saveCurser
     class Bashor_Terminal moveCurserBy "$1" "$2"
@@ -111,8 +113,11 @@ CLASS_Bashor_Terminal_Graphic_printRectangleFilled()
 		printf "%${3}s" | sed 's/ /'"$char"'/g'
         class Bashor_Terminal moveCurserReversedBy "$3" -1
 	`
-	local i out=
-    for i in `seq "$4"`; do out="${out}${tmp}"; done
+	local i=0 out=
+    while [ "$i" -lt "$4" ]; do
+        out+="$tmp";
+        ((i++))
+    done
 	printf '%s' "$out"
 	[[ "$8" =~ X ]] && class Bashor_Terminal setExtendedCharacters 0
 	class Bashor_Terminal resetStyle

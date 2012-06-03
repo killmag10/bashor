@@ -83,40 +83,6 @@ getBacktrace()
 }
 
 ##
-# Handle Errors
-#
-# exec 101>&1; (
-#       COMANDS
-# ) 2>&1 >&101 | handleError
-#
-# &0    string  error stream
-handleError()
-{    
-    [ $BASHOR_ERROR_OUTPUT = 1 ] && loadClassOnce "Bashor_Color"
-    [ $BASHOR_ERROR_LOG = 1 ] && loadClassOnce "Bashor_Log"
-    local pre='ERROR: '
-    while read msg; do
-        [ $BASHOR_ERROR_BACKTRACE = 1 ] \
-            && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
-        if [ $BASHOR_ERROR_OUTPUT = 1 ]; then
-            msgOut=$(printf '%s' "$msg" | sed "s/^/$pre/g")
-            [ $BASHOR_ERROR_BACKTRACE = 1 ] \
-                && local msgOut="$msgOut""$NL""$trace"
-            printf '%s' "$msgOut" | class Bashor_Color fg '' 'red' 'bold'
-        fi
-        if [ $BASHOR_ERROR_LOG = 1 ]; then
-            local log
-            class Bashor_Log getDefault log
-            msgLog="$msg"
-            [ $BASHOR_ERROR_BACKTRACE = 1 ] \
-                && local msgLog="$msgOut""$NL""$trace"
-            printf '%s' "$msgLog" | object "$log" error
-        fi
-        [ -n "$1" ] && exit "$1"
-    done
-}
-
-##
 # Error handler call
 #
 # $1    string  type
@@ -163,12 +129,12 @@ _bashor_handleError()
     local BASHOR_BACKTRACE_REMOVE=$((BASHOR_BACKTRACE_REMOVE+1))
     local BASHOR_BACKTRACE="`getBacktrace "$BASHOR_BACKTRACE_REMOVE"`"
     
-    __handleError "$1" "$2" "$3" "$BASHOR_BACKTRACE"
+    __handleError "$1" "$2" "${3-1}" "$BASHOR_BACKTRACE"
     [ "$?" = 0 ] && return 0
     
     local type="$1"
     local message="$2"
-    local exit="${3:-1}"
+    local exit="${3-1}"
     local prefix=
     local backtrace=
     local showBacktrace=

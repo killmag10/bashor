@@ -25,12 +25,12 @@ loadClass()
 {
     requireParams R "$@"
     
-    local dn filename IFS=$'\n\r'
-    for dn in $BASHOR_PATHS_CLASS; do
-        filename="$dn/""${1//_//}"'.sh'
-        [ -f "$filename" ] || continue
-        . "$filename"
-        unset -v filename
+    local _bashor_temp_path _bashor_temp_filename IFS=$'\n\r'
+    for _bashor_temp_path in $BASHOR_PATHS_CLASS; do
+        _bashor_temp_filename="$_bashor_temp_path/${1//_//}"'.sh'
+        [ -f "$_bashor_temp_filename" ] || continue
+        . "$_bashor_temp_filename"
+        unset -v _bashor_temp_filename _bashor_temp_path
         addClass "$1"
         return $?
     done
@@ -135,7 +135,7 @@ _bashor_createExtendedClassFunctions()
         fNameParent=CLASS_"$2"_"$f"
         fNameNew=CLASS_"$1"_"$f"
         if ! issetFunction "$fNameNew"; then
-            eval 'function '"$fNameNew"'() {
+            eval "$fNameNew"'() {
                 local CLASS_NAME='\'"$2"\'';
                 '"$fNameParent"' "$@";
                 return $?;
@@ -207,7 +207,7 @@ _bashor_objectSaveData()
     requireParams R "$@"
     echo 'bashor dump 1.0.0 objectData'
     printf '%s\n' "CLASS_NAME=$CLASS_NAME"
-    echo 'DATA='
+    printf '%s\n' 'DATA='
     printf '%s' "${!1}" | encodeData
     return $?
 }
@@ -438,7 +438,7 @@ remove()
 # $?    1       ERROR
 _bashor_generatePointer()
 {
-    requireParams R "$@"
+    requireParams RR "$@"
     
     local _bashor_temp_pointer
     while true; do
@@ -555,7 +555,6 @@ this()
 # $?    *       all of class method
 static()
 {
-    requireParams R "$@"
     [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set' 
     local CLASS_NAME="$CLASS_TOP_NAME";
     
@@ -609,6 +608,7 @@ static()
             return $?
             ;;
         *)
+            requireParams R "$@"
             error "\"$1\" is not a option of static!"
             ;;
     esac
@@ -739,7 +739,7 @@ _bashor_objectCount()
 # $?    1       ERROR
 _bashor_objectClear()
 {
-    eval "$1"'='  
+    eval "$1"=  
     return 0
 }
 
@@ -808,7 +808,7 @@ requireObject()
 # $?    1       ERROR
 inObject()
 {
-    [ -n "$OBJECT" -a -n "$CLASS_NAME" -a -n "$FUNCTION_NAME" ]
+    [ -n "$OBJECT" -a -n "$CLASS_NAME" ]
     return $?
 }
 
@@ -829,7 +829,7 @@ requireStatic()
 # $?    1       ERROR
 inStatic()
 {
-    [ -z "$OBJECT" -a -n "$CLASS_NAME" -a -n "$FUNCTION_NAME" ]
+    [ -z "$OBJECT" -a -n "$CLASS_NAME" ]
     return $?
 }
 
