@@ -1,0 +1,93 @@
+Changelog: 1.3.0:
+
+Add Bashor Config
+Add Error Handling Class
+Add extended color functions
+add hex coding for decode and encode
+add size
+Add Tests
+change echo to printf
+Cleanup Config Ini
+correct old call check in test classes
+fix backtrace output
+Fix bug by this isset
+Fix bug in object get
+fix bug on object get (false search, no ^)
+fix local var data
+Fix memory leak in serialize
+fix \n bug in error handling
+make it more posix conform 
+move handleError() to class
+optimize code
+Optimize requireParams
+Refactor Error Handling
+remove debug output from Bashor Config
+replace $OBJECT and $STATIC with functions
+set version fix doc block
+Update Config Ini
+Update man page
+Update Terminal
+
+
+Changelog: 1.2.0:
+
+Add  BASHOR_COMPATIBILITY_THIS var
+Add Bashor_Math
+Add constants
+Add dump function
+correct param check in color class
+Error handling update
+fix bug in copyFunction
+new parameter functions
+New param funktions
+Optimize class code
+optimize math random
+Set svn:keywords Id
+update Bashor class code
+Update classes for static
+Update doc
+Update error handling
+update loader
+
+
+Changelog: 1.1.0:
+
+add new class features
+fix __call
+make it more posix
+new Bashor_Doc_Block
+refactor tests
+update Bashor_List
+update error handling
+update version and doc
+
+Changelog: 1.0.0:
+
+add Bashor Version
+add config
+Add Docu Scripts
+add hook class router
+add isObject
+Add List
+Add List Iterable
+add openssl base64
+add serialize
+channel 3 to 2
+Code Optimize
+Fix autoload bug
+fix autoload on extends
+Fix for etch base64
+fix grep \s
+fix pointer name conflict
+fix \s
+fix unserial
+move scripts
+Optimize Code
+rename internal class functions
+Update Bashor_List
+update Bashor_List tests
+update Bashor_Lock
+Update Classes to Bashor_Param
+Update Docu
+update dump
+update speed test
