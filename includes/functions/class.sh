@@ -789,7 +789,7 @@ isObject()
 {
     requireParams S "$@"
     
-    [ "${!1}" = "$BASHOR_TYPE_OBJECT" ] && [[ "$1" =~ ^_BASHOR_POINTER_ ]]
+    [[ "$1" =~ ^_BASHOR_POINTER_ ]] && [ "${!1}" = "$BASHOR_TYPE_OBJECT" ]
     return $?
 }
 
