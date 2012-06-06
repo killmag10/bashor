@@ -44,8 +44,7 @@ CLASS_Bashor_Cache_File_filename()
     requireObject
     requireParams S "$@"
     
-    loadClassOnce Bashor_Hash
-    
+    loadClassOnce Bashor_Hash    
     local hashMd5=`class Bashor_Hash md5 "$1"`
     local hashCrc32=`printf '%s' "$1" | cksum | tr ' ' '_'`
     printf '%s' "`this get dir`""/CACHE_${hashMd5}_${hashCrc32}"
@@ -137,9 +136,9 @@ CLASS_Bashor_Cache_File_removeOutdated()
     requireObject
     
     local dir="`this get dir`"
-    local files="`ls -1 "$dir"`"
     local IFS=$'\n\r'
-    for file in $files; do
+    local file
+    for file in `ls -1 "$dir"`; do
         this call check "$dir/$file"
         if [ "$?" != 0 ]; then
             rm "$dir/$file"

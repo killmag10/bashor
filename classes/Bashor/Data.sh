@@ -57,9 +57,9 @@ CLASS_Bashor_Data_set()
     else
         local value="$2"
     fi
-                
+    
     local key=`printf '%s\n' "$1" | encodeData`
-    local value=`printf '%s\n' "$value" | this call _compress 'c' | encodeData`
+    value=`printf '%s\n' "$value" | this call _compress 'c' | encodeData`
     local data="`this get data`"
     data=`printf '%s\n' "$data" | sed "s#^${key}[[:space:]]\+.*##"`
     data=`printf '%s\n' "$key $value"; printf '%s' "$data";`
@@ -68,7 +68,7 @@ CLASS_Bashor_Data_set()
         warning "Max session memory overrun of `this get maxSize` with ${#data}"
         return 1
     fi
-    local data=`printf '%s\n' "$data" | sort -u;`
+    data=`printf '%s\n' "$data" | sort -u;`
     this set data "$data"
 
     return "$?"
@@ -195,8 +195,7 @@ CLASS_Bashor_Data_getKeys()
     
     local data=`this get data`
     if [ -n "$data" ]; then
-        local IFS=$'\n\r'
-        local line
+        local line IFS=$'\n'
         for line in $data; do
             printf '%s\n' "$line" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
         done
@@ -217,11 +216,11 @@ CLASS_Bashor_Data_getValues()
     
     local data=`this get data`
     if [ -n "$data" ]; then
-        local IFS=$'\n\r'
-        local line
+        local key value
+        local line IFS=$'\n'
         for line in $data; do
-            local key=`printf '%s\n' "$line" -n | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData`
-            local value=`printf '%s' "$line" | sed 's#^[^[:space:]]\+[[:space:]]\+##' | decodeData | this call _compress 'd'`
+            key=`printf '%s\n' "$line" -n | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData`
+            value=`printf '%s' "$line" | sed 's#^[^[:space:]]\+[[:space:]]\+##' | decodeData | this call _compress 'd'`
             printf '%s\n' "$key : $value"
         done
         return 0

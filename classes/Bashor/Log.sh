@@ -100,7 +100,7 @@ CLASS_Bashor_Log_remove()
 CLASS_Bashor_Log_error()
 {
     requireObject
-    datestring=`date +'%Y-%m-%d %H:%M:%S'`
+    local datestring=`date +'%Y-%m-%d %H:%M:%S'`
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring ERROR: #" | this call log
     else
@@ -116,7 +116,7 @@ CLASS_Bashor_Log_error()
 CLASS_Bashor_Log_warning()
 {    
     requireObject
-    datestring=`date +'%Y-%m-%d %H:%M:%S'`
+    local datestring=`date +'%Y-%m-%d %H:%M:%S'`
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring WARNING: #" | this call log
     else
@@ -132,7 +132,7 @@ CLASS_Bashor_Log_warning()
 CLASS_Bashor_Log_debug()
 {   
     requireObject
-    datestring=`date +'%Y-%m-%d %H:%M:%S'`
+    local datestring=`date +'%Y-%m-%d %H:%M:%S'`
     if [ -p "/dev/stdin" ] && [ -z "$1" ] && [ "$1" !=  "${1-null}" ]; then
         nl | sed "s#^#$datestring DEBUG: #" | this call log
     else

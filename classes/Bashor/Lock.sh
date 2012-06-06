@@ -37,7 +37,7 @@ CLASS_Bashor_Lock_filename()
 {
     requireParams R "$@"
     
-    printf '%s' "$1"".lock"
+    printf '%s' "$1"'.lock'
     return 0
 }
 
@@ -68,7 +68,7 @@ CLASS_Bashor_Lock_checkRead()
     requireParams R "$@"
     
     if [ -f "$1" ]; then
-        flock -s --nonblock "$1" "true"
+        flock -s --nonblock "$1" 'true'
         return "$?"
     fi
     
@@ -85,7 +85,7 @@ CLASS_Bashor_Lock_checkWrite()
     requireParams R "$@"
     
     if [ -f "$1" ]; then
-        flock --nonblock "$1" "true"
+        flock --nonblock "$1" 'true'
         return "$?"
     fi
     

@@ -39,9 +39,9 @@ CLASS_Bashor_Temp_dir()
     requireObject
     requireParams R "$@"
     
-    local dir=`this get dir`
+    local dir="`this get dir`"
     mkdir -p "$dir/"
-    printf '%s' "$dir/"`this call generateFilename "$1"`
+    printf '%s' "$dir/""`this call generateFilename "$1"`"
     return "$?"
 }
 
@@ -70,7 +70,7 @@ CLASS_Bashor_Temp_generateFilename()
 {
     requireParams R "$@"
 
-    printf '%s' 'temp_'`date +'%Y%m%dT%H%M%S'`"_""$$""_""$1""_""$RANDOM"
+    printf '%s' "temp_`date +'%Y%m%dT%H%M%S'`_""$$""_""$1""_""$RANDOM"
     return 0
 }
 

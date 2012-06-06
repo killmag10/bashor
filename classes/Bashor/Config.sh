@@ -43,6 +43,21 @@ CLASS_Bashor_Config_set()
         return 1
     fi
     
+    this call _set "$1" "$2"
+    return $?
+}
+
+##
+# Internal call for set a value.
+#
+# $1    string  key
+# $2    mixed   data
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Config__set()
+{
+    requireObject
+    requireParams RS "$@"
+    
     parent call set "$1" "$2"
     return $?
 }
@@ -61,6 +76,20 @@ CLASS_Bashor_Config_unset()
         warning 'is set readonly'
         return 1
     fi
+    
+    parent call _unset "$1"
+    return $?
+}
+
+##
+# Internal call for unset a key.
+#
+# $1    string  Id
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Config__unset()
+{
+    requireObject
+    requireParams R "$@"
     
     parent call unset "$1"
     return $?
@@ -104,7 +133,7 @@ CLASS_Bashor_Config_mergeParent()
                 object "`this call get "$key"`" mergeParent "$current"
             fi
         else
-            this call set "$key" "$current"
+            this call _set "$key" "$current"
         fi
         object "$1" next
     done

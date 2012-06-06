@@ -65,7 +65,7 @@ CLASS_Bashor_Registry_set()
     else
         local value="$(echo "$2" | encodeData)"
     fi
-    
+        
     loadClassOnce Bashor_Lock
     local file=`this get file`
     local lockFile=`this call _getLockFileByFile "$file"`
@@ -75,9 +75,9 @@ CLASS_Bashor_Registry_set()
         
         [ ! -f "$file" ] && echo "" | this call _compress 'c' > "$file"        
         local data="$(this call _compress 'd' < $file)"    
-        local key="$(echo "$1" | encodeData)"
-        echo -n "$data" \
-            | ( grep -v "^${key}[[:space:]]\+.*$"; echo "$key $value"; ) \
+        local key="$(printf '%s' "$1" | encodeData)"
+        printf '%s' "$data" \
+            | ( grep -v "^${key}[[:space:]]\+.*$"; printf '%s\n' "$key $value"; ) \
             | this call _compress 'c' > "$file";
     } 200>"$lockFile"
     class Bashor_Lock delete "$lockFile"
@@ -104,8 +104,8 @@ CLASS_Bashor_Registry_remove()
             class Bashor_Lock lock 200
                  
             local data="$(this call _compress 'd' < $file)"    
-            local key="$(echo "$1" | encodeData)"
-            echo -n "$data" \
+            local key="$(printf '%s' "$1" | encodeData)"
+            printf '%s' "$data" \
                 | ( grep -v "^${key}[[:space:]]\+.*$";) \
                 | this call _compress 'c' > "$file";
         } 200>"$lockFile"
@@ -133,11 +133,12 @@ CLASS_Bashor_Registry_get()
     if [ -f "$file" ]; then
         {
             class Bashor_Lock lock -s 200
-    
+            
+            local data
             data="$( this call _compress 'd' < "$file" \
-                | grep "$(echo "$1" | encodeData) ")" 
+                | grep "^$(printf '%s' "$1" | encodeData)[[:space:]]\+.*$")" 
             [ $? == 0 ] || return 1    
-            echo "$data" | cut -d ' ' -f 2 | decodeData
+            printf '%s' "$data" | cut -d ' ' -f 2 | decodeData
         } 200>"$lockFile"
         class Bashor_Lock delete "$lockFile"
     fi
@@ -164,8 +165,9 @@ CLASS_Bashor_Registry_isset()
         {
             class Bashor_Lock lock -s 200
             
-            data="$( this call _compress 'd' < "$file" \
-                | grep "$(echo "$1" | encodeData) ")" 
+            local data
+            this call _compress 'd' < "$file" \
+                | grep "$(printf '%s' "$1" | encodeData)[[:space:]]\+.*$" >/dev/null 
             [ $? == 0 ] && return 0 
         } 200>"$lockFile"
         class Bashor_Lock delete "$lockFile"
@@ -241,10 +243,11 @@ CLASS_Bashor_Registry_getKeys()
             
             local res="$(this call _compress 'd' < "$file")"
             if [ -n "$res" ]; then
-                local IFS=$'\n\r'
+                local IFS=$'\n'
                 local line
                 for line in $res; do
-                    echo "$line" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
+                    printf '%s' "$line" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
+                    echo
                 done
                 return 0
             fi
@@ -275,11 +278,11 @@ CLASS_Bashor_Registry_getValues()
             local res="$(this call _compress 'd' < "$file")"
             if [ -n "$res" ]; then
                 local IFS=$'\n\r'
-                local line
+                local key value line
                 for line in $res; do
-                    local key=`echo "$line" -n | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData`
-                    local value=`echo -n "$line" | sed 's#^[^[:space:]]\+[[:space:]]\+##' | decodeData`
-                    echo "$key : $value"
+                    key=`printf '%s' "$line" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData`
+                    value=`printf '%s' "$line" | sed 's#^[^[:space:]]\+[[:space:]]\+##' | decodeData`
+                    printf '%s\n' "$key : $value"
                 done
                 return 0
             fi
@@ -337,6 +340,6 @@ CLASS_Bashor_Registry__getLockFileByFile()
     requireObject
     requireParams R "$@"
     
-    echo "$1"'.lock'
+    printf '%s' "$1"'.lock'
     return 0
 }

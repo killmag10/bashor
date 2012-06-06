@@ -36,19 +36,19 @@ CLASS_Bashor_Param_issetOpt()
     local key="$1"
     eval set -- "`this get optsArgs`"  
 
-    local first=0
+    local opt first=0
     while shift "$first"; do
-        local first=1
-        [ "$1" == "--" ] && break        
+        first=1
+        [ "$1" = "--" ] && break        
         [ "${1:0:1}" = '-' ] || continue
         
         if [ "${1:0:2}" = '--' ]; then
-            local opt=`this call getOptLongExtension "${1:2}"`
+            opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
+            opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
-        [ "$1" == "$key" ] && return 0
-        [ ":" == "$opt" ] && shift    
+        [ "$1" = "$key" ] && return 0
+        [ ":" = "$opt" ] && shift    
     done
         
     return 1
@@ -96,7 +96,7 @@ CLASS_Bashor_Param_notEmpty()
     requireObject
     requireParams R "$@"
     
-    if [ "${1:0:1}" == '-' ]; then    
+    if [ "${1:0:1}" = '-' ]; then    
         this call notEmptyOpt "$1"
         return $?
     fi
@@ -138,16 +138,16 @@ CLASS_Bashor_Param_getOpt()
     local key="$1"
     eval set -- "`this get optsArgs`" 
 
-    local first=0
+    local opt first=0
     while shift "$first"; do
-        local first=1
-        [ "$1" == "--" ] && break
+        first=1
+        [ "$1" = "--" ] && break
         [ "${1:0:1}" = '-' ] || continue
         
         if [ "${1:0:2}" = '--' ]; then
-            local opt=`this call getOptLongExtension "${1:2}"`
+            opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
+            opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
         if [ ":" == "$opt" ]; then
             if [ "$1" == "$key" ]; then
@@ -194,19 +194,19 @@ CLASS_Bashor_Param_getOptKeys()
     local return=1
     eval set -- "`this get optsArgs`"
 
-    local first=0
+    local opt first=0
     while shift "$first"; do
-        local first=1
-        [ "$1" == "--" ] && break
+        first=1
+        [ "$1" = "--" ] && break
         [ "${1:0:1}" = '-' ] || continue
         
         if [ "${1:0:2}" = '--' ]; then
-            local opt=`this call getOptLongExtension "${1:2}"`
+            opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
+            opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
         printf '%s\n' "$1"
-        local return=0
+        return=0
         if [ ":" == "$opt" ]; then
             shift
         fi    
@@ -226,19 +226,19 @@ CLASS_Bashor_Param_listOpt()
     local return=1
     eval set -- "`this get optsArgs`" 
     
-    local first=0
+    local opt first=0
     while shift "$first"; do
-        local first=1
-        [ "$1" == "--" ] && break
+        first=1
+        [ "$1" = "--" ] && break
         [ "${1:0:1}" = '-' ] || continue
         
         if [ "${1:0:2}" = '--' ]; then
-            local opt=`this call getOptLongExtension "${1:2}"`
+            opt=`this call getOptLongExtension "${1:2}"`
         else
-            local opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
+            opt=`printf '%s' "\`this get opts\`" | cut -f 2 -d "${1:1}" | cut -b 1`
         fi
         printf '%s' "$1"
-        local return=0
+        return=0
         if [ ":" == "$opt" ]; then
             printf '%s' " $2"
             shift
@@ -263,7 +263,7 @@ CLASS_Bashor_Param_listArg()
         local first=0;
         while shift "$first"; do
             first=1
-            [ "$1" == "--" ] && break
+            [ "$1" = "--" ] && break
         done
 
         while shift "$first"; do
@@ -335,7 +335,7 @@ CLASS_Bashor_Param_get()
         return $?
     fi
     
-    if [ "${1:0:1}" == '-' ]; then    
+    if [ "${1:0:1}" = '-' ]; then    
         this call getOpt "$1"
         return $?
     fi
@@ -357,7 +357,7 @@ CLASS_Bashor_Param_isset()
     requireObject
     requireParams R "$@"
         
-    if [ "${1:0:1}" == '-' ]; then    
+    if [ "${1:0:1}" = '-' ]; then    
         this call issetOpt "$1"
         return $?
     fi
@@ -379,10 +379,10 @@ CLASS_Bashor_Param_getOptLongExtension()
 {
     requireObject
     
-    local IFS=","
-    local value
+    local IFS=','
+    local value key
     for value in `this get optsLong`; do
-        local key="`printf '%s' "$value" | sed 's#:##g'`"
+        key="`printf '%s' "$value" | sed 's#:##g'`"
         if [ "$key" == "$1" ]; then
             printf '%s' "$value" | sed 's#[^:]##g'
             return 0

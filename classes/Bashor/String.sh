@@ -27,7 +27,7 @@ CLASS_Bashor_String_repeat()
     requireParams RR "$@"
     
     local char="`class Bashor_Escape regExReplacement "$1" '#'`"
-    dd if=/dev/zero bs=1 count="$2" 2>/dev/null | tr '\0' "0" | sed "s#.#$char#g"
+    printf "%${2}s" | sed "s#.#$char#g"
     return $?
 }
 

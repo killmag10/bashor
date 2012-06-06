@@ -28,12 +28,11 @@ CLASS_Bashor_Output___construct()
 # $1    string  prefix
 CLASS_Bashor_Output_prepare()
 {
-    local IFS=$'\n\r'
+    local IFS=$'\n'
     local prefixes=(`this get 'prefixes'`)
-    IFS=
     local preString="${prefixes[*]}${1}"
     
-    IFS=$'\n\r'
+    local msg IFS=$'\n'
     while read msg; do printf '%s\n' "${preString}${msg}"; done
 }
 
@@ -43,7 +42,7 @@ CLASS_Bashor_Output_prepare()
 # @see echo
 CLASS_Bashor_Output_echo()
 {
-    local IFS=$'\n\r'
+    local IFS=$'\n'
     local prefixes=(`this get 'prefixes'`)
     IFS=
     printf '%s' "${prefixes[*]}"
@@ -56,7 +55,7 @@ CLASS_Bashor_Output_echo()
 # @see printf
 CLASS_Bashor_Output_printf()
 {
-    local IFS=$'\n\r'
+    local IFS=$'\n'
     local prefixes=(`this get 'prefixes'`)
     IFS=
     printf '%s' "${prefixes[*]}"
@@ -69,7 +68,7 @@ CLASS_Bashor_Output_printf()
 # $1    string  prefix
 CLASS_Bashor_Output_addPrefix()
 {    
-    local IFS=$'\n\r'    
+    local IFS=$'\n'    
     local prefixes="`this get 'prefixes'`"
     this set 'prefixes' "${prefixes}${NL}${1:-    }"
 }
@@ -78,7 +77,7 @@ CLASS_Bashor_Output_addPrefix()
 # Remove last prefix.
 CLASS_Bashor_Output_removePrefix()
 {
-    local IFS=$'\n\r'    
+    local IFS=$'\n'    
     local prefixes=(`this get 'prefixes'`)
     local level=${#prefixes[*]}
     ((--level))

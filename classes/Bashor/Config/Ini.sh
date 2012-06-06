@@ -83,8 +83,8 @@ CLASS_Bashor_Config_Ini__extendsSections()
     while object "$ParentList" valid; do
         section="`object "$ParentList" key`"
         parent="`object "$ParentList" current`"
-        this call set "$section" "`this call get "$section:$parent"`"
-        this call unset "$section:$parent"
+        this call _set "$section" "`this call get "$section:$parent"`"
+        this call _unset "$section:$parent"
         object "$ParentList" next
     done
     
@@ -138,15 +138,15 @@ CLASS_Bashor_Config_Ini__setIniValue()
             config="`this call get "$key"`"
             if ! isObject "$config"; then
                 new "`static call getClass`" config
-                this call set "$key" "$config"
+                this call _set "$key" "$config"
             fi
         else
             new "`static call getClass`" config
-            this call set "$key" "$config"
+            this call _set "$key" "$config"
         fi
         key="`printf '%s' "$1" | sed -n 's/^[^.]\+[.]//p'`"
         object "$config" _setIniValue "$key" "$2"
     else
-        this call set "$1" "$2"
+        this call _set "$1" "$2"
     fi
 }

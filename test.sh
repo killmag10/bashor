@@ -44,9 +44,9 @@ doTest()
 printFinalResult()
 {    
     if [ 0 == "$TESTS_FAIL" ]; then
-        local res=`echo -en '\033[1;32mOK ('"$TESTS_OK"')  \033[0m'`
+        local res=`echo -en '\033[1;32mOK ('"$TESTS_OK"') in '"$SECONDS"'s\033[0m'`
     else
-        local res=`echo -en '\033[1;31mTESTS FAIL ('"$TESTS_FAIL"')\033[0m'`;
+        local res=`echo -en '\033[1;31mTESTS FAIL ('"$TESTS_FAIL"') in '"$SECONDS"'s\033[0m'`;
     fi
     printf '\nRESULT: %s\n' "$res";
 }
@@ -85,6 +85,8 @@ checkRegexLines()
     [ "$res" == "$4" ];
     printResult "$1" "$?";
 }
+
+SECONDS=0
 
 doTest 'includes/functions/class';
 doTest 'includes/Class';

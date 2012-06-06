@@ -24,7 +24,7 @@
 CLASS_Bashor_Escape_regEx()
 {
     requireParams S "$@"
-    local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`
+    local replacement=`printf '%s' "${2:-/}" | sed 's#/#\\\\/#g'`
 
     printf '%s' "$1" \
         | sed 's#\([.^$*\\]\)#\\\1#g' \
@@ -43,7 +43,7 @@ CLASS_Bashor_Escape_regEx()
 CLASS_Bashor_Escape_regExReplacement()
 {
     requireParams S "$@"
-    local replacement=`echo "${2:-/}" | sed 's#/#\\\\/#g'`
+    local replacement=`printf '%s' "${2:-/}" | sed 's#/#\\\\/#g'`
 
     printf '%s' "$1" \
         | sed 's#\([\\]\)#\\\1#g' \
