@@ -25,3 +25,9 @@ checkSimple "isA Bashor_Registry true" "$?" '0';
 
 class Bashor_Session isA 'Null'
 checkSimple "isA Null false" "$?" '1';
+
+class Bashor_Session hasMethod 'remove'
+checkSimple "hasMethod remove true" "$?" '0';
+
+class Bashor_Session hasMethod 'noMethod'
+checkSimple "hasMethod noMethod false" "$?" '1';

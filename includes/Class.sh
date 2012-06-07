@@ -78,6 +78,20 @@ CLASS_Class_getClass()
 }
 
 ##
+# Check if the class has the over given method.
+#
+# $1    string  method name
+# $?    0:OK
+# $?    1:ERROR
+CLASS_Class_hasMethod()
+{
+    requireParams R "$@"
+    
+    issetFunction CLASS_"$CLASS_TOP_NAME"_"$1"
+    return $?
+}
+
+##
 # Get the parent class name.
 #
 # $?    0:OK    1:ERROR
