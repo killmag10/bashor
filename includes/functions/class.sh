@@ -85,14 +85,17 @@ addClass()
 {
     requireParams R "$@"
     
-    local namespace='_BASHOR_CLASS_'"$1"  
+    [[ "$1" =~ ^[a-zA-Z_]+$ ]] || error 'No valid class name!'
+    
+    local namespace='_BASHOR_CLASS_'"$1"
+    local namespaceExtends='_BASHOR_CLASS_'"$1"'_EXTENDS'
     local pointer
     _bashor_generatePointer pointer "$BASHOR_TYPE_OBJECT"
-    eval '[ -z "$'"$namespace"'_EXTENDS" ] && _bashor_addStdClass '"$1"   
+    [ -z "${!namespaceExtends}" ] && _bashor_addStdClass "$1"   
     eval "$namespace"='"$1"'
     eval "$namespace"'_POINTER='"$pointer"
     eval "$pointer"_DATA=
-    unset -v namespace pointer
+    unset -v namespace namespaceExtends pointer
     
     issetFunction CLASS_"$1"___load
     if [ "$?" = 0 ]; then
@@ -228,7 +231,8 @@ object()
     
     local OBJECT CLASS_TOP_NAME CLASS_NAME
     OBJECT="$1"
-    eval 'CLASS_NAME="$'"$1"'_CLASS"'
+    CLASS_NAME="$1"'_CLASS'
+    CLASS_NAME="${!CLASS_NAME}"
     CLASS_TOP_NAME="$CLASS_NAME"
     
     shift 1;
@@ -328,7 +332,8 @@ _bashor_call()
         return $?
     fi
     
-    eval '[ -z "$_BASHOR_CLASS_'"$CLASS_NAME"'" ]' \
+    local className=_BASHOR_CLASS_"$CLASS_NAME"
+    [ -z "${!className}" ] \
          && error "No class $CLASS_NAME found!"
     
     error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!"
@@ -392,8 +397,9 @@ clone()
     isObject "$1" || error 'Pointer "'"$1"'" is not a Object!'
     
     _bashor_generatePointer "$2" "$BASHOR_TYPE_OBJECT"        
-    eval 'local CLASS_NAME="$'"$1"'_CLASS"'
-    eval "${!2}"'_CLASS="$'"$1"'_CLASS"'
+    local CLASS_NAME="$1"_CLASS
+    CLASS_NAME="${!CLASS_NAME}"
+    eval "${!2}"'_CLASS="$CLASS_NAME"'
     eval "${!2}"'_DATA="$'"$1"'_DATA"'
     
     if issetFunction CLASS_"$CLASS_NAME"___clone; then
@@ -417,7 +423,8 @@ remove()
 
     local CLASS_NAME res=0
     local OBJECT="$1"
-    eval 'CLASS_NAME="$'"$OBJECT"'_CLASS"'
+    CLASS_NAME="$OBJECT"_CLASS
+    CLASS_NAME="${!CLASS_NAME}"
         
     if issetFunction CLASS_"$CLASS_NAME"___destruct; then
         object "$OBJECT" __destruct
@@ -447,8 +454,8 @@ _bashor_generatePointer()
         _bashor_temp_pointer=_BASHOR_POINTER_"$(date +%s%N)"
         issetVar "$_bashor_temp_pointer" || break
     done;
-    eval "$_bashor_temp_pointer"="$2"
-    eval "$1"="$_bashor_temp_pointer"
+    eval "$_bashor_temp_pointer"='"$2"'
+    eval "$1"='"$_bashor_temp_pointer"'
     return 0
 }
 
@@ -629,7 +636,8 @@ parent()
     requireParams R "$@"
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
-    eval 'local CLASS_NAME="$_BASHOR_CLASS_'"$CLASS_NAME"'_EXTENDS"'
+    local CLASS_NAME='_BASHOR_CLASS_'"$CLASS_NAME"'_EXTENDS'
+    CLASS_NAME="${!CLASS_NAME}"
     case "$1" in
         call)
             shift
