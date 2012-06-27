@@ -115,6 +115,7 @@ addClass()
 _bashor_addStdClass()
 {
     requireParams R "$@"
+    [ "$1" = 'Class' ] && return 0
     
     _bashor_createExtendedClassFunctions "$1" Class
     eval '_BASHOR_CLASS_'"$1"'_EXTENDS=Class'
@@ -845,3 +846,4 @@ inStatic()
 
 
 . "$BASHOR_PATH_INCLUDES/Class.sh"
+addClass Class
