@@ -16,6 +16,41 @@
 ################################################################################
 
 ##
+# Copy a array
+#
+# $1    string  source array name
+# $2    string  destination array name
+# $?    0       OK
+# $?    1       ERROR
+copyArray()
+{
+    requireParams RR "$@"
+
+    local data
+    data="`varExport "$1"`"
+    data="${data#[\"\']}"
+    data="${data%[\"\']}"
+    
+    eval "$2"'="$data"'
+    return $?
+}
+
+##
+# Export a variable.
+#
+# $1    string  var name
+# $?    0       OK
+# $?    1       ERROR
+varExport()
+{
+    requireParams R "$@"
+
+    printf '%s\n' "`declare -p "$1" | sed '1s/[^=]\+=//'`"
+    return $?
+}
+
+
+##
 # Copy a function
 #
 # $1    string  current function name
