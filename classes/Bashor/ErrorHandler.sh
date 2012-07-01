@@ -123,23 +123,23 @@ CLASS_Bashor_ErrorHandler_handle()
 # &0    string  error stream
 CLASS_Bashor_ErrorHandler_handleStream()
 {    
-    [ $BASHOR_ERROR_OUTPUT = 1 ] && loadClassOnce "Bashor_Color"
-    [ $BASHOR_ERROR_LOG = 1 ] && loadClassOnce "Bashor_Log"
+    [ "$BASHOR_ERROR_OUTPUT" = 1 ] && loadClassOnce "Bashor_Color"
+    [ "$BASHOR_ERROR_LOG" = 1 ] && loadClassOnce "Bashor_Log"
     local pre='ERROR: '
     while read msg; do
-        [ $BASHOR_ERROR_BACKTRACE = 1 ] \
+        [ "$BASHOR_ERROR_BACKTRACE" = 1 ] \
             && local trace=$(getBacktrace | tail -n +2  | sed 's#^#    #')
-        if [ $BASHOR_ERROR_OUTPUT = 1 ]; then
+        if [ "$BASHOR_ERROR_OUTPUT" = 1 ]; then
             msgOut=$(printf '%s' "$msg" | sed "s/^/$pre/g")
-            [ $BASHOR_ERROR_BACKTRACE = 1 ] \
+            [ "$BASHOR_ERROR_BACKTRACE" = 1 ] \
                 && local msgOut="$msgOut""$NL""$trace"
             printf '%s' "$msgOut" | class Bashor_Color fg '' 'red' 'bold'
         fi
-        if [ $BASHOR_ERROR_LOG = 1 ]; then
+        if [ "$BASHOR_ERROR_LOG" = 1 ]; then
             local log
             class Bashor_Log getDefault log
             msgLog="$msg"
-            [ $BASHOR_ERROR_BACKTRACE = 1 ] \
+            [ "$BASHOR_ERROR_BACKTRACE" = 1 ] \
                 && local msgLog="$msgOut""$NL""$trace"
             printf '%s' "$msgLog" | object "$log" error
         fi
