@@ -432,7 +432,7 @@ remove()
         res=$?
     fi
     
-    unset -v "$OBJECT"_DATA "$OBJECT"_ID
+    unset -v "$OBJECT"_DATA
     unset -v "$OBJECT"_CLASS "$OBJECT"
     
     return "$res"
