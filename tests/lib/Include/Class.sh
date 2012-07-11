@@ -15,19 +15,26 @@
 # @version      $Id$
 ################################################################################
 
-function CLASS_Include_Class___construct()
+CLASS_Include_Class___load()
 {    
-    requireObject
-    
-    this set data "$1"
+    static set staticData '123abc'
     
     return 0
 }
 
-function CLASS_Include_Class_get()
+CLASS_Include_Class___construct()
+{    
+    requireObject
+    
+    this set objectData "$1"
+    
+    return 0
+}
+
+CLASS_Include_Class_get()
 {
     requireObject
 	
-	this get data
+	this get objectData
     return "$?"
 }
