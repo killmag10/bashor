@@ -29,6 +29,8 @@ loadClass()
     for _bashor_temp_path in $BASHOR_PATHS_CLASS; do
         _bashor_temp_filename="$_bashor_temp_path/${1//_//}"'.sh'
         [ -f "$_bashor_temp_filename" ] || continue
+        local _bashor_temp_className=_BASHOR_CLASS_"$1"
+        eval "$_bashor_temp_className"='"$1"'
         . "$_bashor_temp_filename"
         unset -v _bashor_temp_filename _bashor_temp_path
         addClass "$1"
@@ -47,7 +49,9 @@ loadClass()
 loadClassOnce()
 {
     local _bashor_temp_className=_BASHOR_CLASS_"$1"
-    [ -n "${!_bashor_temp_className}" ] || loadClass "$1"
+    if [ -z "${!_bashor_temp_className}" ]; then
+        loadClass "$1"
+    fi
     return $?
 }
 
@@ -95,6 +99,7 @@ addClass()
     eval "$namespace"='"$1"'
     eval "$namespace"'_POINTER='"$pointer"
     eval "$pointer"_DATA=
+    eval "$pointer"'_CLASS="$1"'
     unset -v namespace namespaceExtends pointer
     
     issetFunction CLASS_"$1"___load
@@ -211,6 +216,7 @@ _bashor_objectSaveData()
     requireParams R "$@"
     echo 'bashor dump 1.0.0 objectData'
     printf '%s\n' "CLASS_NAME=$CLASS_NAME"
+    printf '%s\n' "DATA_FORMAT=$BASHOR_CODEING_METHOD"
     printf '%s\n' 'DATA='
     printf '%s' "${!1}" | encodeData
     return $?
@@ -287,9 +293,9 @@ unserialize()
     else
         local _bashor_temp_data="$2"
     fi
-    
+
     _bashor_temp_dataLine=$(
-        printf '%s' "$_bashor_temp_data" | grep '^DATA=' -n | sed 's/:.*$//'
+        printf '%s' "$_bashor_temp_data" | grep -n -m 1 '^DATA=' | sed 's/:.*$//'
     )
     ((_bashor_temp_dataLine--))
     _bashor_temp_header="$(printf '%s' "$_bashor_temp_data" | head -n $_bashor_temp_dataLine)"
@@ -758,9 +764,10 @@ _bashor_objectClear()
 # Get the keys of the object vars.
 #
 # $1    string  var name
+# $2    integer pos in list
 # $?    0       OK
 # $?    1       ERROR
-# &0    integer count
+# &1    string  key
 _bashor_objectKey()
 {
     requireParams RR "$@"

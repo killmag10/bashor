@@ -15,6 +15,8 @@
 # @version      $Id: Data.sh 185 2011-08-29 22:09:38Z lars $
 ################################################################################
 
+loadClassOnce 'Bashor_Reflection_Property';
+
 ##
 # Constructor
 #
@@ -62,6 +64,27 @@ CLASS_Bashor_Reflection_Class_getName()
 # $?    1:ERROR
 CLASS_Bashor_Reflection_Class_getParentClass()
 {    
+    requireParams R "$@"
+    
+    local parentClassName=_BASHOR_CLASS_"$CLASS_NAME"_EXTENDS
+    parentClassName="${!parentClassName}"
+    [ -z "$parentClassName" ] && return 1
+    
+    new Bashor_Reflection_Class "$1" "$parentClassName"
+    return $?
+}
+
+##
+# Get the parent class as Reflection Class.
+#
+# $1    string  var name
+# &1    Bashor_Reflection_Class parent class
+# $?    0:OK
+# $?    1:ERROR
+CLASS_Bashor_Reflection_Class_getProperty()
+{    
+    requireParams R "$@"
+    
     local parentClassName=_BASHOR_CLASS_"$CLASS_NAME"_EXTENDS
     parentClassName="${!parentClassName}"
     [ -z "$parentClassName" ] && return 1
@@ -89,7 +112,7 @@ CLASS_Bashor_Reflection_Class_hasMethod()
 #
 # $1    string  property name
 # $?    0:OK
-# $?    1:ERROR
+# $?    1:ERROR  
 CLASS_Bashor_Reflection_Class_hasProperty()
 {
     requireParams R "$@"

@@ -89,6 +89,7 @@ checkRegexLines()
 SECONDS=0
 
 doTest 'classes/Reflection/Class';
+doTest 'classes/Reflection/Property';
 #exit;
 
 doTest 'includes/functions/class';

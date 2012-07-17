@@ -15,6 +15,8 @@
 # @version      $Id: Data.sh 185 2011-08-29 22:09:38Z lars $
 ################################################################################
 
+loadClassOnce 'Bashor_Reflection_Class';
+
 ##
 # Constructor
 #
@@ -30,14 +32,14 @@ CLASS_Bashor_Reflection_Property___construct()
     local propertyName="$2"
     if [[ "$1" =~ ^_BASHOR_POINTER_ ]]; then
         isObject "$1" || error 'Pointer is not a object!'
-        eval 'className="$'"$1"'_CLASS"'
+        eval 'className="$'"${!1}"'_CLASS"'
         objectPointer="$1"
     else
         className="$1"
         eval 'objectPointer=$_BASHOR_CLASS_'"$className"'_POINTER'
     fi
     classExists "$className" || error 'Class "'"$className"'" not found!'
-    _bashor_objectIsset "$objectPointer"_DATA "$1" \
+    _bashor_objectIsset "$objectPointer"_DATA "$propertyName" \
         || error 'Class "'"$className"'" has no property "'"$propertyName"'"!'
     
     this set className "$className"
@@ -50,12 +52,18 @@ CLASS_Bashor_Reflection_Property___construct()
 ##
 # Get the class name of the class from the property.
 #
-# &1    string      class name
+# $1    string                       var name
+# &1    Bashor_Reflection_Class      class
 # $?    0:OK
 # $?    1:ERROR
 CLASS_Bashor_Reflection_Property_getDeclaringClass()
-{    
-    this get className
+{
+    requireParams R "$@"
+    
+    local objectPointer
+    objectPointer="`this get objectPointer`"
+    
+    new Bashor_Reflection_Class "$1" "$objectPointer";
     return $?
 }
 

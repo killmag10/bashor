@@ -110,8 +110,8 @@ checkSimple "key 2 return" "$?" "0";
 checkSimple "key 2" "$res" '2';
 
 res=`object "$Data" get 2`;
-checkSimple "key 2 return" "$?" "0";
-checkSimple "key 2" "$res" 'a add';
+checkSimple "get 2 return" "$?" "0";
+checkSimple "get 2" "$res" 'a add';
 
 remove "$Data";
 checkSimple "remove object" "$?" "0";

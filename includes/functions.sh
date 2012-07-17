@@ -31,7 +31,7 @@ copyArray()
     data="${data#[\"\']}"
     data="${data%[\"\']}"
     
-    eval "$2"'="$data"'
+    eval "$2"'='"$data"
     return $?
 }
 
@@ -44,7 +44,6 @@ copyArray()
 varExport()
 {
     requireParams R "$@"
-
     printf '%s\n' "`declare -p "$1" | sed '1s/[^=]\+=//'`"
     return $?
 }
@@ -359,9 +358,12 @@ encodeData()
             hexdump -v -e '1/1 "%02X"'
             return $?
             ;;
-        *) #base64
+        base64) #base64
             encodeBase64
             return $?
+            ;;
+        *)
+            error 'No BASHOR_CODEING_METHOD set!'
             ;;
     esac
 }
@@ -373,9 +375,12 @@ decodeData()
             printf "`sed -n 's/../\\\\x\0/gp'`"
             return $?
             ;;
-        *) #base64
+        base64) #base64
             decodeBase64
             return $?
+            ;;
+        *)
+            error 'No BASHOR_CODEING_METHOD set!'
             ;;
     esac
 }
@@ -518,6 +523,7 @@ checkParams()
 }
 
 . "$BASHOR_PATH_INCLUDES/functions/class.sh"
+#. "$BASHOR_PATH_INCLUDES/functions/class/array.sh"
 
 # load opt function
 if [ "$BASHOR_USE_GETOPT" = 1 ]; then
