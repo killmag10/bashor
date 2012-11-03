@@ -21,15 +21,15 @@ loadClassOnce 'Bashor_Reflection_Class';
 # Constructor
 #
 # $1    string|object   class name/object
-# $2    string          property name
-CLASS_Bashor_Reflection_Property___construct()
+# $2    string          method name
+CLASS_Bashor_Reflection_Method___construct()
 {    
     requireObject
     requireParams RR "$@"
     
     local className=
     local objectPointer=
-    local propertyName="$2"
+    local methodName="$2"
     if [[ "$1" =~ ^_BASHOR_POINTER_ ]]; then
         isObject "$1" || error 'Pointer is not a object!'
         eval 'className="$'"${!1}"'_CLASS"'
@@ -39,12 +39,12 @@ CLASS_Bashor_Reflection_Property___construct()
         eval 'objectPointer=$_BASHOR_CLASS_'"$className"'_POINTER'
     fi
     classExists "$className" || error 'Class "'"$className"'" not found!'
-    _bashor_objectIsset "$objectPointer"_DATA "$propertyName" \
-        || error 'Class "'"$className"'" has no property "'"$propertyName"'"!'
+    issetFunction CLASS_"$className"_"$methodName" \
+        || error 'Class "'"$className"'" has no method "'"$methodName"'"!'
     
     this set className "$className"
     this set objectPointer "$objectPointer"
-    this set propertyName "$propertyName"
+    this set methodName "$methodName"
     
     return 0
 }
@@ -56,7 +56,7 @@ CLASS_Bashor_Reflection_Property___construct()
 # &1    Bashor_Reflection_Class      class
 # $?    0:OK
 # $?    1:ERROR
-CLASS_Bashor_Reflection_Property_getDeclaringClass()
+CLASS_Bashor_Reflection_Method_getDeclaringClass()
 {
     requireParams R "$@"
     
@@ -73,24 +73,30 @@ CLASS_Bashor_Reflection_Property_getDeclaringClass()
 # &1    string      property name
 # $?    0:OK
 # $?    1:ERROR
-CLASS_Bashor_Reflection_Property_getName()
+CLASS_Bashor_Reflection_Method_getName()
 {    
-    this get propertyName
+    this get methodName
     return $?
 }
 
 ##
-# Get the property value.
+# Check if the method is the Constructor.
 #
-# &1    mixed      property value
-# $?    0:OK
-# $?    1:ERROR
-CLASS_Bashor_Reflection_Property_getValue()
+# $?    0:TRUE
+# $?    1:FALSE
+CLASS_Bashor_Reflection_Method_isConstructor()
 {
-    local objectPointer propertyName
-    objectPointer="`this get objectPointer`"
-    propertyName="`this get propertyName`"
+    [ "`this get methodName`" = '__construct' ]
+    return $?
+}
 
-    _bashor_objectGet "$objectPointer"_DATA "$propertyName"   
+##
+# Check if the method is the Destructor.
+#
+# $?    0:TRUE
+# $?    1:FALSE
+CLASS_Bashor_Reflection_Method_isDestructor()
+{
+    [ "`this get methodName`" = '__destruct' ]
     return $?
 }

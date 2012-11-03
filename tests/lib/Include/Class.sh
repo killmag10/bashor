@@ -31,6 +31,13 @@ CLASS_Include_Class___construct()
     return 0
 }
 
+CLASS_Include_Class___destruct()
+{    
+    requireObject
+    
+    return 0
+}
+
 CLASS_Include_Class_get()
 {
     requireObject
