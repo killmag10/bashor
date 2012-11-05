@@ -27,8 +27,6 @@ CLASS_Bashor_List___construct()
     local data
     new Bashor_List_Data data
     this set data "$data"
-    
-    return 0
 }
 
 ##

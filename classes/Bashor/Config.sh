@@ -15,6 +15,7 @@
 # @version      $Id$
 ################################################################################
 
+loadClassOnce 'Bashor_List_Iterable'
 extends Bashor_Config Bashor_List_Iterable
 
 ##
@@ -54,10 +55,7 @@ CLASS_Bashor_Config_set()
 # $2    mixed   data
 # $?    0:OK    1:ERROR
 CLASS_Bashor_Config__set()
-{
-    requireObject
-    requireParams RS "$@"
-    
+{   
     parent call set "$1" "$2"
     return $?
 }
@@ -88,9 +86,6 @@ CLASS_Bashor_Config_unset()
 # $?    0:OK    1:ERROR
 CLASS_Bashor_Config__unset()
 {
-    requireObject
-    requireParams R "$@"
-    
     parent call unset "$1"
     return $?
 }
@@ -123,6 +118,17 @@ CLASS_Bashor_Config_mergeParent()
         return 1
     fi
     
+    this call _mergeParent "$1"
+    return $?
+}
+
+##
+# Merge config objects (internal).
+#
+# $1    Bashor_Config   
+# $?    0:OK    1:ERROR
+CLASS_Bashor_Config__mergeParent()
+{       
     local key current
     object "$1" rewind
     while object "$1" valid; do
@@ -130,7 +136,7 @@ CLASS_Bashor_Config_mergeParent()
         current="`object "$1" current`"
         if this call isset "$key"; then
             if isObject "$current" && isObject "`this call get "$key"`"; then
-                object "`this call get "$key"`" mergeParent "$current"
+                object "`this call get "$key"`" _mergeParent "$current"
             fi
         else
             this call _set "$key" "$current"

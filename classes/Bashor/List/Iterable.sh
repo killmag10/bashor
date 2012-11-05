@@ -24,11 +24,8 @@ CLASS_Bashor_List_Iterable___construct()
 {
     requireObject
     
-    parent call __construct "$@"
-    local return=$?
+    parent call __construct
     this set iterator 0
-    
-    return $return
 }
 
 ##
@@ -82,7 +79,7 @@ CLASS_Bashor_List_Iterable_key()
     if [ "$#" -gt 0 ]; then
         parent call key "$1"
         return $?
-    fi    
+    fi
     
     object "`this get 'data'`" key "`this get iterator`"
     return $?

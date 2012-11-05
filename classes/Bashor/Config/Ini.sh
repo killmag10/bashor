@@ -27,11 +27,10 @@ CLASS_Bashor_Config_Ini___construct()
     requireObject
     
     parent call __construct
-    local file="$1"
-    this set 'file' "$file"
+    this set 'file' "$1"
     
-    [ -n "$file" ] || return 0;
-    [ -e "$file" ] || error 'File "'"$file"'" does not exists!'
+    [ -n "$1" ] || return 0;
+    [ -e "$1" ] || error 'File "'"$1"'" does not exists!'
     
     this call _readFile
     this call _extendsSections
@@ -43,19 +42,19 @@ CLASS_Bashor_Config_Ini__readFile()
 {
     requireObject
     
-    local section line key value file
-    file="`this get 'file'`"
+    local section line key
     while read line; do
-        [[ "$line" =~ ^\; ]] && continue
-        if [[ "$line" =~ ^\[[^\]]+\]$ ]]; then
-            section="`printf '%s' "$line" | sed 's/^[[:space:]]*\[//;s/\][[:space:]]*$//'`"
-        fi
+        [[ "$line" =~ ^[[:space:]]*\; ]] && continue
         if [[ "$line" =~ [[:alnum:]\.]+[[:space:]]*= ]]; then
             key="`printf '%s' "$line" | sed 's/[[:space:]]*=.*$//'`"
-            value="`printf '%s' "$line" | sed 's/[[:alnum:]\.]\+[[:space:]]*=[[:space:]]*//;s/^\"\(.*\)\"$/\1/'`"
-            this call _setIniValue "$section.$key" "$value"
+            this call _setIniValue "$section.$key" \
+                "`printf '%s' "$line" | sed 's/[[:alnum:]\.]\+[[:space:]]*=[[:space:]]*//;s/^\"\(.*\)\"$/\1/'`"
+        else
+            if [[ "$line" =~ ^\[[^\]]+\]$ ]]; then
+                section="`printf '%s' "$line" | sed 's/^[[:space:]]*\[//;s/\][[:space:]]*$//'`"
+            fi
         fi
-    done < "$file"
+    done < "`this get 'file'`"
 }
 
 ##
@@ -71,9 +70,9 @@ CLASS_Bashor_Config_Ini__extendsSections()
     while this call valid; do
         key="`this call key`"
         if [[ "$key" =~ : ]]; then
-            section="`printf '%s' "$key" | sed -n 's/^\([^:]\+\).*$/\1/p'`"
-            parent="`printf '%s' "$key" | sed -n 's/^[^:]\+://p'`"
-            object "$ParentList" set "$section" "$parent"
+            object "$ParentList" set \
+                "`printf '%s' "$key" | sed -n 's/^\([^:]\+\).*$/\1/p'`" \
+                "`printf '%s' "$key" | sed -n 's/^[^:]\+://p'`"
         fi
         this call next
     done
@@ -93,12 +92,13 @@ CLASS_Bashor_Config_Ini__extendsSections()
     while this call valid; do
         key="`this call key`"
         object "$ParentList" isset "$key"
-        parentKey="`object "$ParentList" get "$key"`"
-        if [ -z "$parentKey" ]; then
+        if [ -z "`object "$ParentList" get "$key"`" ]; then
             this call _extendsSectionsChild "$key" "$ParentList"
         fi
         this call next
     done
+    
+    remove ParentList
 }
 
 ##
@@ -110,7 +110,7 @@ CLASS_Bashor_Config_Ini__extendsSectionsChild()
 {
     local parentKey="$1"
     local ParentList="$2"
-    local key section parent
+    local section parent
     
     object "$ParentList" rewind
     while object "$ParentList" valid; do
@@ -130,10 +130,10 @@ CLASS_Bashor_Config_Ini__extendsSectionsChild()
 # $1    string      key
 # $2    string      value
 CLASS_Bashor_Config_Ini__setIniValue()
-{
+{    
     if [[ "$1" =~ \. ]]; then
-        local key config
-        key="`printf '%s' "$1" | sed -n 's/^\([^.]\+\).*$/\1/p'`"
+        local key config IFS=.
+        for key in $1; do break; done
         if this call isset "$key"; then
             config="`this call get "$key"`"
             if ! isObject "$config"; then
@@ -144,8 +144,9 @@ CLASS_Bashor_Config_Ini__setIniValue()
             new "`static call getClass`" config
             this call _set "$key" "$config"
         fi
-        key="`printf '%s' "$1" | sed -n 's/^[^.]\+[.]//p'`"
-        object "$config" _setIniValue "$key" "$2"
+        object "$config" _setIniValue \
+            "`printf '%s' "$1" | sed -n 's/^[^.]\+[.]//p'`" \
+            "$2"
     else
         this call _set "$1" "$2"
     fi
