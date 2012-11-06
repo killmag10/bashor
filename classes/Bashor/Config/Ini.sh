@@ -42,19 +42,23 @@ CLASS_Bashor_Config_Ini__readFile()
 {
     requireObject
     
+    local keyCache
+    new Bashor_List_Data keyCache
     local section line key
     while read line; do
         [[ "$line" =~ ^[[:space:]]*\; ]] && continue
         if [[ "$line" =~ [[:alnum:]\.]+[[:space:]]*= ]]; then
             key="`printf '%s' "$line" | sed 's/[[:space:]]*=.*$//'`"
             this call _setIniValue "$section.$key" \
-                "`printf '%s' "$line" | sed 's/[[:alnum:]\.]\+[[:space:]]*=[[:space:]]*//;s/^\"\(.*\)\"$/\1/'`"
+                "`printf '%s' "$line" | sed 's/[[:alnum:]\.]\+[[:space:]]*=[[:space:]]*//;s/^\"\(.*\)\"$/\1/'`" \
+                "$keyCache"
         else
             if [[ "$line" =~ ^\[[^\]]+\]$ ]]; then
                 section="`printf '%s' "$line" | sed 's/^[[:space:]]*\[//;s/\][[:space:]]*$//'`"
             fi
         fi
     done < "`this get 'file'`"
+    remove keyCache;
 }
 
 ##
@@ -91,8 +95,7 @@ CLASS_Bashor_Config_Ini__extendsSections()
     this call rewind
     while this call valid; do
         key="`this call key`"
-        object "$ParentList" isset "$key"
-        if [ -z "`object "$ParentList" get "$key"`" ]; then
+        if ! object "$ParentList" isset "$key"; then
             this call _extendsSectionsChild "$key" "$ParentList"
         fi
         this call next
@@ -131,29 +134,37 @@ CLASS_Bashor_Config_Ini__extendsSectionsChild()
 # $2    string      value
 CLASS_Bashor_Config_Ini__setIniValue()
 {
-    local i key IFS=.
+    local i key parentConfig= cacheKey cacheResult IFS=.
     local config="`this pointer`"
-    local parentConfig=
     local -a list=()
     local currentClass="`static call getClass`"
+    local keyCache="$3"
+    
+    cacheKey="`printf '%s' "$1" | sed 's/.[^.]\+$//'`"
     for key in $1; do
         list[${#list[@]}]=$key
     done
     
-    local max=$((${#list[@]} - 1))
-    for (( i=0 ; i < $max ; i++ )); do
-        parentConfig="$config"
-        if object "$config" isset "${list[i]}"; then
-            config="`object "$config" get "${list[i]}"`"
-            if ! isObject "$config"; then
+    cacheResult="`object "$keyCache" get "$cacheKey"`"
+    if [ -z "$cacheResult" ]; then
+        for (( i=0 ; i < $((${#list[@]} - 1)) ; i++ )); do
+            parentConfig="$config"
+            if object "$config" isset "${list[i]}"; then
+                config="`object "$config" get "${list[i]}"`"
+                if ! isObject "$config"; then
+                    new "$currentClass" config
+                    object "$parentConfig" _set "${list[i]}" "$config"
+                fi
+            else
                 new "$currentClass" config
                 object "$parentConfig" _set "${list[i]}" "$config"
             fi
-        else
-            new "$currentClass" config
-            object "$parentConfig" _set "${list[i]}" "$config"
-        fi
-    done
+        done
+        object "$keyCache" set "$cacheKey" "$config"
+    else
+        config="$cacheResult"
+        i=$((${#list[@]} - 1))
+    fi
     
     object "$config" _set "${list[i]}" "$2"
 }
