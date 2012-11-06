@@ -9,7 +9,7 @@
 #
 # @package      Bashor
 # @subpackage   Classes
-# @copyright    Copyright (c) 2011 Lars Dietrich, All rights reserved.
+# @copyright    Copyright (c) 2012 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
 # @version      $Id$

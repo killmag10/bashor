@@ -30,6 +30,16 @@ CLASS_Bashor_List___construct()
 }
 
 ##
+# Destructor
+#
+CLASS_Bashor_List___destruct()
+{    
+    requireObject
+    
+    remove "`this get data`"
+}
+
+##
 # Add item to list.
 #
 # $1    string  data

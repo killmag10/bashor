@@ -8,8 +8,8 @@
 # http://www.gnu.de/documents/lgpl.de.html
 #
 # @package      Bashor
-# @subpackage   Functions
-# @copyright    Copyright (c) 2010 Lars Dietrich, All rights reserved.
+# @subpackage   Classes
+# @copyright    Copyright (c) 2012 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
 # @version      $Id
@@ -130,24 +130,30 @@ CLASS_Bashor_Config_Ini__extendsSectionsChild()
 # $1    string      key
 # $2    string      value
 CLASS_Bashor_Config_Ini__setIniValue()
-{    
-    if [[ "$1" =~ \. ]]; then
-        local key config IFS=.
-        for key in $1; do break; done
-        if this call isset "$key"; then
-            config="`this call get "$key"`"
+{
+    local i key IFS=.
+    local config="`this pointer`"
+    local parentConfig=
+    local -a list=()
+    local currentClass="`static call getClass`"
+    for key in $1; do
+        list[${#list[@]}]=$key
+    done
+    
+    local max=$((${#list[@]} - 1))
+    for (( i=0 ; i < $max ; i++ )); do
+        parentConfig="$config"
+        if object "$config" isset "${list[i]}"; then
+            config="`object "$config" get "${list[i]}"`"
             if ! isObject "$config"; then
-                new "`static call getClass`" config
-                this call _set "$key" "$config"
+                new "$currentClass" config
+                object "$parentConfig" _set "${list[i]}" "$config"
             fi
         else
-            new "`static call getClass`" config
-            this call _set "$key" "$config"
+            new "$currentClass" config
+            object "$parentConfig" _set "${list[i]}" "$config"
         fi
-        object "$config" _setIniValue \
-            "`printf '%s' "$1" | sed -n 's/^[^.]\+[.]//p'`" \
-            "$2"
-    else
-        this call _set "$1" "$2"
-    fi
+    done
+    
+    object "$config" _set "${list[i]}" "$2"
 }

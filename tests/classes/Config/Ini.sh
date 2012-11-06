@@ -62,7 +62,7 @@ testIniNode "$Ini" "extented2.base.tree" 'tree2'
 testIniNode "$Ini" "extented2.base.next.string" 'extented1'
 testIniNode "$Ini" "extented2.base.new.string" 'extented2'
 
+#show "$Ini" "+++"
+
 remove "$Ini"
 checkSimple "remove" "$?" "0"
-
-#show "$Ini" "+++"
