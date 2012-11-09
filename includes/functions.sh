@@ -451,8 +451,8 @@ bufferStream()
 requireParams()
 {
     # Checks for speedup
-    [ "$1" = "R" ] && [ -n "$2" ] && return 0
-    [ "$1" = "RR" ] && [ -n "$2" -a -n "$3" ] && return 0
+    [ "$1" = 'R' ] && [ -n "$2" ] && return 0
+    [ "$1" = 'RR' ] && [ -n "$2" -a -n "$3" ] && return 0
     
     local current=0
     local config="$1"
