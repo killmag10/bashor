@@ -25,7 +25,27 @@ CLASS_Bashor_List_Iterable___construct()
     requireObject
     
     parent call __construct
-    this set iterator 0
+    eval "`this pointer`"'_Iterator=0'
+}
+
+##
+# Destructor
+CLASS_Bashor_List_Iterable___destruct()
+{
+    requireObject
+    
+    parent call __destruct
+    unset -v "`this pointer`"'_Iterator'
+}
+
+##
+# Clone
+CLASS_Bashor_List_Iterable___clone()
+{
+    requireObject
+    
+    parent call __clone
+    eval "`this pointer`"'_Iterator=0'
 }
 
 ##
@@ -34,9 +54,9 @@ CLASS_Bashor_List_Iterable_current()
 {
     requireObject
     
-    local iterator=`this get iterator`
+    local iterator="`this pointer`"'_Iterator'
     local data="`this get 'data'`"
-    object "$data" get "`object "$data" key "$iterator"`"
+    object "$data" get "`object "$data" key "${!iterator}"`"
     return $?
 }
 
@@ -46,8 +66,7 @@ CLASS_Bashor_List_Iterable_next()
 {
     requireObject
 
-    local iterator=`this get iterator`
-    this set iterator $((++iterator))
+    eval '(('"`this pointer`"'_Iterator++))'
 }
 
 ##
@@ -56,7 +75,7 @@ CLASS_Bashor_List_Iterable_rewind()
 {
     requireObject
     
-    this set iterator 0
+    eval "`this pointer`"'_Iterator=0'
 }
 
 
@@ -66,7 +85,8 @@ CLASS_Bashor_List_Iterable_valid()
 {
     requireObject
     
-    [ "`this get iterator`" -lt "`parent call count`" ]
+    local iterator="`this pointer`"'_Iterator'
+    [ "${!iterator}" -lt "`parent call count`" ]
     return $?
 }
 
@@ -81,6 +101,7 @@ CLASS_Bashor_List_Iterable_key()
         return $?
     fi
     
-    object "`this get 'data'`" key "`this get iterator`"
+    local iterator="`this pointer`"'_Iterator'
+    object "`this get 'data'`" key "${!iterator}"
     return $?
 }

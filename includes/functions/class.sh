@@ -775,7 +775,7 @@ _bashor_objectKey()
     local IFS=$'\n'
     local data=(`printf '%s' "${!1}"`);
     [ "$2" -ge "${#data[@]}" ] && return 1;
-    printf '%s' "${data[$2]}" | sed 's#^\([^[:space:]]\+\).\+$#\1#' | decodeData
+    printf '%s' "${data[$2]}" | cut -d ' ' -f 1 | decodeData
     return $?
 }
 
