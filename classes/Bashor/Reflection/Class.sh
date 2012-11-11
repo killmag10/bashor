@@ -12,7 +12,7 @@
 # @copyright    Copyright (c) 2012 Lars Dietrich, All rights reserved.
 # @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3
 # @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: Data.sh 185 2011-08-29 22:09:38Z lars $
+# @version      $Id$
 ################################################################################
 
 loadClassOnce 'Bashor_Reflection_Property';
