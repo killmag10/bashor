@@ -2,7 +2,7 @@
 .\"
 .\" Man page for Bashor
 .\"
-.TH Bashor 7 "2012-06-12" "Lars Dietrich" "Bashor Coding Commands"
+.TH Bashor 7 "2012-11-12" "Lars Dietrich" "Bashor Coding Commands"
 .SH Bashor
 .B Bashor
 \- an pseudo object extension for bash
@@ -51,6 +51,25 @@ Config String
 .B $@
 .I mixed
 All Params
+.HP
+
+.HP
+
+.RE
+
+.TP
+.B copyArray()
+.RS
+.HP
+Copy a array
+.HP
+.B $1
+.I string
+source array name
+.HP
+.B $2
+.I string
+destination array name
 .HP
 
 .HP
@@ -291,6 +310,21 @@ Config String
 .B $@
 .I mixed
 All Params
+.HP
+
+.HP
+
+.RE
+
+.TP
+.B varExport()
+.RS
+.HP
+Export a variable.
+.HP
+.B $1
+.I string
+var name
 .HP
 
 .HP

@@ -1,3 +1,19 @@
+Changelog: 1.4.0:
+
+Add Bashor_Reflection_Method
+add display time by tests
+add function copyArray
+add function varExport
+Add hasMethod to Class
+add Reflection Class
+add support for Bash Arrays
+_bashor_addStdClass add class check
+Fix bug in stream error handler then error handling vars empty
+Optimize Bashor_Config
+optimize code
+Update docs
+
+
 Changelog: 1.3.0:
 
 Add Bashor Config
