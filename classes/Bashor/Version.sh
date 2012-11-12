@@ -24,6 +24,6 @@
 # $?    1       ERROR
 CLASS_Bashor_Version_getCurrent()
 {
-    printf '%s' '1.3.1'
+    printf '%s' '1.4.0'
     return 0
 }
