@@ -88,10 +88,6 @@ checkRegexLines()
 
 SECONDS=0
 
-doTest 'classes/Reflection/Class';
-doTest 'classes/Reflection/Property';
-#exit;
-
 doTest 'includes/functions/class';
 doTest 'includes/Class';
 
@@ -115,5 +111,8 @@ doTest 'classes/Escape';
 doTest 'classes/Temp';
 doTest 'classes/Terminal';
 doTest 'classes/Config/Ini';
+doTest 'classes/Reflection/Class';
+doTest 'classes/Reflection/Property';
+doTest 'classes/Reflection/Method';
 
 printFinalResult;
