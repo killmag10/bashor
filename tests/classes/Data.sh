@@ -48,10 +48,10 @@ checkSimple "isCompressed" "$?" "0";
 res=`object "$Data" size`;
 case "$BASHOR_CODEING_METHOD" in
 hex)
-    checkSimple "size" "$res" "43187";
+    checkSimple "size" "$res" "43186";
     ;;
 *)
-    checkSimple "size" "$res" "28795";
+    checkSimple "size" "$res" "28794";
     ;;
 esac
 remove "$Data";

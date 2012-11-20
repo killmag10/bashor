@@ -41,5 +41,8 @@ exec 3>&2;
 # Load general functions
 . "${BASHOR_PATH_INCLUDES}/functions.sh";
 
-[ -n "$BASHOR_ERROR_CLASS" ] && class Bashor_ErrorHandler setHandler;
+if [ -n "$BASHOR_ERROR_CLASS" ]; then
+    loadClassOnce Bashor_ErrorHandler
+    class Bashor_ErrorHandler setHandler;
+fi
 

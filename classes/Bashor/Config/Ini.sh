@@ -48,13 +48,15 @@ CLASS_Bashor_Config_Ini__readFile()
     while read line; do
         [[ "$line" =~ ^[[:space:]]*\; ]] && continue
         if [[ "$line" =~ [[:alnum:]\.]+[[:space:]]*= ]]; then
-            key="`printf '%s' "$line" | sed 's/[[:space:]]*=.*$//'`"
+            key="${line%%=*}"
+            key="${key%% *}"
             this call _setIniValue "$section.$key" \
-                "`printf '%s' "$line" | sed 's/[[:alnum:]\.]\+[[:space:]]*=[[:space:]]*//;s/^\"\(.*\)\"$/\1/'`" \
+                "`printf '%s' "$line" | sed 's/^[[:alnum:]\.]\+[[:space:]]*=[[:space:]]*//;s/^\"\(.*\)\"$/\1/'`" \
                 "$keyCache"
         else
-            if [[ "$line" =~ ^\[[^\]]+\]$ ]]; then
-                section="`printf '%s' "$line" | sed 's/^[[:space:]]*\[//;s/\][[:space:]]*$//'`"
+            if [[ "$line" =~ ^\[[^\]]+\]\s*$ ]]; then
+                section="${line#[}"
+                section="${section%]*}"
             fi
         fi
     done < "`this get 'file'`"
@@ -74,9 +76,7 @@ CLASS_Bashor_Config_Ini__extendsSections()
     while this call valid; do
         key="`this call key`"
         if [[ "$key" =~ : ]]; then
-            object "$ParentList" set \
-                "`printf '%s' "$key" | sed -n 's/^\([^:]\+\).*$/\1/p'`" \
-                "`printf '%s' "$key" | sed -n 's/^[^:]\+://p'`"
+            object "$ParentList" set "${key%%:*}" "${key#*:}"
         fi
         this call next
     done
@@ -140,7 +140,7 @@ CLASS_Bashor_Config_Ini__setIniValue()
     local currentClass="`static call getClass`"
     local keyCache="$3"
     
-    cacheKey="`printf '%s' "$1" | sed 's/.[^.]\+$//'`"
+    cacheKey="${1%.*}"
     for key in $1; do
         list[${#list[@]}]=$key
     done

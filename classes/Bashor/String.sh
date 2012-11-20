@@ -15,6 +15,7 @@
 # @version      $Id$
 ################################################################################
 
+loadClassOnce "Bashor_Escape"
 
 ##
 # Repear a string.

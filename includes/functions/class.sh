@@ -91,13 +91,13 @@ addClass()
     
     [[ "$1" =~ ^[a-zA-Z_]+$ ]] || error 'No valid class name!'
     
-    local namespace='_BASHOR_CLASS_'"$1"
-    local namespaceExtends='_BASHOR_CLASS_'"$1"'_EXTENDS'
+    local namespace=_BASHOR_CLASS_"$1"
+    local namespaceExtends=_BASHOR_CLASS_"$1"_EXTENDS
     local pointer
     _bashor_generatePointer pointer "$BASHOR_TYPE_OBJECT"
     [ -z "${!namespaceExtends}" ] && _bashor_addStdClass "$1"   
     eval "$namespace"='"$1"'
-    eval "$namespace"'_POINTER='"$pointer"
+    eval "$namespace"_POINTER="$pointer"
     eval "$pointer"_DATA=
     eval "$pointer"'_CLASS="$1"'
     unset -v namespace namespaceExtends pointer
@@ -120,10 +120,10 @@ addClass()
 _bashor_addStdClass()
 {
     requireParams R "$@"
-    [ "$1" = 'Class' ] && return 0
+    [ "$1" = Class ] && return 0
     
     _bashor_createExtendedClassFunctions "$1" Class
-    eval '_BASHOR_CLASS_'"$1"'_EXTENDS=Class'
+    eval _BASHOR_CLASS_"$1"_EXTENDS=Class
     return 0
 }
 
@@ -215,9 +215,9 @@ _bashor_objectSaveData()
 {
     requireParams R "$@"
     echo 'bashor dump 1.0.0 objectData'
-    printf '%s\n' "CLASS_NAME=$CLASS_NAME"
-    printf '%s\n' "DATA_FORMAT=$BASHOR_CODEING_METHOD"
-    printf '%s\n' 'DATA='
+    printf 'CLASS_NAME=%s\n' "$CLASS_NAME"
+    printf 'DATA_FORMAT=%s\n' "$BASHOR_CODEING_METHOD"
+    printf 'DATA=\n'
     printf '%s' "${!1}" | encodeData
     return $?
 }
@@ -238,7 +238,7 @@ object()
     
     local OBJECT CLASS_TOP_NAME CLASS_NAME
     OBJECT="$1"
-    CLASS_NAME="$1"'_CLASS'
+    CLASS_NAME="$1"_CLASS
     CLASS_NAME="${!CLASS_NAME}"
     CLASS_TOP_NAME="$CLASS_NAME"
     
@@ -258,7 +258,7 @@ serialize()
 {    
     {
         requireParams R "$@"
-        issetVar "$1"'_CLASS' || error 'Pointer "'"$1"'" is not a Object!'
+        issetVar "$1"_CLASS || error 'Pointer "'"$1"'" is not a Object!'
         
         local OBJECT CLASS_NAME
         clone "$1" OBJECT
@@ -289,7 +289,7 @@ unserialize()
     local _bashor_temp_dataLine _bashor_temp_header CLASS_NAME
     
     if [ "$#" -lt 2 -a -p /dev/stdin ]; then
-        local _bashor_temp_data=$(cat -)
+        local _bashor_temp_data="$(cat -)"
     else
         local _bashor_temp_data="$2"
     fi
@@ -302,7 +302,7 @@ unserialize()
     
     CLASS_NAME=$(printf '%s' "$_bashor_temp_header" | sed -n 's/^CLASS_NAME=//1p')
     _bashor_generatePointer "${1}" "$BASHOR_TYPE_OBJECT"
-    eval "${!1}"'_CLASS='"$CLASS_NAME"
+    eval "${!1}"'_CLASS="$CLASS_NAME"'
     eval "${!1}"_DATA=
 
     _bashor_objectLoadData "${!1}"_DATA "$_bashor_temp_data";
@@ -387,7 +387,7 @@ extends()
     requireParams RR "$@"
     
     [ "$BASHOR_CLASS_AUTOLOAD" = 1 ] && __autoloadClass "$2"
-    eval '_BASHOR_CLASS_'"$1"'_EXTENDS'"='$2'"
+    eval _BASHOR_CLASS_"$1"'_EXTENDS="$2"'
     _bashor_createExtendedClassFunctions "$1" "$2"    
     return 0
 }
@@ -583,7 +583,7 @@ static()
             ;;
     esac
     
-    eval 'local OBJECT=$_BASHOR_CLASS_'"$CLASS_NAME"'_POINTER'
+    eval 'local OBJECT=$_BASHOR_CLASS_'"$CLASS_NAME"_POINTER
     local dataVarName="$OBJECT"_DATA
     case "$1" in
         get)
@@ -643,7 +643,7 @@ parent()
     requireParams R "$@"
     [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
     
-    local CLASS_NAME='_BASHOR_CLASS_'"$CLASS_NAME"'_EXTENDS'
+    local CLASS_NAME=_BASHOR_CLASS_"$CLASS_NAME"_EXTENDS
     CLASS_NAME="${!CLASS_NAME}"
     case "$1" in
         call)
@@ -679,13 +679,13 @@ _bashor_objectSet()
     if [ "$#" -lt 3 -a -p /dev/stdin ]; then
         local value=$(cat - | encodeData)
     else
-        local value=$(printf '%s\n' "$3" | encodeData)
+        local value=$(printf '%s' "$3" | encodeData)
     fi
     
     local key=$(printf '%s' "$2" | encodeData)
-    local data=$(printf '%s' "${!1}" \
+    value=$(printf '%s' "${!1}" \
         | grep -v "^${key}[[:space:]]\+.*$"; printf '%s\n' "$key $value";)
-    eval "$1"'="$data"'
+    eval "$1"'="$value"'
     
     return $?
 }
@@ -724,7 +724,7 @@ _bashor_objectGet()
     data=$(printf '%s' "${!1}" | grep "^$(printf '%s' "$2" | encodeData)[[:space:]]\+.*$")    
     [ $? = 0 ] || return 1
     
-    printf '%s' "$data" | cut -d ' ' -f 2 | decodeData
+    printf '%s' "${data#* }" | decodeData
     return 0
 }
 
@@ -773,9 +773,9 @@ _bashor_objectKey()
     requireParams RR "$@"
     
     local IFS=$'\n'
-    local data=(`printf '%s' "${!1}"`);
+    local -a data=(`printf '%s' "${!1}"`);
     [ "$2" -ge "${#data[@]}" ] && return 1;
-    printf '%s' "${data[$2]}" | cut -d ' ' -f 1 | decodeData
+    printf '%s' "${data[$2]% *}" | decodeData
     return $?
 }
 

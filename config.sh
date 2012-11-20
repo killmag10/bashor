@@ -21,8 +21,8 @@
 BASHOR_CLASS_AUTOLOAD='1';
 
 # Compatibility
-BASHOR_BASE64_USE='base64'; # openssl|perl|base64
 BASHOR_CODEING_METHOD='base64' # base64|hex
+BASHOR_BASE64_USE='base64'; # openssl|perl|base64
 BASHOR_USE_GETOPT='1'; # 0|1
 BASHOR_COMPATIBILITY_THIS='' # ''|1
 
@@ -48,5 +48,5 @@ set -B # enable brace expansion;
 set +a # disable allexport
 set +b # disable notify;
 set +e # disable errexit;
-set -i # enable interactive;
+#set -i # enable interactive;
 set +p # disable privileged (suid);
