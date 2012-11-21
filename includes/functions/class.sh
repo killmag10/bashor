@@ -230,7 +230,7 @@ _bashor_objectSaveData()
 object()
 {    
     requireParams RR "$@" 
-    if [ ! "${!1}" = "$BASHOR_TYPE_OBJECT" ] || [[ ! "$1" =~ ^_BASHOR_POINTER_ ]]; then
+    if [ "${!1}" != "$BASHOR_TYPE_OBJECT" ] || [[ ! "$1" =~ ^_BASHOR_POINTER_ ]]; then
         error 'Pointer "'"$1"'" is not a Object!'
     fi
     
@@ -426,7 +426,8 @@ remove()
     requireParams R "$@"
     [ -z "$1"_CLASS ] && error 'Pointer "'"$1"'" is not a Object!'
 
-    local CLASS_NAME res=0
+    local CLASS_NAME
+    local -i res=0
     local OBJECT="$1"
     CLASS_NAME="$OBJECT"_CLASS
     CLASS_NAME="${!CLASS_NAME}"
@@ -872,7 +873,6 @@ inStatic()
     [ -z "$OBJECT" -a -n "$CLASS_NAME" ]
     return $?
 }
-
 
 . "$BASHOR_PATH_INCLUDES/Class.sh"
 addClass Class

@@ -105,8 +105,8 @@ prepareOutput()
 # $?    1       ERROR
 getBacktrace()
 {    
-    local res=1
-    local pos=0
+    local -i res=1
+    local -i pos=0
     local remove="$1"
     while [ -n "$res" ]; do
         res=$(caller "$((pos+remove))")
@@ -454,7 +454,7 @@ requireParams()
     [ "$1" = R -a -n "$2" ] && return 0
     [ "$1" = RR -a -n "$2" -a -n "$3" ] && return 0
     
-    local current=0
+    local -i current=0
     local config="$1"
     while shift; do
         case "${config:$current:1}" in
@@ -504,7 +504,7 @@ checkParams()
         return 1
     fi
     
-    local current=0
+    local -i current=0
     while shift; do
         case "${config:$current:1}" in
             R)
@@ -531,3 +531,5 @@ if [ "$BASHOR_USE_GETOPT" = 1 ]; then
 else
     . "$BASHOR_PATH_INCLUDES/functions/getopts.sh"
 fi
+
+. "$BASHOR_PATH_INCLUDES/functions/profile.sh"
