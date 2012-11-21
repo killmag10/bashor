@@ -133,13 +133,13 @@ CLASS_Bashor_Config__mergeParent()
     object "$1" rewind
     while object "$1" valid; do
         key="`object "$1" key`"
-        current="`object "$1" current`"
         if this call isset "$key"; then
+            current="`object "$1" current`"
             if isObject "$current" && isObject "`this call get "$key"`"; then
                 object "`this call get "$key"`" _mergeParent "$current"
             fi
         else
-            this call _set "$key" "$current"
+            this call _set "$key" "`object "$1" current`"
         fi
         object "$1" next
     done

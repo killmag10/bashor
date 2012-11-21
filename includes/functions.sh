@@ -451,8 +451,8 @@ bufferStream()
 requireParams()
 {
     # Checks for speedup
-    [ "$1" = R ] && [ -n "$2" ] && return 0
-    [ "$1" = RR ] && [ -n "$2" -a -n "$3" ] && return 0
+    [ "$1" = R -a -n "$2" ] && return 0
+    [ "$1" = RR -a -n "$2" -a -n "$3" ] && return 0
     
     local current=0
     local config="$1"
@@ -460,14 +460,14 @@ requireParams()
         case "${config:$current:1}" in
             R)
                     if [ -z "$1" ]; then
-                        ((current+1))
+                        ((current++))
                         error "$current: Parameter empty but required"
                         return 1
                     fi
                 ;;
             S)
                     if [ "$#" = 0 ]; then
-                        ((current+1))
+                        ((current++))
                         error "$current: Parameter not set"
                         return 1
                     fi

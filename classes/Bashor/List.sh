@@ -167,6 +167,21 @@ CLASS_Bashor_List_key()
 }
 
 ##
+# Get the value of a item.
+#
+# $1    integer  pos of item in list
+# $?    0:EXISTS    1:NOT FOUND
+# &1    string Data 
+CLASS_Bashor_List_value()
+{
+    requireObject
+    requireParams R "$@"
+    
+    object "`this get 'data'`" value "$1"
+    return $?
+}
+
+##
 # Get count of items
 #
 # $?    0:OK    1:ERROR

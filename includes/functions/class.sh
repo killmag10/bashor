@@ -25,7 +25,7 @@ loadClass()
 {
     requireParams R "$@"
     
-    local _bashor_temp_path _bashor_temp_filename IFS=$'\n\r'
+    local _bashor_temp_path _bashor_temp_filename IFS=$'\n'
     for _bashor_temp_path in $BASHOR_PATHS_CLASS; do
         _bashor_temp_filename="$_bashor_temp_path/${1//_//}"'.sh'
         [ -f "$_bashor_temp_filename" ] || continue
@@ -49,9 +49,7 @@ loadClass()
 loadClassOnce()
 {
     local _bashor_temp_className=_BASHOR_CLASS_"$1"
-    if [ -z "${!_bashor_temp_className}" ]; then
-        loadClass "$1"
-    fi
+    [ -n "${!_bashor_temp_className}" ] || loadClass "$1"
     return $?
 }
 
@@ -490,59 +488,59 @@ this()
     fi
     requireObject
     requireParams R "$@"
-    [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set' 
-    local CLASS_NAME="$CLASS_TOP_NAME";
     
     case "$1" in
         call)
+            [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set' 
+            local CLASS_NAME="$CLASS_TOP_NAME";
             shift
             _bashor_call "$@"
             return $?
             ;;
         pointer)
-            [ -z "$OBJECT" ] && error 'Not a Object'
             printf '%s' "$OBJECT"
             return 0
             ;;
-    esac
-    
-    local dataVarName="$OBJECT"_DATA    
-    case "$1" in
         get)
             shift
-            _bashor_objectGet "$dataVarName" "$@"
+            _bashor_objectGet "$OBJECT"_DATA "$@"
             return $?
             ;;
         set)
             shift
-            _bashor_objectSet "$dataVarName" "$@"
+            _bashor_objectSet "$OBJECT"_DATA "$@"
             return $?
             ;;
         unset)
             shift
-            _bashor_objectUnset "$dataVarName" "$@"
+            _bashor_objectUnset "$OBJECT"_DATA "$@"
             return $?
             ;;
         isset)
             shift
-            _bashor_objectIsset "$dataVarName" "$@"
+            _bashor_objectIsset "$OBJECT"_DATA "$@"
             return $?
             ;;
         count)
-            _bashor_objectCount "$dataVarName"
+            _bashor_objectCount "$OBJECT"_DATA
             return $?
             ;;
         key)
             shift
-            _bashor_objectKey "$dataVarName" "$@"
+            _bashor_objectKey "$OBJECT"_DATA "$@"
+            return $?
+            ;;
+        value)
+            shift
+            _bashor_objectValue "$OBJECT"_DATA "$@"
             return $?
             ;;
         size)
-            printf '%s' "$dataVarName" | wc -c
+            printf '%s' "$OBJECT"_DATA | wc -c
             return $?
             ;;
         clear)
-             _bashor_objectClear "$dataVarName"
+             _bashor_objectClear "$OBJECT"_DATA
             return $?
             ;;
         *)
@@ -584,43 +582,47 @@ static()
     esac
     
     eval 'local OBJECT=$_BASHOR_CLASS_'"$CLASS_NAME"_POINTER
-    local dataVarName="$OBJECT"_DATA
     case "$1" in
         get)
             shift
-            _bashor_objectGet "$dataVarName" "$@"
+            _bashor_objectGet "$OBJECT"_DATA "$@"
             return $?
             ;;
         set)
             shift
-            _bashor_objectSet "$dataVarName" "$@"
+            _bashor_objectSet "$OBJECT"_DATA "$@"
             return $?
             ;;
         unset)
             shift
-            _bashor_objectUnset "$dataVarName" "$@"
+            _bashor_objectUnset "$OBJECT"_DATA "$@"
             return $?
             ;;
         isset)
             shift
-            _bashor_objectIsset "$dataVarName" "$@"
+            _bashor_objectIsset "$OBJECT"_DATA "$@"
             return $?
             ;;
         count)
-            _bashor_objectCount "$dataVarName"
+            _bashor_objectCount "$OBJECT"_DATA
             return $?
             ;;
         key)
             shift
-            _bashor_objectKey "$dataVarName" "$@"
+            _bashor_objectKey "$OBJECT"_DATA "$@"
+            return $?
+            ;;
+        value)
+            shift
+            _bashor_objectValue "$OBJECT"_DATA "$@"
             return $?
             ;;
         size)
-            printf '%s' "$dataVarName" | wc -c
+            printf '%s' "$OBJECT"_DATA | wc -c
             return $?
             ;;
         clear)
-             _bashor_objectClear "$dataVarName"
+             _bashor_objectClear "$OBJECT"_DATA
             return $?
             ;;
         *)
@@ -780,6 +782,26 @@ _bashor_objectKey()
 }
 
 ##
+# Get the values of the object vars.
+#
+# $1    string  var name
+# $2    integer pos in list
+# $?    0       OK
+# $?    1       ERROR
+# &1    string  key
+_bashor_objectValue()
+{
+    requireParams RR "$@"
+    
+    local IFS=$'\n'
+    local -a data=(`printf '%s' "${!1}"`);
+    [ "$2" -ge "${#data[@]}" ] && return 1;
+    printf '%s' "${data[$2]#* }" | decodeData
+    return $?
+}
+
+
+##
 # Check if is set in object var.
 #
 # $1    string  var name
@@ -816,7 +838,7 @@ isObject()
 # $?    1       ERROR
 requireObject()
 {
-    inObject || error 'Not a object call!'
+    [ -n "$OBJECT" ] || error 'Not a object call!'
 }
 
 ##
@@ -826,7 +848,7 @@ requireObject()
 # $?    1       ERROR
 inObject()
 {
-    [ -n "$OBJECT" -a -n "$CLASS_NAME" ]
+    [ -n "$OBJECT" ]
     return $?
 }
 
@@ -837,7 +859,7 @@ inObject()
 # $?    1       ERROR
 requireStatic()
 {
-    inStatic || error 'Not a static call!'
+    [ -z "$OBJECT" -a -n "$CLASS_NAME" ] || error 'Not a static call!'
 }
 
 ##

@@ -28,6 +28,7 @@ _bashor_objectLoadData()
     
     local dataLine="$(printf '%s' "$2" | grep -n -m 1 '^DATA=' | sed 's/:.*$//')"
     local value="`printf '%s' "$2" | tail -n +$((++dataLine))`"
+    #printf '%s <<<\n' "$*" >&3
     eval 'declare -g -A '"$1"'='"$value"
     return $?
 }
@@ -232,7 +233,7 @@ _bashor_objectKey()
     
     local IFS=$'\n'
     local -a data
-    
+    local IFS='|'
     eval 'data=(${!'"$1"'[@]})'
     [ "$2" -ge "${#data[@]}" ] && return 1;
     printf '%s' "${data[$2]}"
