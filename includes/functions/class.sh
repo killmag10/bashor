@@ -29,8 +29,8 @@ loadClass()
     for _bashor_temp_path in $BASHOR_PATHS_CLASS; do
         _bashor_temp_filename="$_bashor_temp_path/${1//_//}"'.sh'
         [ -f "$_bashor_temp_filename" ] || continue
-        local _bashor_temp_className=_BASHOR_CLASS_"$1"
-        eval "$_bashor_temp_className"='"$1"'
+        local _bashor_temp_className=_BASHOR_LOADED_CLASS_"$1"
+        eval "$_bashor_temp_className"='"$_bashor_temp_filename"'
         . "$_bashor_temp_filename"
         unset -v _bashor_temp_filename _bashor_temp_path
         addClass "$1"
@@ -48,7 +48,7 @@ loadClass()
 # $?    1       ERROR
 loadClassOnce()
 {
-    local _bashor_temp_className=_BASHOR_CLASS_"$1"
+    local _bashor_temp_className=_BASHOR_LOADED_CLASS_"$1"
     [ -n "${!_bashor_temp_className}" ] || loadClass "$1"
     return $?
 }
@@ -144,6 +144,7 @@ _bashor_createExtendedClassFunctions()
         if ! issetFunction "$fNameNew"; then
             eval "$fNameNew"'() {
                 local CLASS_NAME='\'"$2"\'';
+                [ -n "$BASHOR_PROFILE" ] && _profileMethodRematch "$CLASS_NAME"
                 '"$fNameParent"' "$@";
                 return $?;
             }'
@@ -321,20 +322,26 @@ unserialize()
 # $?    0       OK
 # $?    1       ERROR
 _bashor_call()
-{    
-    requireParams R "$@" 
+{
+    requireParams R "$@"
     [ "$BASHOR_CLASS_AUTOLOAD" = 1 ] && __autoloadClass "$CLASS_NAME"
     
     local FUNCTION_NAME="$1"
     if issetFunction CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"; then
         shift
+        [ -n "$BASHOR_PROFILE" ] && _profileMethodBegin "$CLASS_NAME" "$FUNCTION_NAME"
         CLASS_"$CLASS_NAME"_"$FUNCTION_NAME" "$@"
-        return $?
+        local return=$?
+        [ -n "$BASHOR_PROFILE" ] && _profileMethodEnd "$CLASS_NAME" "$FUNCTION_NAME"
+        return $return
     fi
 
     if issetFunction CLASS_"$CLASS_NAME"___call; then
+        [ -n "$BASHOR_PROFILE" ] && _profileMethodBegin "$CLASS_NAME" __call
         CLASS_"$CLASS_NAME"___call "$@"
-        return $?
+        local return=$?
+        #[ -n "$BASHOR_PROFILE" ] && _profileMethodEnd "$CLASS_NAME" "$FUNCTION_NAME"
+        return $return
     fi
     
     local className=_BASHOR_CLASS_"$CLASS_NAME"

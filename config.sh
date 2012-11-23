@@ -43,6 +43,10 @@ BASHOR_DEBUG_LOG='';
 BASHOR_DEBUG_OUTPUT='1';
 BASHOR_DEBUG_BACKTRACE='1';
 
+# Profiling
+[ -z "$BASHOR_PROFILE" ] && BASHOR_PROFILE=
+[ -z "$BASHOR_PROFILE_FILE" ] && BASHOR_PROFILE_FILE=
+
 # Bash options
 set -B # enable brace expansion;
 set +a # disable allexport

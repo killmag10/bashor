@@ -17,15 +17,12 @@
 
 _PROFILE_START_TIMES=()
 _PROFILE_CALLER=()
+_PROFILE_REMATCH_CLASS=()
 _PROFILE_OUTPUT=()
 _PROFILE_OUTPUT_CALLS=()
 _PROFILE_TIME=()
+_PROFILE_LEVEL=0
 
-
-# [ -n "$BASHOR_PROFILE" ] && _profileMethodBegin
-
-#echo "$BASHOR_PROFILE"
-#exit;
 
 _profileStart()
 {
@@ -33,71 +30,84 @@ _profileStart()
         error "\$BASHOR_PROFILE = 1 put \$BASHOR_PROFILE_FILE not set!"
     fi
 
-    _PROFILE_LAST_FN='main'
-
     {
-        printf 'version: %s\n' '0.9.6'
+        printf 'version: %s\n' '1.0.0'
         printf 'cmd: %s\n' "$0"
         printf 'part: %s\n' '1'
-        printf '\n'
         printf 'events: %s\n' 'Time'
-       # printf 'fn=%s\n' 'main'
-       # printf "%s %s\n" "0" "0"
+        printf '\n'
     } > "$BASHOR_PROFILE_FILE"
     
-   _PROFILE_TIME[${#_PROFILE_TIME[@]}]=0
-   _PROFILE_OUTPUT[${#_PROFILE_OUTPUT[@]}]=''
-   _PROFILE_OUTPUT_CALLS[${#_PROFILE_OUTPUT_CALLS[@]}]=''
-   _PROFILE_CALLER[${#_PROFILE_CALLER[@]}]="main"
-   _PROFILE_START_TIMES[${#_PROFILE_START_TIMES[@]}]="`date +'%s%N'`"
+   _PROFILE_TIME[$_PROFILE_LEVEL]=0
+   _PROFILE_OUTPUT[$_PROFILE_LEVEL]=''
+   _PROFILE_OUTPUT_CALLS[$_PROFILE_LEVEL]=''
+   _PROFILE_CALLER[$_PROFILE_LEVEL]="main"
+   _PROFILE_REMATCH_CLASS[$_PROFILE_LEVEL]=
+   _PROFILE_START_TIMES[$_PROFILE_LEVEL]="`date +'%s%N'`"
    
    trap '_profileStop' EXIT
 }
 
 _profileMethodBegin()
 {
-   local currentCall="${1}:${2}"
-   _PROFILE_TIME[${#_PROFILE_TIME[@]}]=0
-   _PROFILE_OUTPUT[${#_PROFILE_OUTPUT[@]}]=''
-   _PROFILE_OUTPUT_CALLS[${#_PROFILE_OUTPUT_CALLS[@]}]=''
-   _PROFILE_CALLER[${#_PROFILE_CALLER[@]}]="$currentCall"
-   _PROFILE_START_TIMES[${#_PROFILE_START_TIMES[@]}]="`date +'%s%N'`"
+   ((_PROFILE_LEVEL++))
+   _PROFILE_START_TIMES[$_PROFILE_LEVEL]="`date +'%s%N'`"
+   _PROFILE_TIME[$_PROFILE_LEVEL]=0
+   _PROFILE_OUTPUT[$_PROFILE_LEVEL]=''
+   _PROFILE_OUTPUT_CALLS[$_PROFILE_LEVEL]=''
+   _PROFILE_CALLER[$_PROFILE_LEVEL]="${1}:${2}"
+   _PROFILE_REMATCH_CLASS[$_PROFILE_LEVEL]=
+}
+
+_profileMethodRematch()
+{
+    _PROFILE_REMATCH_CLASS[$_PROFILE_LEVEL]="$1"
 }
 
 _profileMethodEnd()
 {
-    local endTime="`date +'%s%N'`"
-    local currentCall="${1}::${2}"
-    local startTime="${_PROFILE_START_TIMES[${#_PROFILE_START_TIMES[@]}-1]}"
-    local usedTime=$(( endTime - startTime ))
-    local usedOwnTime=$(( usedTime - _PROFILE_TIME[$((${#_PROFILE_TIME[@]}-1))] ))
-
-    local filename=_BASHOR_LOADED_CLASS_"$1"
+    local className="${1}"
+    [ -n "${_PROFILE_REMATCH_CLASS[$_PROFILE_LEVEL]}" ] \
+        && className="${_PROFILE_REMATCH_CLASS[$_PROFILE_LEVEL]}"
+    local currentCall="${className}::${2}"
+    local filename=_BASHOR_LOADED_CLASS_"$className"
     filename="${!filename}"
     filename="`readlink -f "${filename}"`"
 
+    # FUNCTION
     local output=
     output+="fl=$filename"$'\n'
     output+="fn=$currentCall"$'\n'
-    output+="${BASH_LINENO[2]} $usedOwnTime"$'\n'
-    output+="${_PROFILE_OUTPUT_CALLS[$((${#_PROFILE_OUTPUT_CALLS[@]}-1))]}"$'\n'
-    output+="${_PROFILE_OUTPUT[$((${#_PROFILE_OUTPUT[@]}-1))]}"
-    _PROFILE_OUTPUT[$((${#_PROFILE_OUTPUT[@]}-2))]+="$output"
-    
+    # CALL
+    local parentTime=${_PROFILE_TIME[$((_PROFILE_LEVEL-1))]}
     local outputParent=
     outputParent+="cfl=$filename"$'\n'
     outputParent+="cfn=$currentCall"$'\n'
     outputParent+="calls=1 ${BASH_LINENO[2]}"$'\n'
-    outputParent+="${BASH_LINENO[2]} $usedTime"$'\n'
-    _PROFILE_OUTPUT_CALLS[$((${#_PROFILE_OUTPUT_CALLS[@]}-2))]+="$outputParent"
-    local parentTime=${_PROFILE_TIME[$((${#_PROFILE_TIME[@]}-2))]}
-    _PROFILE_TIME[$((${#_PROFILE_TIME[@]}-2))]=$(($parentTime + $usedTime))
 
-    unset _PROFILE_OUTPUT[$((${#_PROFILE_OUTPUT[@]}-1))]
-    unset _PROFILE_OUTPUT_CALLS[$((${#_PROFILE_OUTPUT_CALLS[@]}-1))]
-    unset _PROFILE_CALLER[$((${#_PROFILE_CALLER[@]}-1))]
-    unset _PROFILE_START_TIMES[$((${#_PROFILE_START_TIMES[@]}-1))]
-    unset _PROFILE_TIME[$((${#_PROFILE_TIME[@]}-1))]
+    local startTime endTime usedTime usedOwnTime
+    startTime="${_PROFILE_START_TIMES[$_PROFILE_LEVEL]}"
+    endTime="`date +'%s%N'`"
+    usedTime=$(( endTime - startTime ))
+    usedOwnTime=$(( usedTime - _PROFILE_TIME[$_PROFILE_LEVEL] ))
+
+    # FUNCTION
+    output+="${BASH_LINENO[2]} $usedOwnTime"$'\n'
+    output+="${_PROFILE_OUTPUT_CALLS[$((${#_PROFILE_OUTPUT_CALLS[@]}-1))]}"$'\n'
+    output+="${_PROFILE_OUTPUT[$((${#_PROFILE_OUTPUT[@]}-1))]}"
+    _PROFILE_OUTPUT[$((_PROFILE_LEVEL-1))]+="$output"
+    # CALL
+    outputParent+="${BASH_LINENO[2]} $usedTime"$'\n'
+    _PROFILE_OUTPUT_CALLS[$((_PROFILE_LEVEL-1))]+="$outputParent"
+    _PROFILE_TIME[$((_PROFILE_LEVEL-1))]=$(($parentTime + $usedTime))
+
+    unset _PROFILE_OUTPUT[$_PROFILE_LEVEL]
+    unset _PROFILE_OUTPUT_CALLS[$_PROFILE_LEVEL]
+    unset _PROFILE_CALLER[$_PROFILE_LEVEL]
+    unset _PROFILE_REMATCH_CLASS[$_PROFILE_LEVEL]
+    unset _PROFILE_START_TIMES[$_PROFILE_LEVEL]
+    unset _PROFILE_TIME[$_PROFILE_LEVEL]
+    ((_PROFILE_LEVEL--))
 }
 
 _profileStop()
@@ -118,11 +128,12 @@ _profileStop()
 
     printf '%s\n' "$output" >> "$BASHOR_PROFILE_FILE"
 
-    unset _PROFILE_OUTPUT[$((${#_PROFILE_OUTPUT[@]}-1))]
-    unset _PROFILE_OUTPUT_CALLS[$((${#_PROFILE_OUTPUT_CALLS[@]}-1))]
-    unset _PROFILE_CALLER[$((${#_PROFILE_CALLER[@]}-1))]
-    unset _PROFILE_START_TIMES[$((${#_PROFILE_START_TIMES[@]}-1))]
-    unset _PROFILE_TIME[$((${#_PROFILE_TIME[@]}-1))]
+    unset _PROFILE_OUTPUT[$_PROFILE_LEVEL]
+    unset _PROFILE_OUTPUT_CALLS[$_PROFILE_LEVEL]
+    unset _PROFILE_CALLER[$_PROFILE_LEVEL]
+    unset _PROFILE_REMATCH_CLASS[$_PROFILE_LEVEL]
+    unset _PROFILE_START_TIMES[$_PROFILE_LEVEL]
+    unset _PROFILE_TIME[$_PROFILE_LEVEL]
 }
 
 [ -n "$BASHOR_PROFILE" ] && _profileStart

@@ -522,6 +522,7 @@ checkParams()
     return 0
 }
 
+[ -n "$BASHOR_PROFILE" ] && . "$BASHOR_PATH_INCLUDES/functions/profile.sh"
 . "$BASHOR_PATH_INCLUDES/functions/class.sh"
 #. "$BASHOR_PATH_INCLUDES/functions/class/array.sh"
 
@@ -531,5 +532,3 @@ if [ "$BASHOR_USE_GETOPT" = 1 ]; then
 else
     . "$BASHOR_PATH_INCLUDES/functions/getopts.sh"
 fi
-
-. "$BASHOR_PATH_INCLUDES/functions/profile.sh"
