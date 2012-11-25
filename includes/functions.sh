@@ -26,12 +26,12 @@ copyArray()
 {
     requireParams RR "$@"
 
-    local data
-    data="`varExport "$1"`"
-    data="${data#[\"\']}"
-    data="${data%[\"\']}"
+    local _bashor_temp_key
+    eval '
+        for _bashor_temp_key in ${!'"$1"'[@]}; do
+            '"$2"'[$_bashor_temp_key]="${'"$1"'[$_bashor_temp_key]}"
+        done'
     
-    eval "$2"'='"$data"
     return $?
 }
 
@@ -44,7 +44,7 @@ copyArray()
 varExport()
 {
     requireParams R "$@"
-    printf '%s\n' "`declare -p "$1" | sed '1s/[^=]\+=//'`"
+    declare -p "$1" | sed '1s/[^=]\+=//'
     return $?
 }
 
@@ -520,6 +520,21 @@ checkParams()
     done
     
     return 0
+}
+
+##
+# Helper for profiling
+#
+# $1    string  class name
+# $2    string  function/method name
+# $3    string  levels back to call
+# $?    0       OK
+# $?    1       ERROR
+_bashor_profileMethodHelper()
+{
+    shift 3
+    "$@"
+    return $?
 }
 
 [ -n "$BASHOR_PROFILE" ] && . "$BASHOR_PATH_INCLUDES/functions/profile.sh"

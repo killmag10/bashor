@@ -28,8 +28,7 @@ _bashor_objectLoadData()
     
     local dataLine="$(printf '%s' "$2" | grep -n -m 1 '^DATA=' | sed 's/:.*$//')"
     local value="`printf '%s' "$2" | tail -n +$((++dataLine))`"
-    #printf '%s <<<\n' "$*" >&3
-    eval 'declare -g -A '"$1"'='"$value"
+    eval 'declare -g -A '"$1"="$value"
     return $?
 }
 
@@ -93,8 +92,9 @@ clone()
     local CLASS_NAME="$1"_CLASS
     CLASS_NAME="${!CLASS_NAME}"
     declare -g "${!2}"'_CLASS'="$CLASS_NAME"
-    declare -g -A "${!2}"'_DATA=()'
+    declare -g -A "${!2}"'_DATA='
     copyArray "$1"'_DATA' "${!2}"'_DATA'
+    #eval 'declare -g -A "${!2}"_DATA='"`varExport "$1"_DATA`"
 
     if issetFunction CLASS_"$CLASS_NAME"___clone; then
         object "${!2}" __clone
@@ -182,9 +182,7 @@ _bashor_objectGet()
 {
     requireParams RR "$@"
 
-    local IFS=$'\n'
-    #eval 'printf '%s' "${'"$1"'[*]}"' | head >&3
-    
+    local IFS=$'\n'    
     if _bashor_objectIsset "$1" "$2"; then
         eval 'printf '%s' "${'"$1"'["$2"]}"'
         return 0
@@ -239,6 +237,28 @@ _bashor_objectKey()
     printf '%s' "${data[$2]}"
     return $?
 }
+
+##
+# Get the values of the object vars.
+#
+# $1    string  var name
+# $2    integer pos in list
+# $?    0       OK
+# $?    1       ERROR
+# &1    string  key
+_bashor_objectValue()
+{
+    requireParams RR "$@"
+    
+    local IFS=$'\n'
+    local -a data
+    local IFS='|'
+    eval 'data=(${'"$1"'[@]})'
+    [ "$2" -ge "${#data[@]}" ] && return 1;
+    printf '%s' "${data[$2]}"
+    return $?
+}
+
 
 ##
 # Check if is set in object var.

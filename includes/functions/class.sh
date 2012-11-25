@@ -144,7 +144,7 @@ _bashor_createExtendedClassFunctions()
         if ! issetFunction "$fNameNew"; then
             eval "$fNameNew"'() {
                 local CLASS_NAME='\'"$2"\'';
-                [ -n "$BASHOR_PROFILE" ] && _profileMethodRematch "$CLASS_NAME"
+                [ -n "$BASHOR_PROFILE" ] && _bashor_profileMethodRematch "$CLASS_NAME"
                 '"$fNameParent"' "$@";
                 return $?;
             }'
@@ -329,19 +329,13 @@ _bashor_call()
     local FUNCTION_NAME="$1"
     if issetFunction CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"; then
         shift
-        [ -n "$BASHOR_PROFILE" ] && _profileMethodBegin "$CLASS_NAME" "$FUNCTION_NAME"
-        CLASS_"$CLASS_NAME"_"$FUNCTION_NAME" "$@"
-        local return=$?
-        [ -n "$BASHOR_PROFILE" ] && _profileMethodEnd "$CLASS_NAME" "$FUNCTION_NAME"
-        return $return
+        _bashor_profileMethodHelper "$CLASS_NAME" "$FUNCTION_NAME" 2 CLASS_"$CLASS_NAME"_"$FUNCTION_NAME" "$@"
+        return $?
     fi
 
     if issetFunction CLASS_"$CLASS_NAME"___call; then
-        [ -n "$BASHOR_PROFILE" ] && _profileMethodBegin "$CLASS_NAME" __call
-        CLASS_"$CLASS_NAME"___call "$@"
-        local return=$?
-        #[ -n "$BASHOR_PROFILE" ] && _profileMethodEnd "$CLASS_NAME" "$FUNCTION_NAME"
-        return $return
+        _bashor_profileMethodHelper "$CLASS_NAME" __call 2 CLASS_"$CLASS_NAME"___call "$@"
+        return $?
     fi
     
     local className=_BASHOR_CLASS_"$CLASS_NAME"
