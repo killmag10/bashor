@@ -67,6 +67,94 @@ Add your class paths to **BASHOR\_PATH** seperate with ';'.
     * '' : Off.
     * '1' : On. (default)
 
+### Writing classes
+
+#### Method
+
+* Function Name:
+    1. "CLASS_"
+    1. Your class name. Folders seperated by "_".
+    1. "_" +  Method name.
+        * Protected starts with an extra "_" (tow with normal seperator).
+        * Magic methods starts with "__" (three with normal seperator).
+
+#### Magic methods
+
+* __load : Called on class loding (For static variables).
+* __construct : Called on object creation (new).
+* __destruct : Called on object destruction (remove).
+* __sleep : Called on object serialization (serialize).
+* __wakeup : Called on object unserialization (unserialize).
+
+#### Example
+
+    ```
+    ##
+    # Loader
+    #
+    # Called on class loding
+    CLASS_Class___load()
+    {
+        requireStatic
+        return 0
+    }
+
+    ##
+    # Constructor
+    #
+    # Called on object creation (new)
+    CLASS_Class___construct()
+    {
+        requireObject
+        return 0
+    }
+
+    ##
+    # Destructor
+    #
+    # Called on object destruction (remove)
+    CLASS_Class___destruct()
+    {
+        requireObject
+        return 0
+    }
+
+    ##
+    # Make object ready for sleep.
+    #
+    # Called on object serialization (serialize)
+    CLASS_Class___sleep()
+    {
+        requireObject
+        return 0
+    }
+
+    ##
+    # Make object ready for wakeup.
+    #
+    # Called on object unserialization (unserialize)
+    CLASS_Class___wakeup()
+    {
+        requireObject
+        return 0
+    }
+
+    ##
+    # Check if the class has the over given method.
+    #
+    # $1    string  method name
+    # $?    0:OK
+    # $?    1:ERROR
+    CLASS_Class_hasMethod()
+    {
+        requireParams R "$@"
+        
+        issetFunction CLASS_"$CLASS_TOP_NAME"_"$1"
+        return $?
+    }
+    ```
+
 ## More
 
 More will follow in the next days...
+
