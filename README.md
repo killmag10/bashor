@@ -20,18 +20,21 @@ If you have attention to performance use nodejs. :p
 ## Getting Started
 
 * Include bashor in your main script file.
-    BASE_DIR=`printf '%s' "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
+    
+    ```
+    BASE_DIR=\`printf '%s' "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'\`;
     if [[ ! "$BASE_DIR" =~ ^/ ]]; then
-        BASE_DIR=`printf '%s' "$PWD/$BASE_DIR" | sed 's#/\.\?$##'`;
+        BASE_DIR=\`printf '%s' "$PWD/$BASE_DIR" | sed 's#/\.\?$##'\`;
     fi
     . "$BASE_DIR/loader.sh";
+    ```
 
 ### Configuration
 
-> Set the environment variable **BASHOR\_PATH\_CONFIG** to load this as config
+Set the environment variable **BASHOR\_PATH\_CONFIG** to load this as config
 script.
 
-> Add your class paths to **BASHOR\_PATH** seperate with ';'.
+Add your class paths to **BASHOR\_PATH** seperate with ';'.
 
 #### Performance
 
