@@ -1,6 +1,15 @@
 RM:= rm
 MAN:= man
 
+.PHONY: \
+	all \
+	install \
+	uninstall \
+	clean \
+	test \
+	man \
+	generateMan
+
 all:
 
 install:
@@ -10,8 +19,12 @@ uninstall:
 	# Nothing to do.
 
 clean:
-	# Remove generated man page
+	# Remove generated man page.
 	$(RM) docs/man/bashor.7
+
+test:
+	# Run tests.
+	./test
 
 man: generateMan
 	$(MAN) -l docs/man/bashor.7

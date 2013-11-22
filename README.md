@@ -169,6 +169,11 @@ Example:
         return $?
     }
     ```
+### Run tests
+
+To run the tests run:
+
+    make test
 
 ## More
 

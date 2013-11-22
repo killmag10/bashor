@@ -34,7 +34,7 @@ export BASHOR_PATHS_CLASS="${BASHOR_PATHS_CLASS}${NL}${TEST_DIR}/lib";
 doTest()
 {
     echo "##### Test: $1 #####";
-    . ${TEST_DIR}/${1}.sh;
+    . "${TEST_DIR}/${1}.sh";
 
     if [ -d "$TEST_TEMP_DIR/" ]; then
         rm -rf "$TEST_TEMP_DIR/"*
