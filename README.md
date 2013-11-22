@@ -76,12 +76,11 @@ Add your class paths to **BASHOR\_PATH** seperate with ':'.
 ### Use Classes/Objects
 
 Example:
-    ```
+
     new Bashor_List Data
     object "$Data" set "test" "blub 123blub"
     res=`object "$Data" get "test"`
     remove "$Data"
-    ```
 
 ### Writing classes
 
@@ -104,7 +103,6 @@ Example:
 
 #### Example
 
-    ```
     ##
     # Loader
     #
@@ -168,7 +166,7 @@ Example:
         issetFunction CLASS_"$CLASS_TOP_NAME"_"$1"
         return $?
     }
-    ```
+
 ### Run tests
 
 To run the tests run:
