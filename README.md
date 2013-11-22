@@ -40,7 +40,7 @@ For the API Documentation run:
 Set the environment variable **BASHOR\_PATH\_CONFIG** to load this as config
 script.
 
-Add your class paths to **BASHOR\_PATH** seperate with ';'.
+Add your class paths to **BASHOR\_PATH** seperate with ':'.
 
 #### Performance
 
