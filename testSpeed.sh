@@ -26,7 +26,7 @@ export TEST_RESOURCE_DIR="$TEST_DIR/resources";
 . "$BASE_DIR/loader.sh";
 
 export BASHOR_LOG_FILE="$TEST_TEMP_DIR/log.log";
-export BASHOR_PATHS_CLASS="${BASHOR_PATHS_CLASS}${NL}${TEST_DIR}/lib";
+export BASHOR_PATHS_CLASS="${TEST_DIR}/lib:${BASHOR_PATHS_CLASS}";
 
 loadClassOnce 'Null';
 echo -n 'CLASS: ';

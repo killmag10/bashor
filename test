@@ -29,7 +29,7 @@ export TESTS_OK='0';
 
 export BASHOR_LOG_FILE="$TEST_TEMP_DIR/log.log";
 
-export BASHOR_PATHS_CLASS="${BASHOR_PATHS_CLASS}${NL}${TEST_DIR}/lib";
+export BASHOR_PATHS_CLASS="${TEST_DIR}/lib:${BASHOR_PATHS_CLASS}";
 
 doTest()
 {

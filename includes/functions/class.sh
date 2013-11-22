@@ -25,7 +25,7 @@ loadClass()
 {
     requireParams R "$@"
     
-    local _bashor_temp_path _bashor_temp_filename IFS=$'\n'
+    local _bashor_temp_path _bashor_temp_filename IFS=':'
     for _bashor_temp_path in $BASHOR_PATHS_CLASS; do
         _bashor_temp_filename="$_bashor_temp_path/${1//_//}"'.sh'
         [ -f "$_bashor_temp_filename" ] || continue
