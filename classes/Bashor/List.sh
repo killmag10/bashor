@@ -61,24 +61,6 @@ CLASS_Bashor_List_add()
 }
 
 ##
-# Get the list in Lines.
-#
-# $?    0:EXISTS    1:NOT FOUND
-# &1    string Data 
-CLASS_Bashor_List_asLines()
-{
-    requireObject
-    
-    this call rewind
-    while this call valid; do
-        this call current        
-        this call next
-    done
-    return 0
-}
-
-
-##
 # Clear the list.
 #
 # $?    0:OK    1:ERROR

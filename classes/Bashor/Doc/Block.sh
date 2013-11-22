@@ -68,7 +68,7 @@ CLASS_Bashor_Doc_Block_parseFile()
     requireObject
     requireParams R "$@"
         
-    this call parseString "`cat "$1"`";
+    this call parseString "`cat "$1"`"
     return 0
 }
 
@@ -83,38 +83,37 @@ CLASS_Bashor_Doc_Block_parseString()
     requireObject
     requireParams R "$@"
     
-    local NL=$'\n';
-    local content="$1";
+    local NL=$'\n'
+    local content="$1"
     local docBlock=
     local inDocBlock=
     
-    local line IFS=$'\n';
+    local line IFS=$'\n'
     for line in $content; do        
         # Doc Block Begins?
         if [[ "$line" =~ ^[[:space:]]*\#\# ]]; then
-            inDocBlock=1;
+            inDocBlock=1
             docBlock=
-            continue;
+            continue
         fi
         
         # Not in a Doc Block?
-        [ -z "$inDocBlock" ] && continue;
+        [ -z "$inDocBlock" ] && continue
         
-        if [[ -z "$line" ]]; then
-            continue;
+        if [ -z "$line" ]; then
+            continue
         fi
         
         if [[ "$line" =~ ^[[:space:]]*\# ]]; then
             line="`printf '%s\n' "$line" | sed 's/^[[:space:]]*\#[[:space:]]*//'`"
-            docBlock="${docBlock}${line}${NL}"
-            continue;
+            docBlock="${docBlock}${line}"$'\n'
+            continue
         fi
                 
         this call parseDocBlock "$docBlock" "$line"
-        inDocBlock=;
-        docBlock=;
-        
-    done;
+        inDocBlock=
+        docBlock=
+    done
     
     return 0
 }

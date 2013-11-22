@@ -38,7 +38,7 @@ CLASS_Bashor_Doc_Block_Item_setDoc()
     requireObject
     requireParams R "$@"
     
-    this set docBlock "$1";
+    this set docBlock "$1"
     return 0
 }
 
@@ -53,7 +53,7 @@ CLASS_Bashor_Doc_Block_Item_setLineAfter()
     requireObject
     requireParams R "$@"
     
-    this set lineAfter "$1";
+    this set lineAfter "$1"
     return 0
 }
 
@@ -68,7 +68,7 @@ CLASS_Bashor_Doc_Block_Item_setType()
     requireObject
     requireParams R "$@"
     
-    this set type "$1";
+    this set type "$1"
     return 0
 }
 
@@ -82,7 +82,7 @@ CLASS_Bashor_Doc_Block_Item_getLineAfter()
 {
     requireObject
     
-    this get lineAfter;
+    this get lineAfter
     return 0
 }
 
@@ -96,7 +96,7 @@ CLASS_Bashor_Doc_Block_Item_getType()
 {
     requireObject
     
-    this get type;
+    this get type
     return 0
 }
 
@@ -110,7 +110,7 @@ CLASS_Bashor_Doc_Block_Item_getDoc()
 {
     requireObject
     
-    this get docBlock;
+    this get docBlock
     return 0
 }
 

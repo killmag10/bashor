@@ -282,7 +282,7 @@ debug()
 }
 
 ##
-# Isset a var | function
+# Is set a var | function
 #
 # $1    string  the type (var|function)
 # $2    string  name
@@ -311,7 +311,7 @@ isset()
 }
 
 ##
-# Isset a var
+# Is set a var
 #
 # $1    string  name
 # $?    0       set
@@ -323,7 +323,7 @@ issetVar()
 }
 
 ##
-# Isset a function
+# Is set a function
 #
 # $1    string  name
 # $?    0       set
@@ -351,6 +351,11 @@ inList()
     return 1
 }
 
+##
+# Encode data with the configured coding mehtod.
+#
+# &0    string  data to encode
+# &1    string  encodet data
 encodeData()
 {
     case "$BASHOR_CODEING_METHOD" in
@@ -368,6 +373,11 @@ encodeData()
     esac
 }
 
+##
+# Decode data with the configured coding mehtod.
+#
+# &0    string  data to decode
+# &1    string  decodet data
 decodeData()
 {
     case "$BASHOR_CODEING_METHOD" in
@@ -523,7 +533,7 @@ checkParams()
 }
 
 ##
-# Helper for profiling
+# Helper for profiling.
 #
 # $1    string  class name
 # $2    string  function/method name

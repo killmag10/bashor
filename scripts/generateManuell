@@ -48,7 +48,7 @@ echo '
 .TH Bashor 7 "'"$(date +'%Y-%m-%d')"'" "Lars Dietrich" "Bashor Coding Commands"
 .SH Bashor
 .B Bashor
-\- an pseudo object extension for bash
+\- an pseudo object oriented framwork for the bash.
 
 .PD 0
 

@@ -68,20 +68,20 @@ CLASS_Bashor_Doc_Block_Decorator_Man__getFunction()
     local Item
     Item="`this get item`"
     
-    printf '%s\n' '.TP';
-    printf '%s\n' '.B '"`object "$Item" getName`"'()';
-    printf '%s\n' '.RS'
+    printf '.TP\n'
+    printf '.B %s\n' "`object "$Item" getName`"'()'
+    printf '.RS\n'
     
     local regex replace
-    local line IFS=$'\n';
+    local line IFS=$'\n'
     for line in `object "$Item" getDoc`; do        
         if [[ "$line" =~ ^[[:space:]]*[\$\&][[:alnum:]_@]+ ]]; then
-            printf '%s\n' '.HP'
+            printf '.HP\n'
             regex='^[[:space:]]*\([\$\&][[:alnum:]_@]\+\)[[:space:]]\+\([[:alpha:]|]\+\)[[:space:]]\+'
             replace='.B \1\n.I \2\n'
             printf '%s\n' "$line" \
                 | sed 's/'"$regex"'/'"$replace"'/'
-            continue;
+            continue
         fi        
         if [[ "$line" =~ ^[[:space:]]*\$\? ]]; then
             printf '%s\n' '.HP'
@@ -89,18 +89,17 @@ CLASS_Bashor_Doc_Block_Decorator_Man__getFunction()
             replace='.B \1\n.I \2\n'
             printf '%s\n' \
                 | sed 's/'"$regex"'/'"$replace"'/'
-            continue;
+            continue
         fi
         if [[ -z "$line" ]]; then
             echo
-            continue;
+            continue
         fi
-        printf '%s\n' '.HP'
+        printf '.HP\n'
         printf '%s\n' "$line"
     done  
     
-    printf '%s\n' '.RE'
-    echo
+    printf '%s\n\n' '.RE'
     
     return 0
 }

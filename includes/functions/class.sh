@@ -16,7 +16,7 @@
 ################################################################################
 
 ##
-# Load class.
+# Load a class.
 #
 # $1    string  namespace
 # $?    0       OK
@@ -41,7 +41,7 @@ loadClass()
 }
 
 ##
-# Load class once.
+# Load class only once.
 #
 # $1    string  namespace
 # $?    0       OK
@@ -54,7 +54,9 @@ loadClassOnce()
 }
 
 ##
-# Autoloader for Classes
+# Autoloader for Classes.
+#
+# This function will be called if a class need to be auto loadet.
 #
 # $1    string  class
 # $?    0       OK
@@ -68,7 +70,7 @@ __autoloadClass()
 ##
 # Hook for class routing.
 #
-# $CLASS_NAME   string  class name what will be call
+# $CLASS_NAME   string  class name what will be called.
 # $?    0       OK
 # $?    1       ERROR
 __hookClassRouter()
@@ -78,6 +80,8 @@ __hookClassRouter()
 
 ##
 # Add Class functions.
+#
+# Add all function with the class name to the class.
 #
 # $1    string  class
 # $@    mixed  params
@@ -112,7 +116,9 @@ addClass()
 ##
 # Add standart class.
 #
-# $1    string  class
+# Set the basic class to a class as his parent.
+#
+# $1    string  class name
 # $?    0       OK
 # $?    1       ERROR
 _bashor_addStdClass()
@@ -128,7 +134,10 @@ _bashor_addStdClass()
 ##
 # Create class functions for extended class.
 #
-# $1    string  new class
+# Create proxy functions in the child class to have a fast redirect to
+# the parent class.
+#
+# $1    string  child class
 # $2    string  parent class
 # $?    0       OK
 # $?    1       ERROR
@@ -154,6 +163,8 @@ _bashor_createExtendedClassFunctions()
 
 ##
 # Call a class method
+#
+# Example: class My_Class doSomthing '123'
 #
 # $1    string  class name
 # $2    string  function name
@@ -223,6 +234,8 @@ _bashor_objectSaveData()
 
 ##
 # Call a object method
+#
+# Example: object "$pointerVar" doSomthing '123'
 #
 # $1    string  pointer
 # $2    string  function name
@@ -315,7 +328,9 @@ unserialize()
 }
 
 ##
-# Call a object / static method
+# Call a object / static method.
+#
+# Internal function to call methods.
 #
 # $1    string  function name
 # $@    mixed   method params
@@ -342,12 +357,14 @@ _bashor_call()
     [ -z "${!className}" ] \
          && error "No class $CLASS_NAME found!"
     
-    error "No method \"$FUNCTION_NAME\" in \"$CLASS_NAME\"!"
+    error "No method \"${FUNCTION_NAME}\" in \"${CLASS_NAME}\"!"
     return 1
 }
 
 ##
 # Create a new object from class.
+#
+# Example: new My_Class myPointer '123'
 #
 # $1    string  class name
 # $2    string  var name
@@ -377,6 +394,9 @@ new()
 ##
 # Extends a class.
 #
+# Write extends in the top, before the first method of the class will be
+# defined.
+#
 # $1    string  class name
 # $2    string  parent class name
 # $?    0       OK
@@ -392,10 +412,10 @@ extends()
 }
 
 ##
-# Clone object.
+# Clone a object.
 #
-# $1    string  object name
-# $2    string  object name
+# $1    string  object pointer
+# $2    string  object variable name
 # $?    *       all of class method __clone
 clone()
 {    
@@ -419,7 +439,7 @@ clone()
 ##
 # Remove a object.
 #
-# $1    tring  pointer
+# $1    string  pointer
 # $?    0       OK
 # $?    1       ERROR
 remove()
@@ -446,6 +466,8 @@ remove()
 
 ##
 # Generate a pointer id.
+#
+# Internal function to generate a pointer.
 #
 # $1    string  output var name
 # $2    string  pointer type

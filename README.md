@@ -28,6 +28,12 @@ If you have attention to performance use nodejs. :p
     fi
     . "$BASE_DIR/loader.sh";
     ```
+    
+### API Documentation
+
+For the API Documentation run:
+
+    make man
 
 ### Configuration
 
@@ -66,6 +72,16 @@ Add your class paths to **BASHOR\_PATH** seperate with ';'.
 * BASHOR\_ERROR\_CLASS : Use **Bashor\_ErrorHandler** class for error handling.
     * '' : Off.
     * '1' : On. (default)
+
+### Use Classes/Objects
+
+Example:
+    ```
+    new Bashor_List Data
+    object "$Data" set "test" "blub 123blub"
+    res=`object "$Data" get "test"`
+    remove "$Data"
+    ```
 
 ### Writing classes
 
