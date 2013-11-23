@@ -20,7 +20,7 @@ If you have attention to performance use nodejs. :p
 ## Getting Started
 
 * Include bashor in your main script file.
-    
+
     ```
     BASE_DIR=\`printf '%s' "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'\`;
     if [[ ! "$BASE_DIR" =~ ^/ ]]; then
@@ -28,7 +28,7 @@ If you have attention to performance use nodejs. :p
     fi
     . "$BASE_DIR/loader.sh";
     ```
-    
+
 ### API Documentation
 
 For the API Documentation run:
@@ -162,7 +162,7 @@ Example:
     CLASS_Class_hasMethod()
     {
         requireParams R "$@"
-        
+
         issetFunction CLASS_"$CLASS_TOP_NAME"_"$1"
         return $?
     }
@@ -172,8 +172,4 @@ Example:
 To run the tests run:
 
     make test
-
-## More
-
-More will follow in the next days...
 
