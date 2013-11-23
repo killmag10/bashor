@@ -44,7 +44,7 @@ copyArray()
 varExport()
 {
     requireParams R "$@"
-    declare -p "$1" | sed '1s/[^=]\+=//'
+    declare -p "$1" | sed '1s/^[^=]\+=//'
     return $?
 }
 
