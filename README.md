@@ -72,6 +72,15 @@ Add your class paths to **BASHOR\_PATH** seperate with ':'.
 * BASHOR\_ERROR\_CLASS : Use **Bashor\_ErrorHandler** class for error handling.
     * '' : Off.
     * '1' : On. (default)
+    
+#### Profiling
+
+The profiling format is valgrind (You can view it with kcachgrind).
+
+* BASHOR\_PROFILE : Use profiling.
+    * '' : Off. (default)
+    * '1' : On.
+* BASHOR\_PROFILE\_FILE : File path to save profiling.
 
 ### Use Classes/Objects
 
