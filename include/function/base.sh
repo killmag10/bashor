@@ -105,9 +105,9 @@ prepareOutput()
 # $?    1       ERROR
 getBacktrace()
 {    
-    local -i res=1
+    local res=1
     local -i pos=0
-    local remove="$1"
+    local -i remove="$1"
     while [ -n "$res" ]; do
         res=$(caller "$((pos+remove))")
         [ -n "$res" ] && printf '%s\n' "$((pos+1)): $res"
@@ -209,8 +209,10 @@ _bashor_handleError()
     )
     
     if [ "$showOutput" = 1 ]; then
-        printf '%s\n' "$message" | sed "s/^/$prefix/g"
-        [ -n "$backtrace" ] && printf '%s\n' "$backtrace"
+        {
+            printf '%s\n' "$message" | sed "s/^/$prefix/g"
+            [ -n "$backtrace" ] && printf '%s\n' "$backtrace" 
+        } 1>&3
     fi
     
     if [ "$doLog" = 1 ]; then
