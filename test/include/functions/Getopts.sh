@@ -15,47 +15,35 @@
 # @version      $Id$
 ################################################################################
 
-. "$BASHOR_PATH_INCLUDES/functions/getopt.sh";
+. "$BASHOR_PATH_INCLUDES/function/getopts.sh";
 
 nl=`echo -e '\n\r'`;
 
 function test_getopts()
 {   
-    optSetOpts "abc:df:" "eins:,zwei:,drei";
+    optSetOpts "abc:df:";
     optSetArgs "$@";
-    res=`optGetArgs`;
-    checkSimple "optGetArgs" "$res" " -d -c '123' --zwei 'test' -f '456 789' -b -- 'aaa bbb' 'ccc' '--' 'gg'";
 
-    optIsset "b";
+    optIsset "b";    
     checkSimple "optIsset is set" "$?" "0";
     
     optIsset "a";    
     checkSimple "optIsset not set" "$?" "1";
     
-    res=`optValue "c"`;
-    checkSimple "optValue 1" "$?" "0";
-    checkSimple "optValue data 1" "$res" "123";
-    
-    res=`optValue "f"`;
-    checkSimple "optValue 2" "$?" "0";
-    checkSimple "optValue data 2" "$res" "456 789";
-    
-	res=`optValue "zwei"`;
-    checkSimple "optValue long" "$?" "0";
-    checkSimple "optValue data long" "$res" "test";
+    res=`optValue "c"`;    
+    checkSimple "optValue" "$?" "0";
+    checkSimple "optValue data" "$res" "123";
     
     res=`optKeys`;
     checkSimple "optKeys" "$res" "d
 c
-zwei
 f
 b";
 
     res=`optList`;
     checkSimple "optList" "$res" "d=
 c=123
-zwei=test
-f=456 789
+f=456
 b=";
 
     res=`argList`;
@@ -75,4 +63,4 @@ gg";
     checkSimple "argIsset not set" "$?" "1";
 }
 
-test_getopts "aaa bbb" "ccc" -d -c "123" --zwei test -f "456 789" -b -- -- gg
+test_getopts "aaa bbb" "ccc" -d -c "123" -f "456" -b -- -- gg

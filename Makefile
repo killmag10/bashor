@@ -1,5 +1,6 @@
 RM:= rm
 MAN:= man
+PATH_BIN:= bin
 
 .PHONY: \
 	all \
@@ -20,17 +21,25 @@ uninstall:
 
 clean:
 	# Remove generated man page.
-	$(RM) docs/man/bashor.7
+	$(RM) doc/man/bashor.7
 
 test:
 	# Run tests.
-	./test
+	$(PATH_BIN)/test
+
+testGraphic:
+	# Run tests.
+	$(PATH_BIN)/testGraphic
+
+testGraphicExtended:
+	# Run tests.
+	$(PATH_BIN)/testGraphicExtended
 
 man: generateMan
-	$(MAN) -l docs/man/bashor.7
+	$(MAN) -l doc/man/bashor.7
 
-generateMan: docs/man/bashor.7
+generateMan: doc/man/bashor.7
 
-docs/man/bashor.7:
+doc/man/bashor.7:
 	# Generate the man page, this will take some time.
-	./scripts/generateManuell > docs/man/bashor.7
+	$(PATH_BIN)/generateManuell > doc/man/bashor.7

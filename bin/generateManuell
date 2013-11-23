@@ -55,10 +55,10 @@ echo '
 ';
 
 echo '.SH GENERAL FUNCTIONS';
-parseFile "$BASE_DIR/../includes/functions.sh"
+parseFile "$BASE_DIR/../include/function.sh"
 
 echo '.SH CLASS / OBJECT FUNCTIONS';
-parseFile "$BASE_DIR/../includes/functions/class.sh"
+parseFile "$BASE_DIR/../include/function/class.sh"
 
 echo '.SH BASE CLASS METHODS';
-parseFile "$BASE_DIR/../includes/Class.sh"
+parseFile "$BASE_DIR/../lib/Class.sh"

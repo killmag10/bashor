@@ -19,12 +19,12 @@ BASE_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
 if [[ ! "$BASE_DIR" =~ ^/ ]]; then
     BASE_DIR=`echo "$PWD/$BASE_DIR" | sed 's#/\.\?$##'`;
 fi
-TEST_DIR="$BASE_DIR/tests";
+TEST_DIR="$BASE_DIR/../tests";
 TEST_TEMP_DIR="$TEST_DIR/temp";
 TEST_RESOURCE_DIR="$TEST_DIR/resources";
 TESTS_FAIL='0';
 
-. "$BASE_DIR/loader.sh"
+. "$BASE_DIR/../loader.sh"
 
 loadClass 'Bashor_Terminal';
 

@@ -546,14 +546,3 @@ _bashor_profileMethodHelper()
     "$@"
     return $?
 }
-
-[ -n "$BASHOR_PROFILE" ] && . "$BASHOR_PATH_INCLUDES/functions/profile.sh"
-. "$BASHOR_PATH_INCLUDES/functions/class.sh"
-#. "$BASHOR_PATH_INCLUDES/functions/class/array.sh"
-
-# load opt function
-if [ "$BASHOR_USE_GETOPT" = 1 ]; then
-    . "$BASHOR_PATH_INCLUDES/functions/getopt.sh"
-else
-    . "$BASHOR_PATH_INCLUDES/functions/getopts.sh"
-fi

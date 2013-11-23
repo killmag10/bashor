@@ -19,17 +19,17 @@ BASE_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
 if [[ ! "$BASE_DIR" =~ ^/ ]]; then
     BASE_DIR=`echo "$PWD/$BASE_DIR" | sed 's#/\.\?$##'`;
 fi
-export TEST_DIR="$BASE_DIR/tests";
+export TEST_DIR="$BASE_DIR/../test";
 export TEST_TEMP_DIR="$TEST_DIR/temp";
-export TEST_RESOURCE_DIR="$TEST_DIR/resources";
+export TEST_RESOURCE_DIR="$TEST_DIR/resource";
 export TESTS_FAIL='0';
 export TESTS_OK='0';
 
-. "$BASE_DIR/loader.sh";
+. "$BASE_DIR/../loader.sh";
 
 export BASHOR_LOG_FILE="$TEST_TEMP_DIR/log.log";
 
-export BASHOR_PATHS_CLASS="${TEST_DIR}/lib:${BASHOR_PATHS_CLASS}";
+export BASHOR_PATHS_CLASS="${TEST_DIR}/mock:${BASHOR_PATHS_CLASS}";
 
 doTest()
 {
@@ -88,31 +88,31 @@ checkRegexLines()
 
 SECONDS=0
 
-doTest 'includes/functions/class';
-doTest 'includes/Class';
+doTest 'include/functions/class';
+doTest 'include/functions/Getopt';
+doTest 'include/functions/Getopts';
 
-doTest 'classes/Object';
-doTest 'classes/Getopt';
-doTest 'classes/Getopts';
-doTest 'classes/List';
-doTest 'classes/List/Iterable';
-doTest 'classes/Param';
-doTest 'classes/Cache/File';
-doTest 'classes/Color';
-doTest 'classes/Lock';
-doTest 'classes/Hash';
-doTest 'classes/Math';
-doTest 'classes/Registry';
-doTest 'classes/Data';
-doTest 'classes/Session';
-doTest 'classes/String';
-doTest 'classes/Log';
-doTest 'classes/Escape';
-doTest 'classes/Temp';
-doTest 'classes/Terminal';
-doTest 'classes/Config/Ini';
-doTest 'classes/Reflection/Class';
-doTest 'classes/Reflection/Property';
-doTest 'classes/Reflection/Method';
+doTest 'lib/Class';
+doTest 'lib/Bashor/Object';
+doTest 'lib/Bashor/List';
+doTest 'lib/Bashor/List/Iterable';
+doTest 'lib/Bashor/Param';
+doTest 'lib/Bashor/Cache/File';
+doTest 'lib/Bashor/Color';
+doTest 'lib/Bashor/Lock';
+doTest 'lib/Bashor/Hash';
+doTest 'lib/Bashor/Math';
+doTest 'lib/Bashor/Registry';
+doTest 'lib/Bashor/Data';
+doTest 'lib/Bashor/Session';
+doTest 'lib/Bashor/String';
+doTest 'lib/Bashor/Log';
+doTest 'lib/Bashor/Escape';
+doTest 'lib/Bashor/Temp';
+doTest 'lib/Bashor/Terminal';
+doTest 'lib/Bashor/Config/Ini';
+doTest 'lib/Bashor/Reflection/Class';
+doTest 'lib/Bashor/Reflection/Property';
+doTest 'lib/Bashor/Reflection/Method';
 
 printFinalResult;

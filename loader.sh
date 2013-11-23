@@ -20,11 +20,12 @@ if [[ ! "$BASHOR_PATH" =~ ^/ ]]; then
 fi
 
 # Set paths
-BASHOR_PATH_INCLUDES="${BASHOR_PATH}/includes";
-BASHOR_PATHS_CLASS="${BASHOR_PATH}/classes";
+BASHOR_PATH_INCLUDES="${BASHOR_PATH}/include";
+BASHOR_PATH_CLASSES="${BASHOR_PATH}/lib";
+BASHOR_PATHS_CLASS="${BASHOR_PATH_CLASSES}";
 
 # Add Constants
-. "${BASHOR_PATH_INCLUDES}/constants.sh";
+. "${BASHOR_PATH_INCLUDES}/constant.sh";
 
 # Defaults
 NL=$'\n'
@@ -32,14 +33,14 @@ NL=$'\n'
 BASHOR_BACKTRACE_REMOVE=0;
 
 # Load Config
-. "${BASHOR_PATH}/config.sh"
+. "${BASHOR_PATH_INCLUDES}/config.sh"
 [ -n "$BASHOR_PATH_CONFIG" ] && . "$BASHOR_PATH_CONFIG";
 
 # Add debuging channel
 exec 3>&2;
 
-# Load general functions
-. "${BASHOR_PATH_INCLUDES}/functions.sh";
+# Load functions
+. "${BASHOR_PATH_INCLUDES}/function.sh";
 
 if [ -n "$BASHOR_ERROR_CLASS" ]; then
     loadClassOnce Bashor_ErrorHandler

@@ -896,6 +896,3 @@ inStatic()
     [ -z "$OBJECT" -a -n "$CLASS_NAME" ]
     return $?
 }
-
-. "$BASHOR_PATH_INCLUDES/Class.sh"
-addClass Class
