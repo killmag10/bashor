@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.5.0
+
+* [core] Correct error handling.
+* [structure] Restructure project.
+* [core] Make bash class path variable more posix conform. Replace newline with ":".
+* [testing] Update testing.
+* [doc] Automize documentaion generation.
+* [doc] Move license to root folder.
+* [doc] Convert changelog.
+* [core] add profiling
+* [core] optimize code
+* [library] optimize config ini code
+* [core] fix error without autoload
+
 ## 1.4.0
 
 * Add Bashor\_Reflection\_Method
