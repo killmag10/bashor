@@ -29,8 +29,7 @@ loadClass()
     for _bashor_temp_path in $BASHOR_PATHS_CLASS; do
         _bashor_temp_filename="$_bashor_temp_path/${1//_//}"'.sh'
         [ -f "$_bashor_temp_filename" ] || continue
-        local _bashor_temp_className=_BASHOR_LOADED_CLASS_"$1"
-        eval "$_bashor_temp_className"='"$_bashor_temp_filename"'
+        eval _BASHOR_LOADED_CLASS_"$1"='"$_bashor_temp_filename"'
         . "$_bashor_temp_filename"
         unset -v _bashor_temp_filename _bashor_temp_path
         addClass "$1"
@@ -41,6 +40,20 @@ loadClass()
 }
 
 ##
+# Load class only once internaly.
+#
+# $1    string  namespace
+# $1    string  name of the loaded class variable
+# $?    0       OK
+# $?    1       ERROR
+_bashor_loadClassOnce()
+{
+    [ -n "${!2}" ] || loadClass "$1"
+    return $?
+}
+
+
+##
 # Load class only once.
 #
 # $1    string  namespace
@@ -48,8 +61,7 @@ loadClass()
 # $?    1       ERROR
 loadClassOnce()
 {
-    local _bashor_temp_className=_BASHOR_LOADED_CLASS_"$1"
-    [ -n "${!_bashor_temp_className}" ] || loadClass "$1"
+    _bashor_loadClassOnce "$1" _BASHOR_LOADED_CLASS_"$1"
     return $?
 }
 
@@ -63,7 +75,7 @@ loadClassOnce()
 # $?    1       ERROR
 __autoloadClass()
 {
-    loadClassOnce "$1"
+    _bashor_loadClassOnce "$1" _BASHOR_LOADED_CLASS_"$1"
     return $?
 }
 
@@ -175,8 +187,7 @@ class()
     requireParams RR "$@"
     local CLASS_NAME CLASS_TOP_NAME OBJECT=
     
-    CLASS_NAME="$1"    
-    __hookClassRouter || return 1
+    CLASS_NAME="$1"
     CLASS_TOP_NAME="$CLASS_NAME"
     shift
     _bashor_call "$@"
