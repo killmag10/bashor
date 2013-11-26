@@ -80,17 +80,6 @@ __autoloadClass()
 }
 
 ##
-# Hook for class routing.
-#
-# $CLASS_NAME   string  class name what will be called.
-# $?    0       OK
-# $?    1       ERROR
-__hookClassRouter()
-{    
-    return 0
-}
-
-##
 # Add Class functions.
 #
 # Add all function with the class name to the class.
@@ -387,7 +376,6 @@ new()
     requireParams RR "$@"
     
     local CLASS_NAME="$1"
-    __hookClassRouter || return 1
     [ "$BASHOR_CLASS_AUTOLOAD" = 1 ] && __autoloadClass "$CLASS_NAME"
     local OBJECT
     _bashor_generatePointer OBJECT "$BASHOR_TYPE_OBJECT"
