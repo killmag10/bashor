@@ -4,15 +4,9 @@
 #
 # LICENSE:
 # This software is released under the GNU Lesser General Public License version 3 version 3.
-# http://www.gnu.org/licenses/lgpl.html
-# http://www.gnu.de/documents/lgpl.de.html
+# http://www.gnu.org/licenses/lgpl-3.0.txt
 #
-# @package      Bashor
-# @subpackage   Tests
-# @copyright    Copyright (c) 2011 Lars Dietrich, All rights reserved.
-# @license      http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License version 3 version 3
-# @autor        Lars Dietrich <lars@dietrich-hosting.de>
-# @version      $Id: class.sh 171 2011-08-23 19:45:55Z lars $
+# Copyright 2010-2013 the bashor project authors. All rights reserved.
 ################################################################################
 
 # classExists
