@@ -19,15 +19,15 @@ If you have attention to performance use nodejs. :p
 
 ## Getting Started
 
-* Include bashor in your main script file.
+Include bashor in your main script file.
 
-    ```
-    BASE_DIR=\`printf '%s' "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'\`;
-    if [[ ! "$BASE_DIR" =~ ^/ ]]; then
-        BASE_DIR=\`printf '%s' "$PWD/$BASE_DIR" | sed 's#/\.\?$##'\`;
-    fi
-    . "$BASE_DIR/loader.sh";
-    ```
+```bash
+BASE_DIR=`printf '%s' "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
+if [[ ! "$BASE_DIR" =~ ^/ ]]; then
+    BASE_DIR=`printf '%s' "$PWD/$BASE_DIR" | sed 's#/\.\?$##'`;
+fi
+. "$BASE_DIR/loader.sh";
+```
 
 ### API Documentation
 
@@ -86,10 +86,12 @@ The profiling format is valgrind (You can view it with kcachgrind).
 
 Example:
 
-    new Bashor_List Data
-    object "$Data" set "test" "blub 123blub"
-    res=`object "$Data" get "test"`
-    remove "$Data"
+```bash
+new Bashor_List Data
+object "$Data" set "test" "blub 123blub"
+res=`object "$Data" get "test"`
+remove "$Data"
+```
 
 ### Writing classes
 
@@ -112,69 +114,71 @@ Example:
 
 #### Example
 
-    ##
-    # Loader
-    #
-    # Called on class loding
-    CLASS_Class___load()
-    {
-        requireStatic
-        return 0
-    }
+```bash
+##
+# Loader
+#
+# Called on class loding
+CLASS_Class___load()
+{
+    requireStatic
+    return 0
+}
 
-    ##
-    # Constructor
-    #
-    # Called on object creation (new)
-    CLASS_Class___construct()
-    {
-        requireObject
-        return 0
-    }
+##
+# Constructor
+#
+# Called on object creation (new)
+CLASS_Class___construct()
+{
+    requireObject
+    return 0
+}
 
-    ##
-    # Destructor
-    #
-    # Called on object destruction (remove)
-    CLASS_Class___destruct()
-    {
-        requireObject
-        return 0
-    }
+##
+# Destructor
+#
+# Called on object destruction (remove)
+CLASS_Class___destruct()
+{
+    requireObject
+    return 0
+}
 
-    ##
-    # Make object ready for sleep.
-    #
-    # Called on object serialization (serialize)
-    CLASS_Class___sleep()
-    {
-        requireObject
-        return 0
-    }
+##
+# Make object ready for sleep.
+#
+# Called on object serialization (serialize)
+CLASS_Class___sleep()
+{
+    requireObject
+    return 0
+}
 
-    ##
-    # Make object ready for wakeup.
-    #
-    # Called on object unserialization (unserialize)
-    CLASS_Class___wakeup()
-    {
-        requireObject
-        return 0
-    }
+##
+# Make object ready for wakeup.
+#
+# Called on object unserialization (unserialize)
+CLASS_Class___wakeup()
+{
+    requireObject
+    return 0
+}
 
-    ##
-    # Check if the class has the over given method.
-    #
-    # $1    string  method name
-    # $?    0:OK
-    # $?    1:ERROR
-    CLASS_Class_hasMethod()
-    {
-        requireParams R "$@"
+##
+# Check if the class has the over given method.
+#
+# $1    string  method name
+# $?    0:OK
+# $?    1:ERROR
+CLASS_Class_hasMethod()
+{
+    requireParams R "$@"
 
-        issetFunction CLASS_"$CLASS_TOP_NAME"_"$1"
-        return $?
-    }
+    issetFunction CLASS_"$CLASS_TOP_NAME"_"$1"
+    return $?
+}
+```
 
 ### Run tests
 
