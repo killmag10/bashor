@@ -170,4 +170,4 @@ _bashor_profileMethodHelper()
     return $_bashor_temp_return
 }
 
-[ -n "$BASHOR_PROFILE" ] && _bashor_profileStart
+_bashor_profileStart

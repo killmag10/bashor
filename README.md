@@ -16,6 +16,7 @@ If you have attention to performance use nodejs. :p
 * Serialization of objects.
 * Basic classes includet.
 * Profiling.
+* Code coverage report (Bashor\_Code\_Coverage).
 
 ## Getting Started
 
@@ -81,6 +82,20 @@ The profiling format is valgrind (You can view it with kcachgrind).
     * '' : Off. (default)
     * '1' : On.
 * BASHOR\_PROFILE\_FILE : File path to save profiling.
+
+### Code coverage
+
+This is an example how you can use the code coverage:
+
+```bash
+    new Bashor_Code_Coverage_Writer_Html CoverageWriter "$BASE_DIR/../codeCoverage"
+    class Bashor_Code_Coverage setVerbose '1'
+    class Bashor_Code_Coverage start "$BASE_DIR/../"
+    ...
+    # your code
+    ...
+    class Bashor_Code_Coverage stop "$CoverageWriter"
+```
 
 ### Use Classes/Objects
 

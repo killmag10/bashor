@@ -13,17 +13,48 @@ BASE_DIR=`echo "$BASH_SOURCE" | sed 's#/\?[^/]*$##' | sed 's#^./##'`;
 if [[ ! "$BASE_DIR" =~ ^/ ]]; then
     BASE_DIR=`echo "$PWD/$BASE_DIR" | sed 's#/\.\?$##'`;
 fi
-export TEST_DIR="$BASE_DIR/../test";
-export TEST_TEMP_DIR="$TEST_DIR/temp";
-export TEST_RESOURCE_DIR="$TEST_DIR/resource";
-export TESTS_FAIL='0';
-export TESTS_OK='0';
+
+TEST_CODE_COVERAGE=
+TEST_DIR="$BASE_DIR/../test"
+TEST_TEMP_DIR="$TEST_DIR/temp"
+TEST_RESOURCE_DIR="$TEST_DIR/resource"
+TESTS_FAIL='0'
+TESTS_OK='0'
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --)
+            break
+            ;;
+        -h|--help)
+cat - <<EOF
+
+Help:
+    -h | --help
+        Show this help-
+    -c | --coverage
+        Create a code coverage report under the folder codeCoverage.
+
+EOF
+            exit 0
+            ;;
+        -c|--coverage)
+            TEST_CODE_COVERAGE=1
+            ;;
+        *)
+            printf 'This is not in option: %s' "$1" >&2
+            exit 1
+            ;;
+    esac
+    
+    shift
+done
 
 . "$BASE_DIR/../loader.sh";
 
-export BASHOR_LOG_FILE="$TEST_TEMP_DIR/log.log";
-
-export BASHOR_PATHS_CLASS="${TEST_DIR}/mock:${BASHOR_PATHS_CLASS}";
+BASHOR_CLASS_AUTOLOAD=
+BASHOR_LOG_FILE="$TEST_TEMP_DIR/log.log";
+BASHOR_PATHS_CLASS="${TEST_DIR}/mock:${BASHOR_PATHS_CLASS}";
 
 doTest()
 {
@@ -82,6 +113,14 @@ checkRegexLines()
 
 SECONDS=0
 
+if [ -n "$TEST_CODE_COVERAGE" ]; then
+    loadClassOnce 'Bashor_Code_Coverage'
+    loadClassOnce 'Bashor_Code_Coverage_Writer_Html'
+    new Bashor_Code_Coverage_Writer_Html CoverageWriter "$BASE_DIR/../codeCoverage"
+    class Bashor_Code_Coverage setVerbose '1'
+    class Bashor_Code_Coverage start "$BASE_DIR/../"
+fi
+
 doTest 'include/functions/class';
 doTest 'include/functions/Getopt';
 doTest 'include/functions/Getopts';
@@ -108,5 +147,9 @@ doTest 'lib/Bashor/Config/Ini';
 doTest 'lib/Bashor/Reflection/Class';
 doTest 'lib/Bashor/Reflection/Property';
 doTest 'lib/Bashor/Reflection/Method';
+
+if [ -n "$TEST_CODE_COVERAGE" ]; then
+    class Bashor_Code_Coverage stop "$CoverageWriter"
+fi
 
 printFinalResult;

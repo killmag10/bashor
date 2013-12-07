@@ -40,7 +40,7 @@ BASHOR_DEBUG_BACKTRACE='1';
 
 # Profiling
 [ -z "$BASHOR_PROFILE" ] && BASHOR_PROFILE=
-[ -z "$BASHOR_PROFILE_FILE" ] && BASHOR_PROFILE_FILE=
+[ -z "$BASHOR_PROFILE_FILE" ] && BASHOR_PROFILE_FILE='profile.log'
 
 # Bash options
 set -B # enable brace expansion;
