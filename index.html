@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Bashor by killmag10</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Bashor</h1>
+        <h2>Bashor a pseudo object oriented framwork for the bash. (oop)</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/killmag10/bashor/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/killmag10/bashor/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/killmag10/bashor" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="bashor" class="anchor" href="#bashor"><span class="octicon octicon-link"></span></a>Bashor</h1>
+
+<p>Bashor is a pseudo object oriented framwork for the bash.</p>
+
+<p>Bashor is a alternate way to use object orientation in a filesystem close
+programming language (Bash), to write structered scripts with many file
+operations what have no big attention to performance.
+If you have attention to performance use nodejs. :p</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Create classes.</li>
+<li>Create objects.</li>
+<li>Inherit classes.</li>
+<li>Autoloading classes.</li>
+<li>Serialization of objects.</li>
+<li>Basic classes includet.</li>
+<li>Profiling.</li>
+<li>Code coverage report (Bashor_Code_Coverage).</li>
+</ul><h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>Include bashor in your main script file.</p>
+
+<div class="highlight highlight-bash"><pre><span class="nv">BASE_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">printf</span> <span class="s1">'%s'</span> <span class="s2">"$BASH_SOURCE"</span> <span class="p">|</span> sed <span class="s1">'s#/\?[^/]*$##'</span> <span class="p">|</span> sed <span class="s1">'s#^./##'</span><span class="sb">`</span><span class="p">;</span>
+<span class="k">if</span> <span class="o">[[</span> ! <span class="s2">"$BASE_DIR"</span> <span class="o">=</span>~ ^/ <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+<span class="k">    </span><span class="nv">BASE_DIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">printf</span> <span class="s1">'%s'</span> <span class="s2">"$PWD/$BASE_DIR"</span> <span class="p">|</span> sed <span class="s1">'s#/\.\?$##'</span><span class="sb">`</span><span class="p">;</span>
+<span class="k">fi</span>
+. <span class="s2">"$BASE_DIR/loader.sh"</span><span class="p">;</span>
+</pre></div>
+
+<h3>
+<a name="api-documentation" class="anchor" href="#api-documentation"><span class="octicon octicon-link"></span></a>API Documentation</h3>
+
+<p>For the API Documentation run:</p>
+
+<pre><code>make man
+</code></pre>
+
+<h3>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h3>
+
+<p>Set the environment variable <strong>BASHOR_PATH_CONFIG</strong> to load this as config
+script.</p>
+
+<p>Add your class paths to <strong>BASHOR_PATH</strong> seperate with ':'.</p>
+
+<h4>
+<a name="performance" class="anchor" href="#performance"><span class="octicon octicon-link"></span></a>Performance</h4>
+
+<ul>
+<li>BASHOR_CLASS_AUTOLOAD : Autoloading
+
+<ul>
+<li>'' : Autoloading inactive</li>
+<li>'1' : Autoloading active (default)</li>
+</ul>
+</li>
+</ul><h4>
+<a name="compatibility" class="anchor" href="#compatibility"><span class="octicon octicon-link"></span></a>Compatibility</h4>
+
+<ul>
+<li>BASHOR_CODEING_METHOD : Internal coding method.
+
+<ul>
+<li>base64 (default)</li>
+<li>hex</li>
+</ul>
+</li>
+<li>BASHOR_BASE64_USE : Programm used for base64 coding.
+
+<ul>
+<li>openssl</li>
+<li>perl</li>
+<li>base64 (default)</li>
+</ul>
+</li>
+<li>BASHOR_USE_GETOPT : Use getopt for parameter reading.
+
+<ul>
+<li>'' : Use getopts.</li>
+<li>'1' : Use getopt. (default)</li>
+</ul>
+</li>
+<li>BASHOR_COMPATIBILITY_THIS : Use <strong>this</strong> instat of <strong>static</strong>.
+
+<ul>
+<li>'' : Off. (default)</li>
+<li>'1' : On.</li>
+</ul>
+</li>
+</ul><h4>
+<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h4>
+
+<ul>
+<li>BASHOR_INTERACTIVE : Use interactive mode.
+
+<ul>
+<li>'' : Off. (default)</li>
+<li>'1' : On.</li>
+</ul>
+</li>
+<li>BASHOR_ERROR_CLASS : Use <strong>Bashor_ErrorHandler</strong> class for error handling.
+
+<ul>
+<li>'' : Off.</li>
+<li>'1' : On. (default)</li>
+</ul>
+</li>
+</ul><h4>
+<a name="profiling" class="anchor" href="#profiling"><span class="octicon octicon-link"></span></a>Profiling</h4>
+
+<p>The profiling format is valgrind (You can view it with kcachgrind).</p>
+
+<ul>
+<li>BASHOR_PROFILE : Use profiling.
+
+<ul>
+<li>'' : Off. (default)</li>
+<li>'1' : On.</li>
+</ul>
+</li>
+<li>BASHOR_PROFILE_FILE : File path to save profiling.</li>
+</ul><h3>
+<a name="code-coverage" class="anchor" href="#code-coverage"><span class="octicon octicon-link"></span></a>Code coverage</h3>
+
+<p>This is an example how you can use the code coverage:</p>
+
+<div class="highlight highlight-bash"><pre>    new Bashor_Code_Coverage_Writer_Html CoverageWriter <span class="s2">"$BASE_DIR/../codeCoverage"</span>
+    class Bashor_Code_Coverage setVerbose <span class="s1">'1'</span>
+    class Bashor_Code_Coverage start <span class="s2">"$BASE_DIR/../"</span>
+    ...
+    <span class="c"># your code</span>
+    ...
+    class Bashor_Code_Coverage stop <span class="s2">"$CoverageWriter"</span>
+</pre></div>
+
+<h3>
+<a name="use-classesobjects" class="anchor" href="#use-classesobjects"><span class="octicon octicon-link"></span></a>Use Classes/Objects</h3>
+
+<p>Example:</p>
+
+<div class="highlight highlight-bash"><pre>new Bashor_List Data
+object <span class="s2">"$Data"</span> <span class="nb">set</span> <span class="s2">"test"</span> <span class="s2">"blub 123blub"</span>
+<span class="nv">res</span><span class="o">=</span><span class="sb">`</span>object <span class="s2">"$Data"</span> get <span class="s2">"test"</span><span class="sb">`</span>
+remove <span class="s2">"$Data"</span>
+</pre></div>
+
+<h3>
+<a name="writing-classes" class="anchor" href="#writing-classes"><span class="octicon octicon-link"></span></a>Writing classes</h3>
+
+<h4>
+<a name="method" class="anchor" href="#method"><span class="octicon octicon-link"></span></a>Method</h4>
+
+<ul>
+<li>Function Name:
+
+<ol>
+<li>"CLASS_"</li>
+<li>Your class name. Folders seperated by "_".</li>
+<li>"_" +  Method name.
+
+<ul>
+<li>Protected starts with an extra "_" (tow with normal seperator).</li>
+<li>Magic methods starts with "__" (three with normal seperator).</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul><h4>
+<a name="magic-methods" class="anchor" href="#magic-methods"><span class="octicon octicon-link"></span></a>Magic methods</h4>
+
+<ul>
+<li>__load : Called on class loding (For static variables).</li>
+<li>__construct : Called on object creation (new).</li>
+<li>__destruct : Called on object destruction (remove).</li>
+<li>__sleep : Called on object serialization (serialize).</li>
+<li>__wakeup : Called on object unserialization (unserialize).</li>
+</ul><h4>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h4>
+
+<div class="highlight highlight-bash"><pre><span class="c">##</span>
+<span class="c"># Loader</span>
+<span class="c">#</span>
+<span class="c"># Called on class loding</span>
+CLASS_Class___load<span class="o">()</span>
+<span class="o">{</span>
+    requireStatic
+    <span class="k">return </span>0
+<span class="o">}</span>
+
+<span class="c">##</span>
+<span class="c"># Constructor</span>
+<span class="c">#</span>
+<span class="c"># Called on object creation (new)</span>
+CLASS_Class___construct<span class="o">()</span>
+<span class="o">{</span>
+    requireObject
+    <span class="k">return </span>0
+<span class="o">}</span>
+
+<span class="c">##</span>
+<span class="c"># Destructor</span>
+<span class="c">#</span>
+<span class="c"># Called on object destruction (remove)</span>
+CLASS_Class___destruct<span class="o">()</span>
+<span class="o">{</span>
+    requireObject
+    <span class="k">return </span>0
+<span class="o">}</span>
+
+<span class="c">##</span>
+<span class="c"># Make object ready for sleep.</span>
+<span class="c">#</span>
+<span class="c"># Called on object serialization (serialize)</span>
+CLASS_Class___sleep<span class="o">()</span>
+<span class="o">{</span>
+    requireObject
+    <span class="k">return </span>0
+<span class="o">}</span>
+
+<span class="c">##</span>
+<span class="c"># Make object ready for wakeup.</span>
+<span class="c">#</span>
+<span class="c"># Called on object unserialization (unserialize)</span>
+CLASS_Class___wakeup<span class="o">()</span>
+<span class="o">{</span>
+    requireObject
+    <span class="k">return </span>0
+<span class="o">}</span>
+
+<span class="c">##</span>
+<span class="c"># Check if the class has the over given method.</span>
+<span class="c">#</span>
+<span class="c"># $1    string  method name</span>
+<span class="c"># $?    0:OK</span>
+<span class="c"># $?    1:ERROR</span>
+CLASS_Class_hasMethod<span class="o">()</span>
+<span class="o">{</span>
+    requireParams R <span class="s2">"$@"</span>
+
+    issetFunction CLASS_<span class="s2">"$CLASS_TOP_NAME"</span>_<span class="s2">"$1"</span>
+    <span class="k">return</span> <span class="nv">$?</span>
+<span class="o">}</span>
+</pre></div>
+
+<h3>
+<a name="run-tests" class="anchor" href="#run-tests"><span class="octicon octicon-link"></span></a>Run tests</h3>
+
+<p>To run the tests run:</p>
+
+<pre><code>make test
+</code></pre>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
