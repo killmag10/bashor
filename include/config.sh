@@ -14,12 +14,12 @@
 
 # Performance
 BASHOR_CLASS_AUTOLOAD='1';
+BASHOR_USE_ASSOCIATIVE_ARRAY='1';
 
 # Compatibility
 BASHOR_CODEING_METHOD='base64' # base64|hex
 BASHOR_BASE64_USE='base64'; # openssl|perl|base64
 BASHOR_USE_GETOPT='1'; # 0|1
-BASHOR_COMPATIBILITY_THIS='' # ''|1
 
 # Options
 BASHOR_INTERACTIVE='';

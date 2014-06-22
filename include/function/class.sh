@@ -18,7 +18,7 @@
 loadClass()
 {
     requireParams R "$@"
-    
+
     local _bashor_temp_path _bashor_temp_filename IFS=':'
     for _bashor_temp_path in $BASHOR_PATHS_CLASS; do
         _bashor_temp_filename="$_bashor_temp_path/${1//_//}"'.sh'
@@ -29,7 +29,7 @@ loadClass()
         addClass "$1"
         return $?
     done
-    
+
     return 1
 }
 
@@ -37,7 +37,7 @@ loadClass()
 # Load class only once internaly.
 #
 # $1    string  namespace
-# $1    string  name of the loaded class variable
+# $2    string  name of the loaded class variable
 # $?    0       OK
 # $?    1       ERROR
 _bashor_loadClassOnce()
@@ -85,26 +85,27 @@ __autoloadClass()
 addClass()
 {
     requireParams R "$@"
-    
+
     [[ "$1" =~ ^[a-zA-Z_]+$ ]] || error 'No valid class name!'
-    
+
     local namespace=_BASHOR_CLASS_"$1"
     local namespaceExtends=_BASHOR_CLASS_"$1"_EXTENDS
     local pointer
     _bashor_generatePointer pointer "$BASHOR_TYPE_OBJECT"
-    [ -z "${!namespaceExtends}" ] && _bashor_addStdClass "$1"   
-    eval "$namespace"='"$1"'
-    eval "$namespace"_POINTER="$pointer"
-    eval "$pointer"_DATA=
-    eval "$pointer"'_CLASS="$1"'
+    [ -z "${!namespaceExtends}" ] && _bashor_addStdClass "$1"
+    eval \
+        "$namespace"='"$1"' \
+        "$namespace"_POINTER="$pointer" \
+        "$pointer"_DATA= \
+        "$pointer"'_CLASS="$1"'
     unset -v namespace namespaceExtends pointer
-    
+
     issetFunction CLASS_"$1"___load
     if [ "$?" = 0 ]; then
         class "$1" __load
         return $?
     fi
-    
+
     return 0
 }
 
@@ -120,7 +121,7 @@ _bashor_addStdClass()
 {
     requireParams R "$@"
     [ "$1" = Class ] && return 0
-    
+
     _bashor_createExtendedClassFunctions "$1" Class
     eval _BASHOR_CLASS_"$1"_EXTENDS=Class
     return 0
@@ -139,7 +140,7 @@ _bashor_addStdClass()
 _bashor_createExtendedClassFunctions()
 {
     requireParams RR "$@"
-    
+
     local fList=$(declare -F | sed -n 's#^declare -f CLASS_'"$2"'_\(_*[^_]\+\)$#\1#p')
     local f fNameParent fNameNew IFS=$'\n\r'
     for f in $fList; do
@@ -147,10 +148,10 @@ _bashor_createExtendedClassFunctions()
         fNameNew=CLASS_"$1"_"$f"
         if ! issetFunction "$fNameNew"; then
             eval "$fNameNew"'() {
-                local CLASS_NAME='\'"$2"\'';
+                local CLASS_NAME='\'"$2"\''
                 [ -n "$BASHOR_PROFILE" ] && _bashor_profileMethodRematch "$CLASS_NAME"
-                '"$fNameParent"' "$@";
-                return $?;
+                '"$fNameParent"' "$@"
+                return $?
             }'
         fi
     done
@@ -169,7 +170,7 @@ class()
 {
     requireParams RR "$@"
     local CLASS_NAME CLASS_TOP_NAME OBJECT=
-    
+
     CLASS_NAME="$1"
     CLASS_TOP_NAME="$CLASS_NAME"
     shift
@@ -186,7 +187,7 @@ class()
 classExists()
 {
     requireParams R "$@"
-    
+
     local classVarName=_BASHOR_CLASS_"$1"
     [ -n "${!classVarName}" ]
     return $?
@@ -202,7 +203,7 @@ classExists()
 _bashor_objectLoadData()
 {
     requireParams RS "$@"
-    
+
     local dataLine="$(printf '%s' "$2" | grep '^DATA=' -n | sed 's/:.*$//')"
     local value="$(printf '%s' "$2" | tail -n +$((++dataLine)) | decodeData)"
     eval "$1"'="$value"'
@@ -218,7 +219,7 @@ _bashor_objectLoadData()
 _bashor_objectSaveData()
 {
     requireParams R "$@"
-    echo 'bashor dump 1.0.0 objectData'
+    printf '%s\n' 'bashor dump 1.0.0 objectData'
     printf 'CLASS_NAME=%s\n' "$CLASS_NAME"
     printf 'DATA_FORMAT=%s\n' "$BASHOR_CODEING_METHOD"
     printf 'DATA=\n'
@@ -236,19 +237,19 @@ _bashor_objectSaveData()
 # $@    mixed   method params
 # $?    *       all of class method
 object()
-{    
-    requireParams RR "$@" 
+{
+    requireParams RR "$@"
     if [ "${!1}" != "$BASHOR_TYPE_OBJECT" ] || [[ ! "$1" =~ ^_BASHOR_POINTER_ ]]; then
         error 'Pointer "'"$1"'" is not a Object!'
     fi
-    
+
     local OBJECT CLASS_TOP_NAME CLASS_NAME
     OBJECT="$1"
     CLASS_NAME="$1"_CLASS
     CLASS_NAME="${!CLASS_NAME}"
     CLASS_TOP_NAME="$CLASS_NAME"
-    
-    shift 1;
+
+    shift 1
     _bashor_call "$@"
     return $?
 }
@@ -261,21 +262,21 @@ object()
 # $?    0       OK
 # $?    1       ERROR
 serialize()
-{    
+{
     {
         requireParams R "$@"
         issetVar "$1"_CLASS || error 'Pointer "'"$1"'" is not a Object!'
-        
+
         local OBJECT CLASS_NAME
         clone "$1" OBJECT
         CLASS_NAME="$OBJECT"_CLASS
         CLASS_NAME="${!CLASS_NAME}"
-        
+
         if issetFunction CLASS_"$CLASS_NAME"___sleep; then
             object "$OBJECT" __sleep
         fi
     } 1>/dev/null
-    
+
     _bashor_objectSaveData "$OBJECT"_DATA
     local result=$?
     remove "$OBJECT"
@@ -293,7 +294,7 @@ unserialize()
 {
     requireParams R "$@"
     local _bashor_temp_dataLine _bashor_temp_header CLASS_NAME
-    
+
     if [ "$#" -lt 2 -a -p /dev/stdin ]; then
         local _bashor_temp_data="$(cat -)"
     else
@@ -305,19 +306,20 @@ unserialize()
     )
     ((_bashor_temp_dataLine--))
     _bashor_temp_header="$(printf '%s' "$_bashor_temp_data" | head -n $_bashor_temp_dataLine)"
-    
+
     CLASS_NAME=$(printf '%s' "$_bashor_temp_header" | sed -n 's/^CLASS_NAME=//1p')
     _bashor_generatePointer "${1}" "$BASHOR_TYPE_OBJECT"
-    eval "${!1}"'_CLASS="$CLASS_NAME"'
-    eval "${!1}"_DATA=
+    eval \
+        "${!1}"'_CLASS="$CLASS_NAME"' \
+        "${!1}"_DATA=
 
-    _bashor_objectLoadData "${!1}"_DATA "$_bashor_temp_data";
+    _bashor_objectLoadData "${!1}"_DATA "$_bashor_temp_data"
     local _bashor_temp_res="$?"
-    
+
     if issetFunction CLASS_"$CLASS_NAME"___wakeup; then
         object "${!1}" __wakeup 1>/dev/null
     fi
-    
+
     return $_bashor_temp_res
 }
 
@@ -334,7 +336,7 @@ _bashor_call()
 {
     requireParams R "$@"
     [ "$BASHOR_CLASS_AUTOLOAD" = 1 ] && __autoloadClass "$CLASS_NAME"
-    
+
     local FUNCTION_NAME="$1"
     if issetFunction CLASS_"$CLASS_NAME"_"$FUNCTION_NAME"; then
         shift
@@ -346,11 +348,11 @@ _bashor_call()
         _bashor_profileMethodHelper "$CLASS_NAME" __call 2 CLASS_"$CLASS_NAME"___call "$@"
         return $?
     fi
-    
+
     local className=_BASHOR_CLASS_"$CLASS_NAME"
     [ -z "${!className}" ] \
          && error "No class $CLASS_NAME found!"
-    
+
     error "No method \"${FUNCTION_NAME}\" in \"${CLASS_NAME}\"!"
     return 1
 }
@@ -368,14 +370,16 @@ _bashor_call()
 new()
 {
     requireParams RR "$@"
-    
+
     local CLASS_NAME="$1"
     [ "$BASHOR_CLASS_AUTOLOAD" = 1 ] && __autoloadClass "$CLASS_NAME"
     local OBJECT
     _bashor_generatePointer OBJECT "$BASHOR_TYPE_OBJECT"
-    eval "$OBJECT"'_CLASS="$CLASS_NAME"'
-    eval "$OBJECT"_DATA=
-    eval "$2"'="$OBJECT"'
+    eval \
+        "$OBJECT"'_CLASS="$CLASS_NAME"' \
+        "$OBJECT"_DATA= \
+        "$2"'="$OBJECT"'
+
     if issetFunction CLASS_"$CLASS_NAME"___construct; then
         shift 2
         object "$OBJECT" __construct "$@"
@@ -397,10 +401,10 @@ new()
 extends()
 {
     requireParams RR "$@"
-    
+
     [ "$BASHOR_CLASS_AUTOLOAD" = 1 ] && __autoloadClass "$2"
     eval _BASHOR_CLASS_"$1"'_EXTENDS="$2"'
-    _bashor_createExtendedClassFunctions "$1" "$2"    
+    _bashor_createExtendedClassFunctions "$1" "$2"
     return 0
 }
 
@@ -411,21 +415,22 @@ extends()
 # $2    string  object variable name
 # $?    *       all of class method __clone
 clone()
-{    
+{
     requireParams RR "$@"
     isObject "$1" || error 'Pointer "'"$1"'" is not a Object!'
-    
-    _bashor_generatePointer "$2" "$BASHOR_TYPE_OBJECT"        
+
+    _bashor_generatePointer "$2" "$BASHOR_TYPE_OBJECT"
     local CLASS_NAME="$1"_CLASS
     CLASS_NAME="${!CLASS_NAME}"
-    eval "${!2}"'_CLASS="$CLASS_NAME"'
-    eval "${!2}"'_DATA="$'"$1"'_DATA"'
-    
+    eval \
+        "${!2}"'_CLASS="$CLASS_NAME"' \
+        "${!2}"'_DATA="$'"$1"'_DATA"'
+
     if issetFunction CLASS_"$CLASS_NAME"___clone; then
         object "${!2}" __clone
         return $?
     fi
-    
+
     return 0
 }
 
@@ -440,21 +445,20 @@ remove()
     requireParams R "$@"
     [ -z "$1"_CLASS ] && error 'Pointer "'"$1"'" is not a Object!'
 
-    local CLASS_NAME
     local -i res=0
     local OBJECT="$1"
-    CLASS_NAME="$OBJECT"_CLASS
+    local CLASS_NAME="$OBJECT"_CLASS
     CLASS_NAME="${!CLASS_NAME}"
-        
+
     if issetFunction CLASS_"$CLASS_NAME"___destruct; then
         object "$OBJECT" __destruct
         res=$?
     fi
-    
+
     unset -v "$OBJECT"_DATA
     unset -v "$OBJECT"_CLASS "$OBJECT"
-    
-    return "$res"
+
+    return $res
 }
 
 ##
@@ -470,14 +474,15 @@ remove()
 _bashor_generatePointer()
 {
     requireParams RR "$@"
-    
+
     local _bashor_temp_pointer
     while true; do
         _bashor_temp_pointer=_BASHOR_POINTER_"$(date +%s%N)"
         issetVar "$_bashor_temp_pointer" || break
-    done;
-    eval "$_bashor_temp_pointer"='"$2"'
-    eval "$1"='"$_bashor_temp_pointer"'
+    done
+    eval \
+        "$_bashor_temp_pointer"='"$2"' \
+        "$1"='"$_bashor_temp_pointer"'
     return 0
 }
 
@@ -499,17 +504,13 @@ _bashor_generatePointer()
 # $?    *       all of class method
 this()
 {
-    if [ -n "$BASHOR_COMPATIBILITY_THIS" -a -z "$OBJECT" ]; then
-        static "$@"
-        return $?
-    fi
     requireObject
     requireParams R "$@"
-    
+
     case "$1" in
         call)
-            [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set' 
-            local CLASS_NAME="$CLASS_TOP_NAME";
+            [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set'
+            local CLASS_NAME="$CLASS_TOP_NAME"
             shift
             _bashor_call "$@"
             return $?
@@ -560,11 +561,9 @@ this()
              _bashor_objectClear "$OBJECT"_DATA
             return $?
             ;;
-        *)
-            error "\"$1\" is not a option of this!"
-            ;;
     esac
-    
+
+    error "\"$1\" is not a option of this!"
     return 1
 }
 
@@ -586,18 +585,16 @@ this()
 # $?    *       all of class method
 static()
 {
-    [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set' 
-    local CLASS_NAME="$CLASS_TOP_NAME";
-    
-    case "$1" in
-        call)
+    [ -z "$CLASS_TOP_NAME" ] && error 'CLASS_TOP_NAME: Parameter empty or not set'
+    local CLASS_NAME="$CLASS_TOP_NAME"
+
+    if [ "$1" = 'call' ]; then
             local OBJECT=
             shift
-            _bashor_call "$@"            
+            _bashor_call "$@"
             return $?
-            ;;
-    esac
-    
+    fi
+
     eval 'local OBJECT=$_BASHOR_CLASS_'"$CLASS_NAME"_POINTER
     case "$1" in
         get)
@@ -642,12 +639,10 @@ static()
              _bashor_objectClear "$OBJECT"_DATA
             return $?
             ;;
-        *)
-            requireParams R "$@"
-            error "\"$1\" is not a option of static!"
-            ;;
     esac
-    
+
+    requireParams R "$@"
+    error "\"$1\" is not a option of static!"
     return 1
 }
 
@@ -660,25 +655,23 @@ static()
 parent()
 {
     requireParams R "$@"
-    [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set' 
-    
+    [ -z "$CLASS_NAME" ] && error 'CLASS_NAME: Parameter empty or not set'
+
     local CLASS_NAME=_BASHOR_CLASS_"$CLASS_NAME"_EXTENDS
     CLASS_NAME="${!CLASS_NAME}"
     case "$1" in
         call)
             shift
-			_bashor_call "$@"
-			return $?
+            _bashor_call "$@"
+            return $?
             ;;
         exists)
             [ -n "$CLASS_NAME" ]
             return $?
             ;;
-        *)
-            error "\"$1\" is not a option of parent!"
-            ;;
     esac
-    
+
+    error "\"$1\" is not a option of parent!"
     return 1
 }
 
@@ -693,19 +686,19 @@ parent()
 # &0    string  Data
 _bashor_objectSet()
 {
-    requireParams RR "$@"  
+    requireParams RR "$@"
 
     if [ "$#" -lt 3 -a -p /dev/stdin ]; then
         local value=$(cat - | encodeData)
     else
         local value=$(printf '%s' "$3" | encodeData)
     fi
-    
+
     local key=$(printf '%s' "$2" | encodeData)
     value=$(printf '%s' "${!1}" \
         | grep -v "^${key}[[:space:]]\+.*$"; printf '%s\n' "$key $value";)
     eval "$1"'="$value"'
-    
+
     return $?
 }
 
@@ -719,11 +712,11 @@ _bashor_objectSet()
 _bashor_objectUnset()
 {
     requireParams RR "$@"
-    
+
     local key=$(printf '%s' "$2" | encodeData)
     local data=$(printf '%s' "${!1}" | grep -v "^${key}[[:space:]]\+.*$")
     eval "$1"'="$data"'
-    
+
     return $?
 }
 
@@ -738,11 +731,11 @@ _bashor_objectUnset()
 _bashor_objectGet()
 {
     requireParams RR "$@"
-    
+
     local data
-    data=$(printf '%s' "${!1}" | grep "^$(printf '%s' "$2" | encodeData)[[:space:]]\+.*$")    
+    data=$(printf '%s' "${!1}" | grep "^$(printf '%s' "$2" | encodeData)[[:space:]]\+.*$")
     [ $? = 0 ] || return 1
-    
+
     printf '%s' "${data#* }" | decodeData
     return 0
 }
@@ -757,13 +750,13 @@ _bashor_objectGet()
 _bashor_objectCount()
 {
     requireParams R "$@"
-    
+
     if [ -z "${!1}" ]; then
-        echo 0 
+        echo 0
         return 0
     fi
-    
-    printf '%s\n' "${!1}" | wc -l    
+
+    printf '%s\n' "${!1}" | wc -l
     return 0
 }
 
@@ -775,7 +768,7 @@ _bashor_objectCount()
 # $?    1       ERROR
 _bashor_objectClear()
 {
-    eval "$1"=  
+    eval "$1"=
     return 0
 }
 
@@ -790,10 +783,10 @@ _bashor_objectClear()
 _bashor_objectKey()
 {
     requireParams RR "$@"
-    
+
     local IFS=$'\n'
-    local -a data=(`printf '%s' "${!1}"`);
-    [ "$2" -ge "${#data[@]}" ] && return 1;
+    local -a data=(`printf '%s' "${!1}"`)
+    [ "$2" -ge "${#data[@]}" ] && return 1
     printf '%s' "${data[$2]% *}" | decodeData
     return $?
 }
@@ -809,10 +802,10 @@ _bashor_objectKey()
 _bashor_objectValue()
 {
     requireParams RR "$@"
-    
+
     local IFS=$'\n'
-    local -a data=(`printf '%s' "${!1}"`);
-    [ "$2" -ge "${#data[@]}" ] && return 1;
+    local -a data=(`printf '%s' "${!1}"`)
+    [ "$2" -ge "${#data[@]}" ] && return 1
     printf '%s' "${data[$2]#* }" | decodeData
     return $?
 }
@@ -828,7 +821,7 @@ _bashor_objectValue()
 _bashor_objectIsset()
 {
     requireParams RR "$@"
-    
+
     local key=$(printf '%s' "$2" | encodeData)
     printf '%s' "${!1}" | grep "^$key[[:space:]]\+.*$" >/dev/null
     return $?
@@ -843,7 +836,7 @@ _bashor_objectIsset()
 isObject()
 {
     requireParams S "$@"
-    
+
     [[ "$1" =~ ^_BASHOR_POINTER_ ]] && [ "${!1}" = "$BASHOR_TYPE_OBJECT" ]
     return $?
 }

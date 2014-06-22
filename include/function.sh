@@ -14,8 +14,9 @@ fi
 # Include profiling.
 [ -n "$BASHOR_PROFILE" ] && . "$BASHOR_PATH_INCLUDES/function/profile.sh"
 
-# Include array support.
-#. "$BASHOR_PATH_INCLUDES/function/class/array.sh"
+# Include associative array support.
+[ -n "$BASHOR_USE_ASSOCIATIVE_ARRAY" ] \
+    && . "$BASHOR_PATH_INCLUDES/function/class/array.sh"
 
 # Load base class.
 . "$BASHOR_PATH_CLASSES/Class.sh"

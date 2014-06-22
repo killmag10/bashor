@@ -25,7 +25,7 @@ copyArray()
         for _bashor_temp_key in ${!'"$1"'[@]}; do
             '"$2"'[$_bashor_temp_key]="${'"$1"'[$_bashor_temp_key]}"
         done'
-    
+
     return $?
 }
 
@@ -37,6 +37,9 @@ copyArray()
 # $?    1       ERROR
 varExport()
 {
+    local IFS
+    unset -v IFS
+
     requireParams R "$@"
     declare -p "$1" | sed '1s/^[^=]\+=//'
     return $?
@@ -53,7 +56,7 @@ varExport()
 copyFunction()
 {
     requireParams RR "$@"
-    
+
     eval "$(printf '%s' "$2"'()'; declare -f "$1" | tail -n +2;)"
     return $?
 }
@@ -68,7 +71,7 @@ copyFunction()
 renameFunction()
 {
     requireParams RR "$@"
-    
+
     copyFunction "$1" "$2" && unset -f "$1"
     return $?
 }
@@ -84,7 +87,7 @@ renameFunction()
 prepareOutput()
 {
     requireParams R "$@"
-    
+
     local msg
     while read msg; do printf '%s' "$1$msg"; done
     return 0
@@ -98,7 +101,7 @@ prepareOutput()
 # $?    0       OK
 # $?    1       ERROR
 getBacktrace()
-{    
+{
     local res=1
     local -i pos=0
     local -i remove="$1"
@@ -132,11 +135,11 @@ __handleError()
 # &3    string  error messages
 _bashor_handleErrorFallback()
 {
-    echo 'Use fallback error handling.' 1>&3 
+    echo 'Use fallback error handling.' 1>&3
     if [ "$showOutput" = 1 ]; then
         printf '%s\n' "$1" | sed "s/^/ERROR: /g" 1>&3
         getBacktrace | sed 's#^#    #'
-    fi 
+    fi
     exit 1
 }
 
@@ -150,16 +153,16 @@ _bashor_handleErrorFallback()
 _bashor_handleError()
 {
     if [ -n "$BASHOR_ERROR" ]; then
-        echo 'Error in error handling!' 1>&3        
+        echo 'Error in error handling!' 1>&3
         _bashor_handleErrorFallback "$1"
     fi
     local BASHOR_ERROR=ERROR;
     local BASHOR_BACKTRACE_REMOVE=$((BASHOR_BACKTRACE_REMOVE+1))
     local BASHOR_BACKTRACE="`getBacktrace "$BASHOR_BACKTRACE_REMOVE"`"
-    
+
     __handleError "$1" "$2" "${3-1}" "$BASHOR_BACKTRACE"
     [ "$?" = 0 ] && return 0
-    
+
     local type="$1"
     local message="$2"
     local exit="${3-1}"
@@ -168,7 +171,7 @@ _bashor_handleError()
     local showBacktrace=
     local showOutput=
     local doLog=
-    
+
     case "$type" in
         error)
             prefix='ERROR: '
@@ -197,18 +200,18 @@ _bashor_handleError()
             doLog="$BASHOR_ERROR_LOG"
             ;;
     esac
-        
+
     [ "$showBacktrace" = 1 ] && backtrace=$(
         printf '%s' "$BASHOR_BACKTRACE" | sed 's#^#    #'
     )
-    
+
     if [ "$showOutput" = 1 ]; then
         {
             printf '%s\n' "$message" | sed "s/^/$prefix/g"
-            [ -n "$backtrace" ] && printf '%s\n' "$backtrace" 
+            [ -n "$backtrace" ] && printf '%s\n' "$backtrace"
         } 1>&3
     fi
-    
+
     if [ "$doLog" = 1 ]; then
         local datestring=`date +'%Y-%m-%d %H:%M:%S'`
         {
@@ -216,13 +219,13 @@ _bashor_handleError()
             [ -n "$backtrace" ] && printf '%s\n' "$backtrace"
         } >> "$BASHOR_LOG_FILE"
     fi
-    
+
     if [ -n "$exit" ]; then
         if [ "$BASHOR_INTERACTIVE" = 1 ]; then
             trap '
                 while [ "${#FUNCNAME[@]}" -gt 0 ]; do
                     return '\'"$exit"\'';
-                done                
+                done
                 trap DEBUG;
                 '"$(trap -p DEBUG)"'
             ' DEBUG;
@@ -243,7 +246,7 @@ _bashor_handleError()
 error()
 {
     requireParams R "$@"
-    
+
     local BASHOR_BACKTRACE_REMOVE
     ((BASHOR_BACKTRACE_REMOVE++))
     _bashor_handleError error "$@"
@@ -257,7 +260,7 @@ error()
 warning()
 {
     requireParams R "$@"
-    
+
     local BASHOR_BACKTRACE_REMOVE
     ((BASHOR_BACKTRACE_REMOVE++))
     _bashor_handleError warning "$@"
@@ -271,7 +274,7 @@ warning()
 debug()
 {
     requireParams R "$@"
-    
+
     local BASHOR_BACKTRACE_REMOVE
     ((BASHOR_BACKTRACE_REMOVE++))
     _bashor_handleError debug "$@"
@@ -287,7 +290,7 @@ debug()
 isset()
 {
     requireParams R "$@"
-    
+
     case "$1" in
         var)
             requireParams RR "$@"
@@ -298,12 +301,12 @@ isset()
             requireParams RR "$@"
             issetFunction "$2"
             return $?
-            ;;           
+            ;;
         *)
             error "\"$1\" is not a option of isset!"
             return 1
             ;;
-    esac    
+    esac
 }
 
 ##
@@ -313,9 +316,9 @@ isset()
 # $?    0       set
 # $?    1       not set
 issetVar()
-{   
+{
     declare -p "$1" &>/dev/null
-    return $? 
+    return $?
 }
 
 ##
@@ -325,9 +328,9 @@ issetVar()
 # $?    0       set
 # $?    1       not set
 issetFunction()
-{  
+{
     declare -F "$1" &> /dev/null
-    return $? 
+    return $?
 }
 
 ##
@@ -459,7 +462,7 @@ requireParams()
     # Checks for speedup
     [ "$1" = R -a -n "$2" ] && return 0
     [ "$1" = RR -a -n "$2" -a -n "$3" ] && return 0
-    
+
     local -i current=0
     local config="$1"
     while shift; do
@@ -505,11 +508,11 @@ requireParams()
 # $?    1       ERROR
 checkParams()
 {
-    local config="$1"    
+    local config="$1"
     if [ "$#" -le "${#config}" ]; then
         return 1
     fi
-    
+
     local -i current=0
     while shift; do
         case "${config:$current:1}" in
@@ -524,7 +527,7 @@ checkParams()
         esac
         ((current++))
     done
-    
+
     return 0
 }
 
