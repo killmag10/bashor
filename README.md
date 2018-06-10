@@ -1,3 +1,8 @@
+# Moved to Gitlab
+Bashor has moved to GitLab: https://gitlab.com/killmag10/bashor
+
+**This repository on GitHub will not be updated any more. Use the GitLab repository.**
+
 # Bashor
 
 Bashor is a pseudo object oriented framwork for the bash.
